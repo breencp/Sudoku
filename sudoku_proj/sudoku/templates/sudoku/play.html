@@ -4,8 +4,54 @@
     <meta charset="UTF-8">
     <title>Sudoku - Let's Play!</title>
 </head>
-<body>
-<h1>Welcome {% player %}!</h1>
-{% board %}
+<style>
+    #canvas {
+        border: 5px solid black;
+        background-size: 100%;
+        background-color: lightblue;
+    }
+</style>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
+
+<script>
+    function draw() {
+        const c = document.getElementById("canvas");
+        const ctx = c.getContext("2d");
+        for (let x = 0; x < 9; x++) {
+            for (let y = 0; y < 9; y++) {
+                ctx.fillStyle = "white";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(56 * x, 56 * y, 56, 56);
+            }
+        }
+        for (let x = 0; x < 9; x += 3) {
+            for (let y = 0; y < 9; y += 3) {
+                ctx.lineWidth = 4;
+                ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3)
+            }
+        }
+    }
+
+    function draw_number(row, col, num) {
+        const c = document.getElementById("canvas");
+        const ctx = c.getContext("2d");
+        ctx.font = "50px Verdana"
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56)
+    }
+
+</script>
+
+<body onload="draw()">
+<div style="text-align: center;">
+    <h1>Welcome {{ request.session.player }}!</h1>
+</div>
+<div style="text-align: center;">
+    <canvas id="canvas" width="504" height="503">
+        Browser not supported; Please upgrade to a modern browser.
+    </canvas>
+</div>
+{{ request.session.board }}
 </body>
 </html>

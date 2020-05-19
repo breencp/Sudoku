@@ -20,10 +20,14 @@ def new_game(request):
 def make_game(request):
     try:
         difficulty = request.POST['difficulty']
-        request.session['player'] = request.POST['player_name']
+        player = request.POST['player_name']
+        if player == "":
+            request.session['player'] = 'Anonymous'
+        else:
+            request.session['player'] = player
     except KeyError:
         return render(request, 'sudoku/newgame.html', {
-            'error_message': 'Please enter your name and select a difficulty level.'
+            'error_message': 'Please select a difficulty level.'
         })
     else:
         new_board = create_game(difficulty)
@@ -36,5 +40,6 @@ def leaderboard(request):
 
 
 def play(request):
-    return render(request, 'sudoku/play.html',
-                  {'board': request.session.get('board'), 'player': request.sessionl.get('player')})
+    player = request.session.get('player')
+    return render(request, 'sudoku/play.html', {'player': player})
+
