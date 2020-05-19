@@ -8,5 +8,6 @@ urlpatterns = [
     path('howtoplay/', views.how_to_play, name='how_to_play'),
     path('newgame/', views.new_game, name='new_game'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
-    path('sudoku/', views.sudoku, name='sudoku')
+    path('play/', views.play, name='play'),
+    path('makegame/', views.make_game, name='make_game'),
 ]

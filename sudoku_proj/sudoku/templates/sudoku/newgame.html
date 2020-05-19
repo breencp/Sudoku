@@ -5,7 +5,27 @@
     <title>Sudoku - Start New Game</title>
 </head>
 <body>
-This page will ask for name, and option to generate new random game at difficulty level of your choice or manually
-create a game from an existing puzzle, say from a puzzle book or newspaper.
+<h1>New Game</h1>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'sudoku:make_game' %}" method="post">
+    {% csrf_token %}
+    <label for="player_name">Player Name:</label><br>
+    <input type="text" id="player_name" name="player_name"><br>
+
+    <br>Difficulty Level:<br>
+    <input type="radio" id="disability" name="difficulty" value="1">
+    <label for="disability">Borderline mental disability</label><br>
+    <input type="radio" id="intelligent" name="difficulty" value="2">
+    <label for="intelligent">Intelligent</label><br>
+    <input type="radio" id="bright" name="difficulty" value="3">
+    <label for="bright">Bright</label><br>
+    <input type="radio" id="gifted" name="difficulty" value="4">
+    <label for="gifted">Gifted</label><br>
+    <input type="radio" id="genius" name="difficulty" value="5">
+    <label for="genius">Genius</label><br>
+
+    <br><input type="submit" value="Create Game">
+</form>
 </body>
 </html>
