@@ -7,17 +7,21 @@ avail_col_nums = []
 avail_block_nums = []
 
 
-def create_board():
+def create_game(difficulty):
     counter = 0
     reset_avail()
     while True:
         board = make_board()
         if board:
-            print("Iterations Required: ", counter)
-            return board
+            print("Iterations Required: ", counter)  # TODO: remove debug code
+            # we now have a complete board solution
+            break
         else:
             reset_avail()
             counter += 1
+
+    # TODO: hide random number of cells and attempt to solve, determine difficulty level from solution
+    return board
 
 
 def reset_avail():
@@ -83,12 +87,12 @@ def get_avail_nums(row, col, block):
     return avail
 
 
-def create_board_debug():
+def create_game_debug():
     start = time.time()
-    print(*create_board(), sep="\n")
+    print(*create_game(1), sep="\n")
     end = time.time()
     print("Elapsed: ", (end - start))
 
 
 if __name__ == "__main__":
-    create_board_debug()
+    create_game_debug()

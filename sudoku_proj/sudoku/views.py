@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .sudoku_logic import *
+from .create_game import *
 
 
 def index(request):
@@ -19,15 +19,16 @@ def new_game(request):
 
 def make_game(request):
     try:
-        selected_diff = request.POST['difficulty']
-        player_name = request.POST['player_name']
+        difficulty = request.POST['difficulty']
+        request.session['player'] = request.POST['player_name']
     except KeyError:
         return render(request, 'sudoku/newgame.html', {
             'error_message': 'Please enter your name and select a difficulty level.'
         })
     else:
-        new_board = create_board()
-        return HttpResponseRedirect(reverse('sudoku:play', {'new_board': new_board}))
+        new_board = create_game(difficulty)
+        request.session['board'] = new_board
+        return HttpResponseRedirect(reverse('sudoku:play'))
 
 
 def leaderboard(request):
@@ -35,4 +36,5 @@ def leaderboard(request):
 
 
 def play(request):
-    return render(request, 'sudoku/play.html')
+    return render(request, 'sudoku/play.html',
+                  {'board': request.session.get('board'), 'player': request.sessionl.get('player')})
