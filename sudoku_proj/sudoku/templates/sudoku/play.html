@@ -27,7 +27,7 @@
         for (let x = 0; x < 9; x += 3) {
             for (let y = 0; y < 9; y += 3) {
                 ctx.lineWidth = 4;
-                ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3)
+                ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3);
             }
         }
     }
@@ -38,7 +38,7 @@
         ctx.font = "50px Verdana"
         ctx.fillStyle = "black";
         ctx.textAlign = "center";
-        ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56)
+        ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56);
     }
 
 </script>
@@ -52,6 +52,16 @@
         Browser not supported; Please upgrade to a modern browser.
     </canvas>
 </div>
-{{ request.session.board }}
+{% for row in request.session.board %}
+{% for col in row %}
+<script>
+    row = "{{ forloop.parentloop.counter }}"
+    col = "{{ forloop.counter }}"
+    num = "{{ col }}"
+    draw_number(row - 1, col - 1, num)
+</script>
+{% endfor %}
+{% endfor %}
+
 </body>
 </html>
