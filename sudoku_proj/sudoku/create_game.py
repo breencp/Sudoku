@@ -1,3 +1,7 @@
+# file: create_game.py
+# author: Christopher Breen
+# date: May 21, 2020
+
 import random
 import time
 
@@ -7,20 +11,51 @@ avail_col_nums = []
 avail_block_nums = []
 
 
-def create_game(difficulty):
+def hide_cells(solution, difficulty):
+    # randomly choose number of cells to hide; need minimum 17 visible numbers of 81 total (64 hidden)
+    # typical puzzle books indicate 30-33 for easy, 24-31 medium
+    board = solution
+
+    if difficulty == '1':
+        hide_count = random.randint(48, 53)
+    elif difficulty == '2':
+        hide_count = random.randint(53, 58)
+    elif difficulty == '3':
+        hide_count = random.randint(58, 63)
+    elif difficulty == '4':
+        hide_count = 64
+    elif difficulty == '5':
+        hide_count = 64
+    else:
+        hide_count = 50
+
     counter = 0
+    while counter < hide_count:
+        row = random.randint(0, 8)
+        col = random.randint(0, 8)
+        if board[row][col] > 0:
+            counter += 1
+            board[row][col] = 0
+
+    return board
+
+
+def create_game(difficulty):
+    counter = 0  # debug purposes to determine how many iterations it takes to get a valid board
     reset_avail()
     while True:
-        board = make_board()
-        if board:
+        solution = make_board()
+        if solution:
             print("Iterations Required: ", counter)  # TODO: remove debug code
             # we now have a complete board solution
+            # let's hide some cells and attempt to solve to determine difficulty level
+
             break
         else:
             reset_avail()
             counter += 1
 
-    # TODO: hide random number of cells and attempt to solve, determine difficulty level from solution
+    board = hide_cells(solution, difficulty)
     return board
 
 
@@ -88,8 +123,9 @@ def get_avail_nums(row, col, block):
 
 
 def create_game_debug():
+    # benchmark compute times to create boards, ensure within acceptable parameters
     start = time.time()
-    print(*create_game(1), sep="\n")
+    print(*create_game('1'), sep="\n")
     end = time.time()
     print("Elapsed: ", (end - start))
 
