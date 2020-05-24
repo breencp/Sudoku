@@ -58,7 +58,7 @@
     row = "{{ forloop.parentloop.counter }}"
     col = "{{ forloop.counter }}"
     num = "{{ col }}"
-    if (num > 0) {
+    if (num.length == 1) {
         draw_number(row - 1, col - 1, num)
     }
 </script>
