@@ -4,7 +4,12 @@
 import copy
 import random
 import time
-from .techniques import solvable_puzzle
+
+# use this import statement when your testing in the local IDE
+from sudoku_proj.sudoku.techniques import *
+
+# use this import statement when running the django web server
+# from .techniques import *
 
 
 # globals
@@ -138,14 +143,10 @@ def get_avail_nums(row, col, block):
     return avail
 
 
-def create_game_debug():
+if __name__ == "__main__":
     """benchmark compute times to create boards, ensure within acceptable parameters"""
     # TODO: remove from production code
     start = time.time()
     print(*create_game('1'), sep="\n")
     end = time.time()
     print("Seconds to generate: ", (end - start))
-
-
-if __name__ == "__main__":
-    create_game_debug()

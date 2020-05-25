@@ -2,12 +2,6 @@
 # author: Christopher Breen
 # date: May 24, 2020
 
-import copy
-import time
-
-# import only to run techniques.py in console only, remove for web app to function
-# from sudoku_proj.sudoku import create_game  # TODO: remove debug code
-
 
 def solvable_puzzle(puzzle_to_solve, difficulty):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
@@ -97,15 +91,3 @@ def is_solved(puzzle):
             if isinstance(puzzle[row][col], list):
                 return False
     return True
-
-
-if __name__ == "__main__":
-    start = time.time()
-    solved = False
-    while not solved:
-        puzzle = create_game.create_game('1')
-        if solvable_puzzle(copy.deepcopy(puzzle), '1'):
-            solved = True
-            print(*puzzle, sep="\n")
-            end = time.time()
-            print("Elapsed: ", (end - start))
