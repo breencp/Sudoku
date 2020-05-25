@@ -1,16 +1,19 @@
 # file: create_game.py
 # author: Christopher Breen
-# date: May 21, 2020
+# date: May 24, 2020
 import copy
 import random
 import time
 
-# use this import statement when your testing in the local IDE
-from sudoku_proj.sudoku.techniques import *
-
-# use this import statement when running the django web server
-# from .techniques import *
-
+try:
+    # this import works when running the django web server
+    from .techniques import *
+except ImportError:
+    try:
+        # this import works when running create_game.py in the IDE as main entry point into the program for testing
+        from sudoku_proj.sudoku.techniques import *
+    except ImportError as err:
+        print(err)
 
 # globals
 avail_row_nums = []
