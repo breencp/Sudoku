@@ -23,8 +23,15 @@ avail_block_nums = []
 
 def create_game(difficulty):
     print('Creating game...', end='')
+    counter = 16
     while True:
+        # developer code to know app not hung, looking for valid puzzle
         print('.', end='')
+        counter += 1
+        if counter == 100:
+            print('\n')
+            counter = 0
+
         reset_avail()
         while True:
             # make_board returns a complete solution will every cell filled in
