@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>About This Projectt</title>
+    <title>About This Project</title>
     <link rel="stylesheet" type="text/css" href="{%  static "StyleSheet.css" %}">
     <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
 </head>
@@ -17,7 +17,10 @@
         <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
         <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
     </ul>
-    Leaderboard coming soon!
+    <h1>This is an Application</h1>
+    <h2>Sudoku Application</h2>
+    {% load static %}
+    <img src="{% static "test.jpg" %}" alt="My image">
 </body>
 
 </html>

@@ -43,3 +43,6 @@ def play(request):
     player = request.session.get('player')
     return render(request, 'sudoku/play.html', {'player': player})
 
+def about(request):
+    return render(request, 'sudoku/about.html')
+
