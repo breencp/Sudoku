@@ -1,31 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
-    <title>Sudoku - Start New Game</title>
+    <title>Start New Sudoku Game</title>
+    <link rel="stylesheet" type="text/css" href="{%  static "StyleSheet.css" %}">
+    <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
 </head>
+
 <body>
-<h1>New Game</h1>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <ul>
+        <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
+        <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
+        <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
+        <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
+        <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
+    </ul>
+    <h1>New Game</h1>
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'sudoku:make_game' %}" method="post">
-    {% csrf_token %}
-    <label for="player_name">Player Name:</label><br>
-    <input type="text" id="player_name" name="player_name"><br>
+    <form action="{% url 'sudoku:make_game' %}" method="post">
+        {% csrf_token %}
+        <label for="player_name">Player Name:</label><br>
+        <input type="text" id="player_name" name="player_name"><br>
 
-    <br>Difficulty Level:<br>
-    <input type="radio" id="disability" name="difficulty" value="1">
-    <label for="disability">Borderline mental disability</label><br>
-    <input type="radio" id="intelligent" name="difficulty" value="2">
-    <label for="intelligent">Intelligent</label><br>
-    <input type="radio" id="bright" name="difficulty" value="3">
-    <label for="bright">Bright</label><br>
-    <input type="radio" id="gifted" name="difficulty" value="4">
-    <label for="gifted">Gifted</label><br>
-    <input type="radio" id="genius" name="difficulty" value="5">
-    <label for="genius">Genius</label><br>
+        <br>Difficulty Level:<br>
+        <input type="radio" id="disability" name="difficulty" value="1">
+        <label for="disability">Borderline mental disability</label><br>
+        <input type="radio" id="intelligent" name="difficulty" value="2">
+        <label for="intelligent">Intelligent</label><br>
+        <input type="radio" id="bright" name="difficulty" value="3">
+        <label for="bright">Bright</label><br>
+        <input type="radio" id="gifted" name="difficulty" value="4">
+        <label for="gifted">Gifted</label><br>
+        <input type="radio" id="genius" name="difficulty" value="5">
+        <label for="genius">Genius</label><br>
 
-    <br><input type="submit" value="Create Game">
-</form>
+        <br><input type="submit" value="Create Game">
+    </form>
 </body>
+
 </html>

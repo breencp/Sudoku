@@ -1,12 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
     <title>UMGC CMSC495 Sudoku Project</title>
+    <link rel="stylesheet" type="text/css" href="{%  static "StyleSheet.css" %}">
+    <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
 </head>
+
 <body>
-<a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br>
-<a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br>
-<a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br>
+
+    <ul>
+        <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
+        <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
+        <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
+        <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
+        <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
+    </ul>
+    <h1>CMSC495 Group 7 Project</h1>
+    <h2>Sudoku Application</h2>
+    <img src="{% static "indexBoard.png" %}" alt="Index Sudoku Board">
 </body>
+
 </html>
