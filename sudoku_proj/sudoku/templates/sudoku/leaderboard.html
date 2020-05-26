@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
+
 <head>
     <meta charset="UTF-8">
-    <title>Sudoku - Leaderboard</title>
+    <title>About This Projectt</title>
+    <link rel="stylesheet" type="text/css" href="{%  static "StyleSheet.css" %}">
+    <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
 </head>
+
 <body>
-Leaderboard coming soon!
+    <ul>
+        <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
+        <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
+        <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
+        <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
+        <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
+    </ul>
+    Leaderboard coming soon!
 </body>
+
 </html>
