@@ -1,13 +1,11 @@
 from django.db import models
 
+
 # User table with stats
-class UserInfo(models.Model):
+class UserBoard(models.Model):
     uid = models.IntegerField(primary_key=True)
     user = models.CharField(max_length=20)
-    wins = models.IntegerField(default=0)
-    losses = models.IntegerField(default=0)
-
-
-# Saved game table
-class Board(models.Model):
-    saved_board = models.CharField(max_length=1863, primary_key=True)
+    start_time = models.IntegerField(default=0)
+    end_time = models.IntegerField(default=0)
+    saved_board = models.CharField(max_length=1863)
+    status = models.CharField(max_length=1)
