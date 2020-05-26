@@ -2,22 +2,22 @@
 # author: Christopher Breen
 # date: May 24, 2020
 
-import copy
-import time
-
-# import only to run techniques.py in console only, remove for web app to function
-# from sudoku_proj.sudoku import create_game  # TODO: remove debug code
-
 
 def solvable_puzzle(puzzle_to_solve, difficulty):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
     progress = True
+    techniques_utilized = set()
     while progress:
         progress = False
         # Naked Single
         if naked_single(puzzle_to_solve):
+            techniques_utilized.add("Naked Single")
             progress = True
         # Hidden Single
+        if hidden_single(puzzle_to_solve):
+            techniques_utilized.add("Hidden Single")
+            progress = True
+
         if difficulty > '1':
             # Naked Pair
             # Omission
@@ -38,7 +38,11 @@ def solvable_puzzle(puzzle_to_solve, difficulty):
 
     # we have continually looped through all techniques in the given difficulty level
     # we may or may not have removed all available numbers down to a single int.  Let's check.
+    if 'Hidden Single' not in techniques_utilized:
+        return False
+
     if is_solved(puzzle_to_solve):
+        print("\nTechniques: ", techniques_utilized)
         return True
     else:
         return False
@@ -47,6 +51,7 @@ def solvable_puzzle(puzzle_to_solve, difficulty):
 def naked_single(solving_puzzle):
     """Naked Single removes any number found in the current row, col, and block.  If only one single number remains,
     it is the solution to that cell"""
+    solved_one = False
     progress = True
     while progress:
         progress = False
@@ -69,10 +74,66 @@ def naked_single(solving_puzzle):
                         if digit in solving_puzzle[row][col]:
                             solving_puzzle[row][col].remove(digit)
                             progress = True
+                            solved_one = True
                     if len(solving_puzzle[row][col]) == 1:
                         # single digit remaining, replace list with integer
                         solving_puzzle[row][col] = solving_puzzle[row][col][0]
-    return progress
+    return solved_one
+
+
+def hidden_single(solving_puzzle):
+    """Hidden single looks at the pencil marks in each cell and then each cell within the row/col/block to
+    see if it contains a number that is not contained in pencil marks of any other cell in the row/col/block"""
+    progress = True
+    solved_one = False
+    while progress:
+        progress = False
+        for row in range(9):
+            for col in range(9):
+                if isinstance(solving_puzzle[row][col], list):
+                    # this is an unsolved cell
+                    cell_possibles = solving_puzzle[row][col][:]
+                    for x in range(9):
+                        if x is not col and isinstance(solving_puzzle[row][x], list):
+                            for digit in solving_puzzle[row][x]:
+                                if digit in cell_possibles:
+                                    cell_possibles.remove(digit)
+                                    if len(cell_possibles) == 0:
+                                        break
+                    if len(cell_possibles) == 1:
+                        # we have a hidden single
+                        progress = True
+                        solved_one = True
+                        solving_puzzle[row][col] = cell_possibles[0]
+
+                    if isinstance(solving_puzzle[row][col], list):
+                        cell_possibles = solving_puzzle[row][col][:]
+                        for y in range(9):
+                            if y is not row and isinstance(solving_puzzle[y][col], list):
+                                for digit in solving_puzzle[y][col]:
+                                    if digit in cell_possibles:
+                                        cell_possibles.remove(digit)
+                        if len(cell_possibles) == 1:
+                            # we have a hidden single
+                            progress = True
+                            solved_one = True
+                            solving_puzzle[row][col] = cell_possibles[0]
+
+                    if isinstance(solving_puzzle[row][col], list):
+                        cell_possibles = solving_puzzle[row][col][:]
+                        xi, yi = get_upper_left(row, col)
+                        for y in range(yi, yi + 3):
+                            for x in range(xi, xi + 3):
+                                if not (x is col and y is row) and isinstance(solving_puzzle[y][x], list):
+                                    for digit in solving_puzzle[y][x]:
+                                        if digit in cell_possibles:
+                                            cell_possibles.remove(digit)
+                        if len(cell_possibles) == 1:
+                            # we have a hidden single
+                            progress = True
+                            solved_one = True
+                            solving_puzzle[row][col] = cell_possibles[0]
+    return solved_one
 
 
 def get_upper_left(row, col):
@@ -97,15 +158,3 @@ def is_solved(puzzle):
             if isinstance(puzzle[row][col], list):
                 return False
     return True
-
-
-if __name__ == "__main__":
-    start = time.time()
-    solved = False
-    while not solved:
-        puzzle = create_game.create_game('1')
-        if solvable_puzzle(copy.deepcopy(puzzle), '1'):
-            solved = True
-            print(*puzzle, sep="\n")
-            end = time.time()
-            print("Elapsed: ", (end - start))
