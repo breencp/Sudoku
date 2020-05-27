@@ -17,6 +17,7 @@ def accepted_difficulties():
         else:
             print('Failed to create game with difficulty ' + x + '\n')
 
+
 # TODO: execute this when appropriate difficulty constraints are implemented
 def rejected_difficulties():
     difficulty = ['0', 'foo', 1]
