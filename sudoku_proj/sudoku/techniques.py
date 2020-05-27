@@ -38,9 +38,6 @@ def solvable_puzzle(puzzle_to_solve, difficulty):
 
     # we have continually looped through all techniques in the given difficulty level
     # we may or may not have removed all available numbers down to a single int.  Let's check.
-    if 'Hidden Single' not in techniques_utilized:
-        return False
-
     if is_solved(puzzle_to_solve):
         print("\nTechniques: ", techniques_utilized)
         return True
@@ -95,11 +92,7 @@ def hidden_single(solving_puzzle):
                     cell_possibles = solving_puzzle[row][col][:]
                     for x in range(9):
                         if x is not col and isinstance(solving_puzzle[row][x], list):
-                            for digit in solving_puzzle[row][x]:
-                                if digit in cell_possibles:
-                                    cell_possibles.remove(digit)
-                                    if len(cell_possibles) == 0:
-                                        break
+                            cell_possibles = [i for i in cell_possibles if i not in solving_puzzle[row][x]]
                     if len(cell_possibles) == 1:
                         # we have a hidden single
                         progress = True
@@ -110,9 +103,7 @@ def hidden_single(solving_puzzle):
                         cell_possibles = solving_puzzle[row][col][:]
                         for y in range(9):
                             if y is not row and isinstance(solving_puzzle[y][col], list):
-                                for digit in solving_puzzle[y][col]:
-                                    if digit in cell_possibles:
-                                        cell_possibles.remove(digit)
+                                cell_possibles = [i for i in cell_possibles if i not in solving_puzzle[y][col]]
                         if len(cell_possibles) == 1:
                             # we have a hidden single
                             progress = True
@@ -125,9 +116,7 @@ def hidden_single(solving_puzzle):
                         for y in range(yi, yi + 3):
                             for x in range(xi, xi + 3):
                                 if not (x is col and y is row) and isinstance(solving_puzzle[y][x], list):
-                                    for digit in solving_puzzle[y][x]:
-                                        if digit in cell_possibles:
-                                            cell_possibles.remove(digit)
+                                    cell_possibles = [i for i in cell_possibles if i not in solving_puzzle[y][x]]
                         if len(cell_possibles) == 1:
                             # we have a hidden single
                             progress = True
