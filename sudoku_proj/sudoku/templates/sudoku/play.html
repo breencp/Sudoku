@@ -5,39 +5,65 @@
 <head>
     <meta charset="UTF-8">
     <title>Sudoku Let's Play</title>
-    <link rel="stylesheet" type="text/css" href="{%  static "StyleSheet.css" %}">
+    <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
     <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
 </head>
 <style>
-    #canvas {
+    #puzzle {
         border: 5px solid black;
         background-size: 100%;
         background-color: lightblue;
     }
+    #scratch {
+        border: 5px solid black;
+        background-size: 100%;
+        background-color: lightpink;
+    }
+    .left_side {
+        flex-grow: 1;
+        text-align: center;
+    }
+    .right_side {
+        flex-grow: 1;
+    }
+    .middle {
+        text-align: center;
+        flex-basis: auto;
+    }
+    .container {
+        display: flex;
+    }
 </style>
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
 
 <script>
     function draw() {
-        const c = document.getElementById("canvas");
+        // Draw main puzzle box
+        const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
+        ctx.lineWidth = 2;
         for (let x = 0; x < 9; x++) {
             for (let y = 0; y < 9; y++) {
-                ctx.fillStyle = "white";
-                ctx.lineWidth = 2;
                 ctx.strokeRect(56 * x, 56 * y, 56, 56);
             }
         }
+        // Draw thick border around blocks
+        ctx.lineWidth = 4;
         for (let x = 0; x < 9; x += 3) {
             for (let y = 0; y < 9; y += 3) {
-                ctx.lineWidth = 4;
                 ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3);
             }
+        }
+        // Prep scratch pad
+        const rs = document.getElementById("scratch");
+        const rs_ctx = rs.getContext("2d");
+        rs_ctx.lineWidth = 2;
+        for (let y = 0; y < 9; y ++) {
+            rs_ctx.strokeRect(0, 56 * y, 56, 56);
         }
     }
 
     function draw_number(row, col, num) {
-        const c = document.getElementById("canvas");
+        const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
         ctx.font = "50px Verdana"
         ctx.fillStyle = "black";
@@ -45,36 +71,74 @@
         ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56);
     }
 
+    function draw_pencil_marks(row, col, num) {
+        num = num.toString().replace(/,/g,' ')
+        let row1 = num.slice(0, num.length / 2).trim();
+        let row2 = num.slice(num.length / 2).trim();
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.font = "20px Verdana"
+        let display_pencil_marks = document.getElementById("pencil_marks_view");
+        if (display_pencil_marks.checked === true) {
+            ctx.fillStyle = "red";
+        } else {
+            ctx.fillStyle = "lightblue";
+        }
+        ctx.textAlign = "center";
+        ctx.fillText(row1, (56 * col) + 28, (56 * row) + 27, 50);
+        ctx.fillText(row2, (56 * col) + 28, (56 * row) + 47, 50);
+    }
+
+    function togglePencilMarks() {
+        drawNumbers();
+    }
+
+    function drawNumbers() {
+        let session_board = "{{ request.session.board }}";
+        let board = JSON.parse(session_board);
+        for(let y = 0; y < board.length; y++) {
+            let row = board[y];
+            for(let x = 0; x < row.length; x++) {
+                if (board[y][x].length === 9) {
+                    draw_pencil_marks(y, x, board[y][x])
+                } else {
+                    draw_number(y, x, board[y][x])
+                }
+            }
+        }
+    }
 </script>
 
 <body onload="draw()">
- <ul>
-        <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
-        <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
-        <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
-        <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
-        <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
- </ul>
+<ul>
+    <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
+    <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
+    <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
+    <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
+    <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
+</ul>
 <div style="text-align: center;">
     <h1>Welcome {{ request.session.player }}!</h1>
 </div>
-<div style="text-align: center;">
-    <canvas id="canvas" width="504" height="503">
-        Browser not supported; Please upgrade to a modern browser.
-    </canvas>
+<div class="container">
+    <div class="left_side">
+        <h2><u>Options</u></h2>
+        <label for="pencil_marks_view">Pencil Marks</label><input type="checkbox" id="pencil_marks_view" onclick="togglePencilMarks()" checked><br>
+    </div>
+    <div class="middle">
+        <canvas id="puzzle" width="504" height="503">
+            Browser not supported; Please upgrade to a modern browser.
+        </canvas>
+    </div>
+    <div class="right_side">
+        <canvas id="scratch" width="56" height="503">
+            Browser not supported; Please upgrade to a modern browser.
+        </canvas>
+    </div>
 </div>
-{% for row in request.session.board %}
-{% for col in row %}
 <script>
-    row = "{{ forloop.parentloop.counter }}"
-    col = "{{ forloop.counter }}"
-    num = "{{ col }}"
-    if (num.length == 1) {
-        draw_number(row - 1, col - 1, num)
-    }
+    // initial draw of the board
+    drawNumbers()
 </script>
-{% endfor %}
-{% endfor %}
-
 </body>
 </html>

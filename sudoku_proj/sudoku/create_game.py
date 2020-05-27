@@ -22,6 +22,7 @@ avail_block_nums = []
 
 
 def create_game(difficulty):
+
     print('Creating game...', end='')
     counter = 16
     while True:
