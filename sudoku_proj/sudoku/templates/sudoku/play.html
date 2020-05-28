@@ -14,29 +14,33 @@
         background-size: 100%;
         background-color: lightblue;
     }
+
     #scratch {
-        border: 5px solid black;
         background-size: 100%;
-        background-color: lightpink;
+        border: 5px solid #7288a1;
     }
-    .left_side {
+
+    .leftSide {
         flex-grow: 1;
         text-align: center;
     }
-    .right_side {
+
+    .rightSide {
         flex-grow: 1;
     }
+
     .middle {
         text-align: center;
         flex-basis: auto;
     }
+
     .container {
         display: flex;
     }
 </style>
 
 <script>
-    function draw() {
+    function drawBoard() {
         // Draw main puzzle box
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -53,16 +57,76 @@
                 ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3);
             }
         }
-        // Prep scratch pad
-        const rs = document.getElementById("scratch");
-        const rs_ctx = rs.getContext("2d");
-        rs_ctx.lineWidth = 2;
-        for (let y = 0; y < 9; y ++) {
-            rs_ctx.strokeRect(0, 56 * y, 56, 56);
+
+        window.scratchVisible = false;
+        window.scratchRow = -1;
+        window.scratchCol = -1;
+
+        drawNumbers()
+        showHidePencilMarks()
+
+        c.addEventListener('click', function (event) {
+            const c = document.getElementById('puzzle');
+            let posX = event.pageX - c.offsetLeft - c.clientLeft;
+            let posY = event.pageY - c.offsetTop - c.clientTop;
+            let clickedRow = Math.floor(posY / 56);
+            let clickedCol = Math.floor(posX / 56);
+            if (clickedRow >= 0 && clickedRow < 9 && clickedCol >= 0 && clickedCol < 9) {
+                // clicked valid cell in puzzle
+                if (clickedRow === window.scratchRow && clickedCol === window.scratchCol) {
+                    // already had this cell's scratch pad open, hide the scratch
+                    hideScratchPad()
+                } else {
+                    // scratch either closed or working on different cell
+                    window.scratchRow = clickedRow;
+                    window.scratchCol = clickedCol
+                    showScratchPad()
+                }
+            }
+        }, false);
+    }
+
+    function hideScratchPad() {
+        window.scratchVisible = false;
+        window.scratchCol = -1;
+        window.scratchRow = -1;
+        const c = document.getElementById('scratch');
+        c.style.borderColor = "#7288a1";
+        c.style.backgroundColor = "#7288a1";
+        const ctx = c.getContext("2d");
+        ctx.clearRect(0, 0, 56, 503);
+    }
+
+    function showScratchPad(event) {
+        let sessionBoard = "{{ request.session.board }}";
+        let board = JSON.parse(sessionBoard);
+        let availNumbers = board[window.scratchRow][window.scratchCol];
+        if (Number.isInteger(availNumbers)) {
+            // user clicked on cell with solved number, hide scratch if open
+            hideScratchPad();
+            return
+        }
+
+        const scratch = document.getElementById("scratch");
+        window.scratchVisible = true;
+        scratch.style.border = "5px solid black";
+        scratch.style.backgroundColor = "lightpink";
+
+        const sCtx = scratch.getContext("2d");
+        sCtx.lineWidth = 2;
+        sCtx.font = "50px Verdana"
+        sCtx.fillStyle = "black";
+        sCtx.textAlign = "center";
+        for (let y = 1; y < 10; y++) {
+            sCtx.strokeRect(0, 56 * y, 56, 56);
+            if (availNumbers.includes(y)) {
+                sCtx.fillText(y.toString(), 28, (56 * (y - 1)) + 47, 56);
+            }
         }
     }
 
-    function draw_number(row, col, num) {
+    function drawNumber(row, col, num) {
+        // draws a single digit from solution into cell
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
         ctx.font = "50px Verdana"
@@ -71,45 +135,62 @@
         ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56);
     }
 
-    function draw_pencil_marks(row, col, num) {
-        num = num.toString().replace(/,/g,' ')
+    function drawPencilMark(row, col, num) {
+        // draws single set of available numbers into a cell
+        num = num.toString().replace(/,/g, ' ')
         let row1 = num.slice(0, num.length / 2).trim();
         let row2 = num.slice(num.length / 2).trim();
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
         ctx.font = "20px Verdana"
-        let display_pencil_marks = document.getElementById("pencil_marks_view");
-        if (display_pencil_marks.checked === true) {
-            ctx.fillStyle = "red";
-        } else {
-            ctx.fillStyle = "lightblue";
-        }
+        ctx.fillStyle = "red";
         ctx.textAlign = "center";
         ctx.fillText(row1, (56 * col) + 28, (56 * row) + 27, 50);
         ctx.fillText(row2, (56 * col) + 28, (56 * row) + 47, 50);
     }
 
-    function togglePencilMarks() {
-        drawNumbers();
+    function erasePencilMarks(row, col) {
+        // erase all pencil marks (user deselected checkbox)
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.clearRect(2 + (56 * col), 2 + (56 * row), 52, 52);
     }
 
     function drawNumbers() {
-        let session_board = "{{ request.session.board }}";
-        let board = JSON.parse(session_board);
-        for(let y = 0; y < board.length; y++) {
+        // loop through every cell calling singular drawNumber for each cell
+        let sessionBoard = "{{ request.session.board }}";
+        let board = JSON.parse(sessionBoard);
+        for (let y = 0; y < board.length; y++) {
             let row = board[y];
-            for(let x = 0; x < row.length; x++) {
+            for (let x = 0; x < row.length; x++) {
+                if (board[y][x].length !== 9) {
+                    drawNumber(y, x, board[y][x])
+                }
+            }
+        }
+    }
+
+    function showHidePencilMarks() {
+        let sessionBoard = "{{ request.session.board }}";
+        let board = JSON.parse(sessionBoard);
+        let pencilMarks = document.getElementById("checkboxPencilMarks");
+
+        for (let y = 0; y < board.length; y++) {
+            let row = board[y];
+            for (let x = 0; x < row.length; x++) {
                 if (board[y][x].length === 9) {
-                    draw_pencil_marks(y, x, board[y][x])
-                } else {
-                    draw_number(y, x, board[y][x])
+                    if (pencilMarks.checked === true) {
+                        drawPencilMark(y, x, board[y][x]);
+                    } else {
+                        erasePencilMarks(y, x);
+                    }
                 }
             }
         }
     }
 </script>
 
-<body onload="draw()">
+<body onload="drawBoard()">
 <ul>
     <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
     <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
@@ -121,24 +202,21 @@
     <h1>Welcome {{ request.session.player }}!</h1>
 </div>
 <div class="container">
-    <div class="left_side">
+    <div class="leftSide">
         <h2><u>Options</u></h2>
-        <label for="pencil_marks_view">Pencil Marks</label><input type="checkbox" id="pencil_marks_view" onclick="togglePencilMarks()" checked><br>
+        <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
+                                                                    onclick="showHidePencilMarks()" checked><br>
     </div>
     <div class="middle">
         <canvas id="puzzle" width="504" height="503">
             Browser not supported; Please upgrade to a modern browser.
         </canvas>
     </div>
-    <div class="right_side">
+    <div class="rightSide">
         <canvas id="scratch" width="56" height="503">
             Browser not supported; Please upgrade to a modern browser.
         </canvas>
     </div>
 </div>
-<script>
-    // initial draw of the board
-    drawNumbers()
-</script>
 </body>
 </html>

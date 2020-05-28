@@ -2,6 +2,8 @@
 # author: Christopher Breen
 # date: May 24, 2020
 
+# from .xwing import x_wing
+
 
 def solvable_puzzle(puzzle_to_solve, difficulty):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
@@ -17,6 +19,11 @@ def solvable_puzzle(puzzle_to_solve, difficulty):
         if hidden_single(puzzle_to_solve):
             techniques_utilized.add("Hidden Single")
             progress = True
+
+        # testing x-wing
+#        if x_wing(puzzle_to_solve):
+#            techniques_utilized.add("X-Wing")
+#            progress = True
 
         if difficulty > '1':
             # Naked Pair
