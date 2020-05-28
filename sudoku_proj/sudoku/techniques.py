@@ -2,9 +2,6 @@
 # author: Christopher Breen
 # date: May 24, 2020
 
-# from .xwing import x_wing
-
-
 def solvable_puzzle(puzzle_to_solve, difficulty):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
     progress = True
