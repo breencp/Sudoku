@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <title>How to Play</title>
     <link rel="stylesheet" type="text/css" href="{%  static "StyleSheet.css" %}">
-    <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
 </head>
 
 <body>
@@ -17,7 +16,18 @@
         <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
         <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
     </ul>
-    Instructions coming soon!
+    <h1>How to play Sudoku</h1>
+<P>Sudoku is a game that is both easy to learn and difficult to master. Puzzles can vary from extremely simple to seemingly impossible.<br>
+Each puzzle has a unique solution and you will never have to guess at answers. Rather than being a math game, Sudoku uses numbers<br>
+    to create logic based puzzles which use the same set of consistent rules. This creates elegant and intuitive gameplay mechanics.
+</P>
+    <figure>
+<img src="{% static "placeholder.png" %}" alt="Placeholder">
+<figcaption>Example of a typical Sudoku board</figcaption>
+        </figure>
+
+<P> Your goal when playing Sudoku is to fill in the numbers 1-9 <b>EXACTLY ONCE</b> in each row, column, and 3x3 region.</P>
+
 </body>
 
 </html>
