@@ -75,16 +75,32 @@
                 // clicked valid cell in puzzle
                 if (clickedRow === window.scratchRow && clickedCol === window.scratchCol) {
                     // already had this cell's scratch pad open, hide the scratch
-                    hideScratchPad()
+                    highlightScratchCell(false);
+                    hideScratchPad();
                 } else {
                     // scratch either closed or working on different cell
+                    highlightScratchCell(false);
                     window.scratchRow = clickedRow;
                     window.scratchCol = clickedCol
-                    showScratchPad()
+                    showScratchPad();
+                    highlightScratchCell(true);
                 }
             }
         }, false);
     }
+
+    function highlightScratchCell(highlight) {
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.lineWidth = 2;
+        if (highlight) {
+            ctx.strokeStyle = "yellow";
+        } else {
+            ctx.strokeStyle = "black";
+        }
+        ctx.strokeRect(56 * window.scratchCol, 56 * window.scratchRow, 56, 56);
+    }
+
 
     function hideScratchPad() {
         window.scratchVisible = false;
