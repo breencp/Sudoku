@@ -1,37 +1,85 @@
 body {
-  font-family: 'Nova Flat';font-size: 22px;
-  background-color: #7288a1;
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;font-size: 22px;
+background-color: #7288a1;
 }
-
 ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: #333;
+list-style-type: none;
+margin: 0;
+padding: 0;
+overflow: hidden;
+background-color: #333;
 }
-
 li {
-  float: left;
+float: left;
 }
-
 li a {
-  display: block;
-  color: white;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
+display: block;
+color: white;
+text-align: center;
+padding: 14px 16px;
+text-decoration: none;
 }
-
 li a:hover {
-  background-color: #111;
+background-color: #111;
 }
 h1 {
-  text-align: center;
-  font-weight: bold;
+text-align: center;
+font-weight: bold;
 }
 h2 {
-  text-align: center;
-  font-weight: bold;
+text-align: center;
+font-weight: bold;
 }
-
+p {
+text-align: center;
+}
+img {
+display: block;
+margin-left: auto;
+margin-right: auto;
+width: 35%;
+}
+figure {
+display: block;
+text-align: center;
+border: 1px dotted gray;
+margin: 20px; /* adjust as needed */
+}
+figure img {
+vertical-align: top;
+margin-left: auto;
+margin-right: auto;
+}
+figure figcaption {
+border: 1px dotted blue;
+text-align: center;
+display: inline-block;
+background-color: black;
+color: white;
+font-style: bold;
+padding: 2px;
+}
+/* Here starts Play.html style block used to create the Sudoku board and the scratch pad used in the game */
+#puzzle {
+border: 5px solid black;
+background-size: 100%;
+background-color: lightblue;
+}
+#scratch {
+background-size: 100%;
+border: 5px solid #7288a1;
+}
+.leftSide {
+flex-grow: 1;
+text-align: center;
+}
+.rightSide {
+flex-grow: 1;
+}
+.middle {
+text-align: center;
+flex-basis: auto;
+}
+.container {
+display: flex;
+}

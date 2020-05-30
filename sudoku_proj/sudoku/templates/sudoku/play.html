@@ -6,38 +6,8 @@
     <meta charset="UTF-8">
     <title>Sudoku Let's Play</title>
     <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
-    <link href='https://fonts.googleapis.com/css?family=Nova Flat' rel='alternate stylesheet'>
+
 </head>
-<style>
-    #puzzle {
-        border: 5px solid black;
-        background-size: 100%;
-        background-color: lightblue;
-    }
-
-    #scratch {
-        background-size: 100%;
-        border: 5px solid #7288a1;
-    }
-
-    .leftSide {
-        flex-grow: 1;
-        text-align: center;
-    }
-
-    .rightSide {
-        flex-grow: 1;
-    }
-
-    .middle {
-        text-align: center;
-        flex-basis: auto;
-    }
-
-    .container {
-        display: flex;
-    }
-</style>
 
 <script>
     function drawBoard() {
@@ -159,7 +129,7 @@
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
         ctx.font = "20px Verdana"
-        ctx.fillStyle = "red";
+        ctx.fillStyle = "grey";
         ctx.textAlign = "center";
         ctx.fillText(row1, (56 * col) + 28, (56 * row) + 27, 50);
         ctx.fillText(row2, (56 * col) + 28, (56 * row) + 47, 50);
