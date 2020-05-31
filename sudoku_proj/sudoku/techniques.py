@@ -36,10 +36,10 @@ def solvable_puzzle(puzzle_to_solve, difficulty):
             pass
 
     # debug specific technique TODO: remove from production code
-    if 'XY-Wing' not in techniques_utilized:
-        # keep going until we solve a puzzle using the technique we are testing
-        print('.', end='')
-        return False
+#    if 'XY-Wing' not in techniques_utilized:
+#        # keep going until we solve a puzzle using the technique we are testing
+#        print('.', end='')
+#        return False
 
     # we have continually looped through all techniques in the given difficulty level
     # we may or may not have removed all available numbers down to a single int.  Let's check.

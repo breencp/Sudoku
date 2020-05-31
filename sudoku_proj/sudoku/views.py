@@ -1,7 +1,8 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 import re
+import json
 
 from .create_game import *
 
@@ -64,3 +65,10 @@ def play(request):
 
 def about(request):
     return render(request, 'sudoku/about.html')
+
+
+def update_board(request):
+    updated_board = json.loads(request.POST.get('board'))
+    request.session['board'] = updated_board
+    return HttpResponse(status=204)
+

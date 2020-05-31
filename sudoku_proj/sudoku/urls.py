@@ -10,5 +10,6 @@ urlpatterns = [
     path('leaderboard/', views.leaderboard, name='leaderboard'),
     path('play/', views.play, name='play'),
     path('makegame/', views.make_game, name='make_game'),
-    path('about/', views.about, name='about')
+    path('about/', views.about, name='about'),
+    path('update_board/', views.update_board, name='update_board')
 ]
