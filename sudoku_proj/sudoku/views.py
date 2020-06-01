@@ -33,8 +33,9 @@ def make_game(request):
             'error_message': 'Please select a difficulty level.'
         })
     else:
-        new_board = create_game(difficulty)
+        new_board, solution = create_game(difficulty)
         request.session['board'] = new_board
+        request.session['solution'] = solution
         return HttpResponseRedirect(reverse('sudoku:play'))
 
 

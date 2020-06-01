@@ -281,6 +281,44 @@
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
 
+    function verifySolutions() {
+        let solution = JSON.parse("{{ request.session.solution }}");
+        let sessionBoard = sessionStorage.getItem("board");
+        let board = JSON.parse(sessionBoard);
+        let errorsFound = false;
+        let puzzleComplete = true;
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                if (!Number.isInteger(board[row][col])) {
+                    // integer's were provided, user answers are lists of length one (or more if unfinished)
+                    if (board[row][col].length > 1) {
+                        puzzleComplete = false;
+                        // verify correct answer is in remaining set of available numbers
+                        if (!board[row][col].includes(solution[row][col])) {
+                            // correct number was removed
+                            console.log("Correct Number removed from " + row + "," + col)
+                            errorsFound = true;
+                        }
+                    } else {
+                        if (board[row][col][0] !== solution[row][col]) {
+                            console.log("Incorrect solution at " + row + "," + col)
+                            errorsFound = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!errorsFound) {
+            if (puzzleComplete) {
+                alert("Puzzle Solution is correct!")
+            } else {
+                alert("So far so good!")
+            }
+        } else {
+            alert("Sorry, but you have a mistake somewhere.")
+        }
+    }
 </script>
 
 <body onload="drawBoard()">
@@ -299,6 +337,7 @@
         <h2><u>Options</u></h2>
         <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
                                                                     onclick="showHidePencilMarks()" checked><br>
+        <button onclick="verifySolutions()">Verify Solutions</button>
     </div>
     <div class="middle">
         <canvas id="puzzle" width="504" height="503">
