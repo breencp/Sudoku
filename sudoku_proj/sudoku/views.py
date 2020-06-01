@@ -1,7 +1,8 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 import re
+import json
 
 from .create_game import *
 
@@ -32,8 +33,9 @@ def make_game(request):
             'error_message': 'Please select a difficulty level.'
         })
     else:
-        new_board = create_game(difficulty)
+        new_board, solution = create_game(difficulty)
         request.session['board'] = new_board
+        request.session['solution'] = solution
         return HttpResponseRedirect(reverse('sudoku:play'))
 
 
@@ -64,3 +66,10 @@ def play(request):
 
 def about(request):
     return render(request, 'sudoku/about.html')
+
+
+def update_board(request):
+    updated_board = json.loads(request.POST.get('board'))
+    request.session['board'] = updated_board
+    return HttpResponse(status=204)
+

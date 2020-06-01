@@ -17,24 +17,29 @@ def solvable_puzzle(puzzle_to_solve, difficulty):
         if hidden_single(puzzle_to_solve):
             techniques_utilized.add("Hidden Single")
             progress = True
-
-        if difficulty > '1':
+        if difficulty > '0':  # TODO: change to 1 after all techniques coded
             # Naked Pair
             # Omission
             # Naked Triplet
             pass
-        if difficulty > '2':
+        if difficulty > '0':  # TODO: change to 2 after all techniques coded
             # Hidden Pair
             # Naked Quad
             # Hidden Triplet
             pass
-        if difficulty > '3':
+        if difficulty > '0':  # TODO: change to 3 after all techniques coded
             # Hidden Quad
             # X-Wing
             # Swordfish
             # XY-Wing
             # Unique Rectangle
             pass
+
+    # debug specific technique TODO: remove from production code
+#    if 'XY-Wing' not in techniques_utilized:
+#        # keep going until we solve a puzzle using the technique we are testing
+#        print('.', end='')
+#        return False
 
     # we have continually looped through all techniques in the given difficulty level
     # we may or may not have removed all available numbers down to a single int.  Let's check.

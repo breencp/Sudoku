@@ -22,11 +22,11 @@ avail_block_nums = []
 
 
 def create_game(difficulty):
-
     print('Creating game...', end='')
     counter = 16
     while True:
         # developer code to know app not hung, looking for valid puzzle
+        # TODO: javascript to display progress on web page
         print('.', end='')
         counter += 1
         if counter == 100:
@@ -35,7 +35,7 @@ def create_game(difficulty):
 
         reset_avail()
         while True:
-            # make_board returns a complete solution will every cell filled in
+            # make_board returns a complete solution with every cell filled in, or false if it failed
             solution = make_board()
             if solution:
                 break
@@ -48,7 +48,7 @@ def create_game(difficulty):
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
         if solvable_puzzle(copy.deepcopy(board), difficulty):
             # if successful, return the board modified by hide_cells
-            return board
+            return board, solution
 
 
 def hide_cells(solution, difficulty):
