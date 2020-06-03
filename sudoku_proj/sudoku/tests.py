@@ -2,28 +2,26 @@
 # author: Christopher Smith
 # date: May 26, 2020
 
-# TODO: allow executability without commenting out the following line
-# from django.test import TestCase
-
-from sudoku_proj.sudoku.create_game import create_game
+import unittest
 
 
-def accepted_difficulties():
-    difficulty = ['1', '2', '3', '4', '5', '6']
-    for x in difficulty:
-        result = create_game(x)
-        if result:
-            print('Successfully created game with difficulty ' + x + '\n')
-        else:
-            print('Failed to create game with difficulty ' + x + '\n')
+class CreateGameTests(unittest.TestCase):
 
+    def accepted_difficulties(self):
+        difficulty = ['1', '2', '3', '4', '5', '6']
+        board = ""
+        solution = ""
+        for x in difficulty:
+            create_game(x)
+            self.assertIs(board, True)
+            self.assertIs(solution, True)
 
-# TODO: execute this when appropriate difficulty constraints are implemented
-def rejected_difficulties():
-    difficulty = ['0', 'foo', 1]
-    for x in difficulty:
-        result = create_game(x)
-        if result:
-            print('Successfully create game with difficulty ' + x + '\n')
-        else:
-            print('Failed to create game with difficulty ' + x + '\n')
+    # TODO: execute this when appropriate difficulty constraints are implemented
+    def rejected_difficulties(self):
+        difficulty = ['0', 'foo', 1]
+        board = ""
+        solution = ""
+        for x in difficulty:
+            create_game(x)
+            self.assertIs(board, False)
+            self.assertIs(solution, False)
