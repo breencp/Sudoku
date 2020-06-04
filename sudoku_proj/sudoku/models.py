@@ -9,3 +9,4 @@ class UserBoard(models.Model):
     end_time = models.IntegerField(default=0)
     saved_board = models.CharField(max_length=1863)
     status = models.CharField(max_length=1)
+    hints = models.IntegerField(default=0)
