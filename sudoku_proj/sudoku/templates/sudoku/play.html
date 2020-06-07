@@ -71,6 +71,10 @@
                 var removed = false;
                 let posY = event.pageY - c.offsetTop - c.clientTop;
                 let clickedRow = Math.floor(posY / 56);
+                if (clickedRow < 0 || clickedRow > 8) {
+                    // clicking the top border of 1 or bottom border of 9 results in an invalid number we need to ignore
+                    return;
+                }
                 let sessionBoard = sessionStorage.getItem("board");
                 let board = JSON.parse(sessionBoard);
                 let availNumbers = board[window.scratchRow][window.scratchCol];
@@ -180,17 +184,18 @@
         // draws single set of available numbers into a cell
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
-        ctx.fillStyle = "grey";
         ctx.textAlign = "center";
 
         if (num.length === 1) {
             ctx.font = "50px Verdana"
+            ctx.fillStyle = "blue";
             ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 50);
         } else {
             num = num.toString().replace(/,/g, ' ')
             let row1 = num.slice(0, num.length / 2).trim();
             let row2 = num.slice(num.length / 2).trim();
             ctx.font = "20px Verdana"
+            ctx.fillStyle = "grey";
             ctx.fillText(row1, (56 * col) + 28, (56 * row) + 27, 50);
             ctx.fillText(row2, (56 * col) + 28, (56 * row) + 47, 50);
         }
