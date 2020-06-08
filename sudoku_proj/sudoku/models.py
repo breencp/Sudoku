@@ -1,3 +1,7 @@
+# file: models.py
+# author: Christopher Smith
+# date: May 24, 2020
+
 from django.db import models
 
 
