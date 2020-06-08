@@ -77,57 +77,56 @@ def naked_single(solving_puzzle):
                             solving_puzzle[row][col].remove(digit)
                             progress = True
                             solved_one = True
+                            # print([row][0]), [col][0], solving_puzzle[row][col]
                     if len(solving_puzzle[row][col]) == 1:
                         # single digit remaining, replace list with integer
                         solving_puzzle[row][col] = solving_puzzle[row][col][0]
+
     return solved_one
 
 
 def hidden_single(solving_puzzle):
     """Hidden single looks at the pencil marks in each cell and then each cell within the row/col/block to
     see if it contains a number that is not contained in pencil marks of any other cell in the row/col/block"""
-    progress = True
-    solved_one = False
-    while progress:
-        progress = False
-        for row in range(9):
-            for col in range(9):
-                if isinstance(solving_puzzle[row][col], list):
-                    # this is an unsolved cell
-                    cell_possibles = solving_puzzle[row][col][:]
+    single = True
+    for row in range(9):
+        for col in range(9):
+            if isinstance(solving_puzzle[row][col], list):
+                # this is an unsolved cell, get avail nums remaining
+                cell_possibles = solving_puzzle[row][col][:]
+                for i in range(len(cell_possibles)):
                     for x in range(9):
                         if x is not col and isinstance(solving_puzzle[row][x], list):
-                            cell_possibles = [i for i in cell_possibles if i not in solving_puzzle[row][x]]
-                    if len(cell_possibles) == 1:
-                        # we have a hidden single
-                        progress = True
-                        solved_one = True
-                        solving_puzzle[row][col] = cell_possibles[0]
+                            if cell_possibles[i] in solving_puzzle[row][x]:
+                                single = False
+                    if single:
+                        # print([row], [col], 'Hidden Single: ', cell_possibles[i])
+                        solving_puzzle[row][col] = cell_possibles[i]
+                        return True
 
-                    if isinstance(solving_puzzle[row][col], list):
-                        cell_possibles = solving_puzzle[row][col][:]
-                        for y in range(9):
-                            if y is not row and isinstance(solving_puzzle[y][col], list):
-                                cell_possibles = [i for i in cell_possibles if i not in solving_puzzle[y][col]]
-                        if len(cell_possibles) == 1:
-                            # we have a hidden single
-                            progress = True
-                            solved_one = True
-                            solving_puzzle[row][col] = cell_possibles[0]
+                    single = True
+                    for y in range(9):
+                        if y is not row and isinstance(solving_puzzle[y][col], list):
+                            if cell_possibles[i] in solving_puzzle[y][col]:
+                                single = False
+                    if single:
+                        # print([row], [col], 'Hidden Single: ', cell_possibles[i])
+                        solving_puzzle[row][col] = cell_possibles[i]
+                        return True
 
-                    if isinstance(solving_puzzle[row][col], list):
-                        cell_possibles = solving_puzzle[row][col][:]
-                        xi, yi = get_upper_left(row, col)
-                        for y in range(yi, yi + 3):
-                            for x in range(xi, xi + 3):
-                                if not (x is col and y is row) and isinstance(solving_puzzle[y][x], list):
-                                    cell_possibles = [i for i in cell_possibles if i not in solving_puzzle[y][x]]
-                        if len(cell_possibles) == 1:
-                            # we have a hidden single
-                            progress = True
-                            solved_one = True
-                            solving_puzzle[row][col] = cell_possibles[0]
-    return solved_one
+                    single = True
+                    xi, yi = get_upper_left(row, col)
+                    for y in range(yi, yi + 3):
+                        for x in range(xi, xi + 3):
+                            if not (x is col and y is row) and isinstance(solving_puzzle[y][x], list):
+                                if cell_possibles[i] in solving_puzzle[y][x]:
+                                    single = False
+                    if single:
+                        # print([row], [col], 'Hidden Single: ', cell_possibles[i])
+                        solving_puzzle[row][col] = cell_possibles[i]
+                        return True
+
+    return False
 
 
 def get_upper_left(row, col):

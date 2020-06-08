@@ -2,6 +2,7 @@
 # author: Christopher Breen
 # date: May 24, 2020
 import copy
+import math
 import random
 import time
 
@@ -83,6 +84,25 @@ def hide_cells(solution, difficulty):
     return board
 
 
+def custom_board(human_puzzle):
+    # convert human readable board sequence into multidimensional list used in code.  e.g. follows:
+    # 9?67853???????65???8?3216??43??5?9786?????25?????6???5??85???2??4?1?8???
+    # The sequence above represents the known numbers and unknown numbers in the puzzle.  It can be read from
+    # a text file used for testing techniques, or could be input by the user to play a custom board.
+    # it starts in upper left most cell and reads left to right, top to bottom.
+
+    # makes a 9x9 multi-dimensional list of zeros
+    board = [[0 for x in range(9)] for x in range(9)]
+    for i in range(len(human_puzzle)):
+        row = math.floor(i / 9)
+        col = i % 9
+        if human_puzzle[i] == '?':
+            board[row][col] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        else:
+            board[row][col] = int(human_puzzle[i])
+    return board
+
+
 def reset_avail():
     # resets avail row/col/block nums to [1, 2, 3, 4, 5, 7, 8, 9]
     global avail_block_nums
@@ -155,9 +175,17 @@ def get_avail_nums(row, col, block):
 
 
 if __name__ == "__main__":
-    """benchmark compute times to create boards, ensure within acceptable parameters"""
-    # TODO: remove from production code
-    start = time.time()
-    print(*create_game('1'), sep="\n")
-    end = time.time()
-    print("Seconds to generate: ", (end - start))
+    custom = False
+    # used to test techniques with custom boards, comment out below to get random boards instead
+    # custom = custom_board('9?67853???????65???8?3216??????971??43??5?9786?????25?????6???5??85???2??4?1?8???')
+
+    if custom:
+        print(custom)
+        # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
+        print(solvable_puzzle(copy.deepcopy(custom), '1'))
+    else:
+        # TODO: remove from production code
+        start = time.time()
+        print(*create_game('1'), sep="\n")
+        end = time.time()
+        print("Seconds to generate: ", (end - start))
