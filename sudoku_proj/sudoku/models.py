@@ -15,6 +15,7 @@ class Puzzles(models.Model):
 
 # User table with stats for leaderboard
 class Played(models.Model):
+    p_id = models.AutoField(primary_key=True)
     id = models.ForeignKey(Puzzles, on_delete=models.CASCADE)
     user = models.CharField(max_length=20)
     start_time = models.FloatField(default=0)
