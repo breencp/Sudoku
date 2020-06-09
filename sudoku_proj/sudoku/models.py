@@ -13,7 +13,7 @@ class Puzzles(models.Model):
     techniques = models.CharField
 
 
-# User table with stats for leaderboard
+# User table with stats for leaderboard determination
 class Played(models.Model):
     p_id = models.AutoField(primary_key=True)
     id = models.ForeignKey(Puzzles, on_delete=models.CASCADE)
