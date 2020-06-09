@@ -7,7 +7,7 @@ import sqlite3
 
 def add():
     try:
-        conn = sqlite3.connect('sudoku.sqlite3')
+        conn = sqlite3.connect('db.sqlite3')
         cur = conn.cursor()
         insert = """ INSERT INTO sudoku_userboard
         (uid, user, start_time, end_time, saved_board, status, hints)
@@ -21,7 +21,7 @@ def add():
 
 def calculate_leaders():
     try:
-        conn = sqlite3.connect('sudoku.sqlite3')
+        conn = sqlite3.connect('db.sqlite3')
         cur = conn.cursor()
         diff1 = ''' SELECT user FROM sudoku_userboard
         WHERE difficulty = 1 ORDER BY difference LIMIT 5 '''
@@ -43,3 +43,7 @@ def calculate_leaders():
         return diff1, diff2, diff3, diff4, diff5
     except sqlite3.Error as e:
         print(e)
+
+
+if __name__ == "__main__":
+    calculate_leaders()
