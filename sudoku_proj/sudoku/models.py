@@ -7,7 +7,7 @@ from django.db import models
 
 # Puzzle table for storing pre-generated puzzles
 class Puzzles(models.Model):
-    puzz_id = models.CharField(primary_key=True)
+    puzz_id = models.CharField(primary_key=True, max_length=5)
     puzzle = models.CharField(max_length=1863)
     difficulty = models.CharField(max_length=1)
 
