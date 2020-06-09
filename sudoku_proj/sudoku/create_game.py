@@ -1,6 +1,6 @@
 # file: create_game.py
 # author: Christopher Breen
-# date: May 24, 2020
+# date:
 import copy
 import math
 import random
@@ -24,14 +24,13 @@ avail_block_nums = []
 
 def create_game(difficulty):
     print('Creating game...', end='')
-    counter = 16
+    counter = 16  # spacing for ... to line up
     while True:
         # developer code to know app not hung, looking for valid puzzle
-        # TODO: javascript to display progress on web page
         print('.', end='')
         counter += 1
         if counter == 100:
-            print('\n')
+            # print('\n')
             counter = 0
 
         reset_avail()
@@ -61,7 +60,7 @@ def hide_cells(solution, difficulty):
     if difficulty == '1':
         hide_count = random.randint(48, 53)
     elif difficulty == '2':
-        hide_count = random.randint(53, 58)
+        hide_count = random.randint(48, 53)  # 53, 58 - once all techniques in diff level are complete
     elif difficulty == '3':
         hide_count = random.randint(58, 63)
     elif difficulty == '4':
@@ -174,18 +173,32 @@ def get_avail_nums(row, col, block):
     return avail
 
 
+def board_to_string(board):
+    board_string = ''
+    for row in range(9):
+        for col in range(9):
+            if isinstance(board[row][col], list):
+                board_string += ' '
+            else:
+                board_string += str(board[row][col])
+    return board_string
+
+
 if __name__ == "__main__":
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # custom = custom_board('9?67853???????65???8?3216??????971??43??5?9786?????25?????6???5??85???2??4?1?8???')
+    # custom = custom_board('???2?3??5?5?17??687?2?6??????????8?7???7??93??7?81??4???8?47??35?73???8??396????4')
 
     if custom:
         print(custom)
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
         print(solvable_puzzle(copy.deepcopy(custom), '1'))
     else:
-        # TODO: remove from production code
         start = time.time()
-        print(*create_game('1'), sep="\n")
+        board, solution = create_game('2')
+        print('Puzzle:\n', board)
+        print('Solution:\n', solution)
+        print('String:\n', board_to_string(board))
         end = time.time()
         print("Seconds to generate: ", (end - start))
+
