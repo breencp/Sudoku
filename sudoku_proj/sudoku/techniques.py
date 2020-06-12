@@ -7,30 +7,30 @@ import copy
 def solvable_puzzle(puzzle_to_solve, desired_difficulty):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
     progress = True
-    techniques_utilized = set()
+    techniques_utilized = dict()
     actual_difficulty = '1'
     while progress:
         progress = False
         # Naked Single: only technique that solves more than one within function
         if naked_single(puzzle_to_solve):
-            techniques_utilized.add("Naked Single")
+            techniques_utilized.update({'naked_single': 'True'})
             progress = True
         # Hidden Single
         if hidden_single(puzzle_to_solve):
-            techniques_utilized.add("Hidden Single")
+            techniques_utilized.update({'hidden_single': 'True'})
             progress = True
         if desired_difficulty > '1':
             # Naked Pair: repeatedly try easier techniques until no longer making progress without advanced techniques
             if not progress:
                 if naked_pair(puzzle_to_solve):
-                    techniques_utilized.add("Naked Pair")
+                    techniques_utilized.update({'naked_pair': 'True'})
                     if actual_difficulty < '2':
                         actual_difficulty = '2'
                     progress = True
             # Omission (a.k.a. Intersection, Pointing)
             if not progress:
                 if omission(puzzle_to_solve):
-                    techniques_utilized.add("Omission")
+                    techniques_utilized.update({'omission': 'True'})
                     if actual_difficulty < '2':
                         actual_difficulty = '2'
             # Naked Triplet
@@ -57,13 +57,13 @@ def solvable_puzzle(puzzle_to_solve, desired_difficulty):
     # we may or may not have removed all available numbers down to a single int.  Let's check.
     # if is_solved(puzzle_to_solve):  # test code, replace with line below
     if is_solved(puzzle_to_solve):
-        print("\nTechniques: " + str(techniques_utilized), end='')
+        # print("\nTechniques: " + str(techniques_utilized), end='')
         if actual_difficulty == desired_difficulty:
-            return True
+            return True, actual_difficulty, techniques_utilized
         else:
-            return False
+            return False, False, False
     else:
-        return False
+        return False, False, False
 
 
 def naked_single(solving_puzzle):
