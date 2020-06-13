@@ -1,0 +1,6 @@
+@startuml
+WebServer -> Database: Initializes Django apps and middleware
+WebServer -> User: WebServer socket listens on port 80
+
+
+@enduml

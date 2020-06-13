@@ -1,0 +1,22 @@
+@startuml
+User -> Input: Clicks on sudoku board
+Input ->board.EventListener: Click registered
+board.EventListener -> User: Show/Hide scratch pad for sudoku board cell clicked
+User -> Input: Clicks on Scratch Pad
+Input -> scratchpad.EventListener: Click registered
+scratchpad.EventListener -> Javascript_Window: Update variables
+scratchpad.EventListener -> Django_Session: Update variables
+scratchpad.EventListener -> SQLite_Database: Update database
+scratchpad.EventListener -> User: Toggle number color grey/black
+User -> Input: Close browser
+Input -> User: Application exit
+User -> Input: Selects "Start New Game" from Index.html
+Input -> new_game: Requests render of newgame.html
+new_game-> User: Returns django.shortcuts.render(newgame.html)
+User -> Input: Selects "Load From Previous Session"
+Input -> make_game: POST data passed with username and load previous selection
+make_game -> create_game: Sanitizes input. Requests game load
+create_game -> SQLite_Database: Requests save state data
+SQLite_Database -> create_game: Returns save state data
+create_game -> User: Returns previous save state
+@enduml
