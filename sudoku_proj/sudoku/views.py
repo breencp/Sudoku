@@ -1,3 +1,6 @@
+# file: views.py
+# author: Christopher Breen
+# date:
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
@@ -44,7 +47,7 @@ def make_game(request):
 
 
 def sanitized_diff(diff):
-    if 0 < int(diff) < 2:  # increase 2 as more difficulty levels are programmed
+    if 0 < int(diff) < 3:  # increase 2 as more difficulty levels are programmed
         return str(diff)
     else:
         return False

@@ -5,6 +5,9 @@ import copy
 import math
 import random
 import time
+import json
+from datetime import date
+
 
 try:
     # this import works when running the django web server
@@ -24,13 +27,12 @@ avail_block_nums = []
 
 def create_game(difficulty):
     print('Creating game...', end='')
-    counter = 16  # spacing for ... to line up
+    counter = 0
     while True:
         # developer code to know app not hung, looking for valid puzzle
-        print('.', end='')
         counter += 1
-        if counter == 100:
-            # print('\n')
+        if counter == 50:
+            print('.', end='')
             counter = 0
 
         reset_avail()
@@ -46,9 +48,10 @@ def create_game(difficulty):
         # hide_cells returns the original solution but with a random subset of cell numbers removed
         board = hide_cells(solution, difficulty)
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
-        if solvable_puzzle(copy.deepcopy(board), difficulty):
+        solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board), difficulty)
+        if solved:
             # if successful, return the board modified by hide_cells
-            return board, solution
+            return board, solution, actual_difficulty, techniques
 
 
 def hide_cells(solution, difficulty):
@@ -194,11 +197,22 @@ if __name__ == "__main__":
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
         print(solvable_puzzle(copy.deepcopy(custom), '1'))
     else:
-        start = time.time()
-        board, solution = create_game('2')
-        print('Puzzle:\n', board)
-        print('Solution:\n', solution)
-        print('String:\n', board_to_string(board))
-        end = time.time()
-        print("Seconds to generate: ", (end - start))
+        for i in range(10):
+            start = time.time()
+            board, solution, actual_difficulty, techniques = create_game('2')
+            data = {'board': board,
+                    'solution': solution,
+                    'difficulty': actual_difficulty,
+                    'techniques': techniques
+                    }
 
+            # print('String:\n', board_to_string(board))
+            end = time.time()
+            output = '\n', data['techniques'], "Seconds to generate: ", (end - start)
+            print(*output)
+
+            filename = 'puzzles/' + date.today().strftime('%Y%m%d') + '.txt'
+            with open(filename, 'a+') as f:
+                json.dump(data, f)
+                f.write('\n')
+            f.close()
