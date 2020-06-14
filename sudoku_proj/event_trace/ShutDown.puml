@@ -1,0 +1,7 @@
+@startuml
+Administrator -> WebServer: Shutdown Request
+WebServer -> Database: End connection
+WebServer -> Administrator: Application shutdown
+
+
+@enduml
