@@ -1,13 +1,14 @@
 # file: views.py
 # author: Christopher Breen
 # date:
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
+from .gamerecords import read_file
 import re
 import json
-
-# from .create_game import *
 
 
 def index(request):
@@ -88,3 +89,22 @@ def update_board(request):
     request.session['board'] = updated_board
     return HttpResponse(status=204)
 
+
+def upload_success(request):
+    return render(request, 'sudoku/uploadsuccess.html')
+
+
+class UploadFileForm(forms.Form):
+    puzzle_file = forms.FileField()
+
+
+@staff_member_required
+def upload(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            read_file(request.FILES['puzzle_file'])
+            return HttpResponseRedirect(reverse('sudoku:upload_success'))
+    else:
+        form = UploadFileForm()
+        return render(request, 'sudoku/upload.html', {'form': form})

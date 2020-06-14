@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Puzzles, Played
+admin.site.register(Puzzles)
+admin.site.register(Played)
