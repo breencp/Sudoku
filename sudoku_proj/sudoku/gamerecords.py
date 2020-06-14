@@ -20,3 +20,8 @@ def read_file(f):
         except IntegrityError:
             # unique constraint failed, puzzle already exists
             pass
+
+
+def get_game(difficulty):
+    puzzles = Puzzles.objects.filter(difficulty=difficulty).order_by('?')[0]
+    return puzzles.board, puzzles.solution
