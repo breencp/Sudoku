@@ -189,7 +189,7 @@ if __name__ == "__main__":
         print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(1000):
+        for i in range(1):
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
                     'solution': solution,
@@ -211,4 +211,4 @@ if __name__ == "__main__":
 
             if 'omission' in data['techniques']:
                 print(board_string)
-                break
+                #break

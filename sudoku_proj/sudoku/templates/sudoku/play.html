@@ -263,7 +263,6 @@
             data: {'board': sessionStorage.getItem("board")},
             success: function () {
                 console.log('Game Saved');
-
             }
         });
     }
@@ -322,6 +321,7 @@
         if (!errorsFound) {
             if (puzzleComplete) {
                 alert("Puzzle Solution is correct!")
+
             } else {
                 alert("So far so good!")
             }

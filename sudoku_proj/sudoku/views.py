@@ -78,7 +78,12 @@ def about(request):
 
 def update_board(request):
     updated_board = json.loads(request.POST.get('board'))
+    # update Django Session
     request.session['board'] = updated_board
+
+    # update SQL3 Database
+    # TODO: pass Played.* to function within gamerecords.py for storage in database
+
     return HttpResponse(status=204)
 
 
