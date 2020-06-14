@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Sudoku Puzzles</title>
+    <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
+</head>
+
+<body>
+<ul>
+    <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
+    <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
+    <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
+    <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
+    <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
+</ul>
+<h1>Upload Puzzles</h1>
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'sudoku:upload' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Upload">
+</form>
+</body>
+
+</html>

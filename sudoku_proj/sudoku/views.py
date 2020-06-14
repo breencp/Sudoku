@@ -1,13 +1,14 @@
 # file: views.py
 # author: Christopher Breen
 # date:
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
+from .gamerecords import read_file, get_game
 import re
 import json
-
-from .create_game import *
 
 
 def index(request):
@@ -39,7 +40,7 @@ def make_game(request):
         # test code, replace new_board = and solution = with new_board, solution = for production
         # new_board = custom_board('???2?3??5?5?17??687?2?6??????????8?7???7??93??7?81??4???8?47??35?73???8??396????4')
         # solution = custom_board('')
-        new_board, solution = create_game(difficulty)
+        new_board, solution = get_game(difficulty)
 
         request.session['board'] = new_board
         request.session['solution'] = solution
@@ -54,7 +55,7 @@ def sanitized_diff(diff):
 
 
 def sanitized_player(player):
-    regex = r"^[\w ]{4,16}$"
+    regex = r"^[\w ]{4,20}$"
     match = re.fullmatch(regex, player)
     if match:
         return match[0]
@@ -80,3 +81,22 @@ def update_board(request):
     request.session['board'] = updated_board
     return HttpResponse(status=204)
 
+
+def upload_success(request):
+    return render(request, 'sudoku/uploadsuccess.html')
+
+
+class UploadFileForm(forms.Form):
+    puzzle_file = forms.FileField()
+
+
+@staff_member_required
+def upload(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            read_file(request.FILES['puzzle_file'])
+            return HttpResponseRedirect(reverse('sudoku:upload_success'))
+    else:
+        form = UploadFileForm()
+        return render(request, 'sudoku/upload.html', {'form': form})

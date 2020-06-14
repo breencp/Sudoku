@@ -8,7 +8,6 @@ import time
 import json
 from datetime import date
 
-
 try:
     # this import works when running the django web server
     from .techniques import *
@@ -25,7 +24,7 @@ avail_col_nums = []
 avail_block_nums = []
 
 
-def create_game(difficulty):
+def create_game():
     print('Creating game...', end='')
     counter = 0
     while True:
@@ -46,32 +45,21 @@ def create_game(difficulty):
                 reset_avail()
 
         # hide_cells returns the original solution but with a random subset of cell numbers removed
-        board = hide_cells(solution, difficulty)
+        board = hide_cells(solution)
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
-        solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board), difficulty)
+        solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board))
         if solved:
             # if successful, return the board modified by hide_cells
             return board, solution, actual_difficulty, techniques
 
 
-def hide_cells(solution, difficulty):
+def hide_cells(solution):
     # randomly choose number of cells to hide; need minimum 17 visible numbers of 81 total (64 hidden)
-    # typical puzzle books indicate 30-33 for easy, 24-31 medium
+    # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
+    # puzzles must have at minimum 17 clues to be solvable (64 hidden)
     board = copy.deepcopy(solution)
-
-    # front-end passes string number values for difficulty to allow easy changing of level names
-    if difficulty == '1':
-        hide_count = random.randint(48, 53)
-    elif difficulty == '2':
-        hide_count = random.randint(48, 53)  # 53, 58 - once all techniques in diff level are complete
-    elif difficulty == '3':
-        hide_count = random.randint(58, 63)
-    elif difficulty == '4':
-        hide_count = 64
-    elif difficulty == '5':
-        hide_count = 64
-    else:
-        hide_count = 50
+    givens = random.randint(28, 32)
+    hide_count = 81 - givens
 
     counter = 0
     while counter < hide_count:
@@ -177,14 +165,17 @@ def get_avail_nums(row, col, block):
 
 
 def board_to_string(board):
+    """Converts the board from multidimensional list to a string for seeding into sudoku-solutions.com to verify"""
     board_string = ''
+    givens = 0
     for row in range(9):
         for col in range(9):
             if isinstance(board[row][col], list):
                 board_string += ' '
             else:
                 board_string += str(board[row][col])
-    return board_string
+                givens += 1
+    return board_string, givens
 
 
 if __name__ == "__main__":
@@ -195,24 +186,29 @@ if __name__ == "__main__":
     if custom:
         print(custom)
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
-        print(solvable_puzzle(copy.deepcopy(custom), '1'))
+        print(solvable_puzzle(copy.deepcopy(custom)))
     else:
-        for i in range(10):
-            start = time.time()
-            board, solution, actual_difficulty, techniques = create_game('2')
+        start = time.time()
+        for i in range(1000):
+            board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
                     'solution': solution,
                     'difficulty': actual_difficulty,
                     'techniques': techniques
                     }
 
-            # print('String:\n', board_to_string(board))
-            end = time.time()
-            output = '\n', data['techniques'], "Seconds to generate: ", (end - start)
-            print(*output)
-
             filename = 'puzzles/' + date.today().strftime('%Y%m%d') + '.txt'
             with open(filename, 'a+') as f:
                 json.dump(data, f)
                 f.write('\n')
             f.close()
+
+            board_string, givens = board_to_string(board)
+            end = time.time()
+            output = '\n', 'Difficulty:', data['difficulty'], data['techniques'], 'Givens:', givens, \
+                     'Total minutes elapsed:', math.ceil((end - start) / 60)
+            print(*output)
+
+            if 'omission' in data['techniques']:
+                print(board_string)
+                break
