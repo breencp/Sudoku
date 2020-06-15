@@ -18,7 +18,12 @@
     function drawBoard() {
         // store django session data into javascript accessible session
         let sessionBoard = "{{ request.session.board }}";
+        let start_time = "{{ request.session.start_time }}";
         sessionStorage.setItem("board", sessionBoard);
+        sessionStorage.setItem("orig_board", sessionBoard);
+        sessionStorage.setItem("start_time", start_time);
+        sessionStorage.setItem("status", "I");
+        sessionStorage.setItem("hints", "0");
 
         // Draw main puzzle box
         const c = document.getElementById("puzzle");
@@ -260,7 +265,12 @@
             type: "POST",
             url: "{% url 'sudoku:update_board' %}",
             dataType: 'json',
-            data: {'board': sessionStorage.getItem("board")},
+            data: {'board': sessionStorage.getItem("board"),
+            'start_time': sessionStorage.getItem("start_time"),
+            'end_time': sessionStorage.getItem("end_time"),
+            'orig_board': sessionStorage.getItem("orig_board"),
+            'status': sessionStorage.getItem("status"),
+            'hints': sessionStorage.getItem("hints")},
             success: function () {
                 console.log('Game Saved');
             }
@@ -321,7 +331,8 @@
         if (!errorsFound) {
             if (puzzleComplete) {
                 alert("Puzzle Solution is correct!")
-
+                sessionStorage.setItem("status", "W");
+                saveBoard();
             } else {
                 alert("So far so good!")
             }

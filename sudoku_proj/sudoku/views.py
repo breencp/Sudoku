@@ -1,12 +1,14 @@
 # file: views.py
 # author: Christopher Breen
 # date:
+import time
+
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django import forms
-from .gamerecords import read_file, get_game
+from .gamerecords import read_file, get_game, save_game
 import re
 import json
 
@@ -42,8 +44,14 @@ def make_game(request):
         # solution = custom_board('')
         new_board, solution = get_game(difficulty)
 
+        request.session['orig_board'] = new_board
         request.session['board'] = new_board
         request.session['solution'] = solution
+        request.session['start_time'] = str(time.time())
+        request.session['end_time'] = "N/A"
+        # W = Win, I = In-Progress, L = Lost, S = Surrendered
+        request.session['status'] = 'I'
+        request.session['hints'] = '0'
         return HttpResponseRedirect(reverse('sudoku:play'))
 
 
@@ -78,12 +86,21 @@ def about(request):
 
 def update_board(request):
     updated_board = json.loads(request.POST.get('board'))
+
     # update Django Session
     request.session['board'] = updated_board
 
-    # update SQL3 Database
-    # TODO: pass Played.* to function within gamerecords.py for storage in database
-
+    # update SQL3 Database: W = Win, I = In-Progress, L = Lost, S = Surrendered
+    data = {'user': request.session['player'],
+            'start_time': request.session['start_time'],
+            'end_time': request.session['end_time'],
+            'orig_board': request.session['orig_board'],
+            'current_board': request.session['board'],
+            'status': request.session['status'],
+            'hints': request.session['hints']
+            }
+    print(data)
+    save_game(data)
     return HttpResponse(status=204)
 
 
