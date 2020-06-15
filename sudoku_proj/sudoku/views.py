@@ -1,6 +1,7 @@
 # file: views.py
 # author: Christopher Breen
 # date:
+import math
 import time
 
 from django.contrib.admin.views.decorators import staff_member_required
@@ -47,11 +48,12 @@ def make_game(request):
         request.session['orig_board'] = new_board
         request.session['board'] = new_board
         request.session['solution'] = solution
-        request.session['start_time'] = str(time.time())
-        request.session['end_time'] = "N/A"
+        request.session['start_time'] = time.time()
+        if 'end_time' in request.session:
+            del request.session['end_time']
         # W = Win, I = In-Progress, L = Lost, S = Surrendered
         request.session['status'] = 'I'
-        request.session['hints'] = '0'
+        request.session['hints'] = 0
         return HttpResponseRedirect(reverse('sudoku:play'))
 
 
@@ -85,21 +87,36 @@ def about(request):
 
 
 def update_board(request):
+    game_finished = False
+
+    # get JavaScript sessionStorage from POST
     updated_board = json.loads(request.POST.get('board'))
+    start_time = json.loads(request.POST.get('start_time'))
+    status = request.POST.get('status')
+    hints = request.POST.get('hints')
+    if request.POST.get('end_time'):
+        game_finished = True
+        end_time = json.loads(request.POST.get('end_time'))
 
     # update Django Session
     request.session['board'] = updated_board
+    request.session['start_time'] = start_time
+    if game_finished:
+        request.session['end_time'] = end_time
+    request.session['status'] = status
+    request.session['hints'] = hints
 
     # update SQL3 Database: W = Win, I = In-Progress, L = Lost, S = Surrendered
     data = {'user': request.session['player'],
             'start_time': request.session['start_time'],
-            'end_time': request.session['end_time'],
             'orig_board': request.session['orig_board'],
             'current_board': request.session['board'],
             'status': request.session['status'],
             'hints': request.session['hints']
             }
-    print(data)
+    if game_finished:
+        data.update({'end_time': end_time})
+
     save_game(data)
     return HttpResponse(status=204)
 

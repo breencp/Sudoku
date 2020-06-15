@@ -4,6 +4,8 @@
 
 import unittest
 
+from sudoku_proj.sudoku import create_game as cg
+
 
 class CreateGameTests(unittest.TestCase):
 
@@ -12,7 +14,7 @@ class CreateGameTests(unittest.TestCase):
         board = ""
         solution = ""
         for x in difficulty:
-            create_game(x)
+            cg.create_game()
             self.assertIs(board, True)
             self.assertIs(solution, True)
 
@@ -22,6 +24,6 @@ class CreateGameTests(unittest.TestCase):
         board = ""
         solution = ""
         for x in difficulty:
-            create_game(x)
+            cg.create_game()
             self.assertIs(board, False)
             self.assertIs(solution, False)
