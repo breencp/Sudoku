@@ -58,7 +58,7 @@ def hide_cells(solution):
     # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
     # puzzles must have at minimum 17 clues to be solvable (64 hidden)
     board = copy.deepcopy(solution)
-    givens = random.randint(28, 32)
+    givens = random.randint(27, 30)
     hide_count = 81 - givens
 
     counter = 0
@@ -189,7 +189,7 @@ if __name__ == "__main__":
         print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(1):
+        for i in range(50):
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
                     'solution': solution,
