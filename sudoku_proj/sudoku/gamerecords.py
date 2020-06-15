@@ -3,7 +3,7 @@
 # date: 12 June 2020
 from django.db import IntegrityError
 
-from .models import Puzzles
+from .models import Puzzles, Played
 
 
 def read_file(f):
@@ -25,3 +25,18 @@ def read_file(f):
 def get_game(difficulty):
     puzzles = Puzzles.objects.filter(difficulty=difficulty).order_by('?')[0]
     return puzzles.board, puzzles.solution
+
+
+def save_game():
+    saved_puzzle: Played = Played()
+    saved_puzzle.user = Played.user
+    saved_puzzle.start_time = Played.start_time
+    saved_puzzle.end_time = Played.end_time
+    saved_puzzle.saved_board = Played.saved_board
+    saved_puzzle.status = Played.status
+    saved_puzzle.hints = Played.hints
+    try:
+        saved_puzzle.save()
+    except IntegrityError:
+        # user state already exists
+        saved_puzzle.save(force_update=True)
