@@ -37,7 +37,7 @@ def save_game(data):
         saved_puzzle.hints = x['hints']
         saved_puzzle.saved_board = x['current_board']
         saved_puzzle.puzzle_id = x['orig_board']
-    query = Played.objects.filter(puzzle_id=saved_puzzle.puzzle_id, user=saved_puzzle.user,
+    query = Played.objects.filter(puzzle_id=saved_puzzle.puzzle_id_id, user=saved_puzzle.user,
                                   start_time=saved_puzzle.start_time)
     # update an existing entry
     if query:
