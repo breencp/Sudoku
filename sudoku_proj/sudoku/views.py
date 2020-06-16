@@ -48,7 +48,7 @@ def make_game(request):
         request.session['orig_board'] = new_board
         request.session['board'] = new_board
         request.session['solution'] = solution
-        request.session['start_time'] = time.time()
+        request.session['start_time'] = round(time.time())
         if 'end_time' in request.session:
             del request.session['end_time']
         # W = Win, I = In-Progress, L = Lost, S = Surrendered
@@ -97,7 +97,7 @@ def update_board(request):
 
     if status == "W" and request.session['status'] != "W":
         # wasn't won before but it is now
-        end_time = time.time()
+        end_time = round(time.time())
         request.session['end_time'] = end_time
     elif status == "W" and request.session['status'] == "W":
         # already won, don't update end time
@@ -117,8 +117,10 @@ def update_board(request):
             'status': request.session['status'],
             'hints': request.session['hints']
             }
+    print('Start: ', start_time)
     if end_time:
         data.update({'end_time': end_time})
+        print('End: ', end_time)
 
     save_game(data)
     return HttpResponse(status=204)
