@@ -87,22 +87,25 @@ def about(request):
 
 
 def update_board(request):
-    game_finished = False
+    end_time = False
 
     # get JavaScript sessionStorage from POST
     updated_board = json.loads(request.POST.get('board'))
     start_time = json.loads(request.POST.get('start_time'))
     status = request.POST.get('status')
     hints = request.POST.get('hints')
-    if request.POST.get('end_time'):
-        game_finished = True
-        end_time = json.loads(request.POST.get('end_time'))
+
+    if status == "W" and request.session['status'] != "W":
+        # wasn't won before but it is now
+        end_time = time.time()
+        request.session['end_time'] = end_time
+    elif status == "W" and request.session['status'] == "W":
+        # already won, don't update end time
+        end_time = request.session['end_time']
 
     # update Django Session
     request.session['board'] = updated_board
     request.session['start_time'] = start_time
-    if game_finished:
-        request.session['end_time'] = end_time
     request.session['status'] = status
     request.session['hints'] = hints
 
@@ -114,7 +117,7 @@ def update_board(request):
             'status': request.session['status'],
             'hints': request.session['hints']
             }
-    if game_finished:
+    if end_time:
         data.update({'end_time': end_time})
 
     save_game(data)
