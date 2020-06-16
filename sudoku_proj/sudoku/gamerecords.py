@@ -30,11 +30,9 @@ def get_game(difficulty):
 def save_game(data):
     saved_puzzle: Played = Played()
     saved_puzzle.user = data['user']
-    saved_puzzle.start_time = round(float(data['start_time']))
-    try:
-        saved_puzzle.end_time = round(float(data['end_time']))
-    except ValueError:
-        saved_puzzle.end_time = 9999999999
+    saved_puzzle.start_time = round(data['start_time'])
+    if 'end_time' in data:
+        saved_puzzle.end_time = round(data['end_time'])
     saved_puzzle.status = data['status']
     saved_puzzle.hints = data['hints']
     saved_puzzle.saved_board = data['current_board']
