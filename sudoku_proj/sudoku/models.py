@@ -31,7 +31,7 @@ class Played(models.Model):
     played_id = models.AutoField(primary_key=True)
     puzzle_id = models.ForeignKey(Puzzles, on_delete=models.CASCADE)
     user = models.CharField(max_length=20)
-    start_time = models.IntegerField(default=0)
+    start_time = models.IntegerField
     end_time = models.IntegerField
     saved_board = models.CharField(max_length=1863)
     status = models.CharField(max_length=1)
