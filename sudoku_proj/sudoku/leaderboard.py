@@ -2,48 +2,24 @@
 # author: Christopher Smith
 # date: 8 June 2020
 
-import sqlite3
+from .models import Played
 
 
-def add():
-    try:
-        conn = sqlite3.connect('db.sqlite3')
-        cur = conn.cursor()
-        insert = """ INSERT INTO sudoku_userboard
-        (uid, user, start_time, end_time, saved_board, status, hints)
-        VALUES (?,?,?,?,?,?,?) """
-        cur.execute(insert)
-        cur.close()
-        conn.close()
-    except sqlite3.Error as e:
-        print(e)
-
-
+# raw SQL queries to determine user, puzzle ID, and completion time of puzzles
 def calculate_leaders():
-    try:
-        conn = sqlite3.connect('db.sqlite3')
-        cur = conn.cursor()
-        diff1 = ''' SELECT user FROM sudoku_userboard
-        WHERE difficulty = 1 ORDER BY difference LIMIT 5 '''
-        diff2 = ''' SELECT user FROM sudoku_userboard
-        WHERE difficulty = 2 ORDER BY difference LIMIT 5 '''
-        diff3 = ''' SELECT user FROM sudoku_userboard
-        WHERE difficulty = 3 ORDER BY difference LIMIT 5 '''
-        diff4 = ''' SELECT user FROM sudoku_userboard
-        WHERE difficulty = 4 ORDER BY difference LIMIT 5 '''
-        diff5 = ''' SELECT user FROM sudoku_userboard
-        WHERE difficulty = 5 ORDER BY difference LIMIT 5 '''
-        cur.execute(diff1)
-        cur.execute(diff2)
-        cur.execute(diff3)
-        cur.execute(diff4)
-        cur.execute(diff5)
-        cur.close()
-        conn.close()
-        return diff1, diff2, diff3, diff4, diff5
-    except sqlite3.Error as e:
-        print(e)
-
-
-if __name__ == "__main__":
-    calculate_leaders()
+    diff1 = Played.objects.raw('SELECT user, puzzle_id_id, end_time - start_time FROM sudoku_played JOIN sudoku_puzzles'
+                               'ON puzzle_id_id = puzzle_id WHERE difficulty = 1 AND'
+                               'end_time - start_time IS NOT NULL ORDER BY end_time - start_time LIMIT 5')
+    diff2 = Played.objects.raw('SELECT user, puzzle_id_id, end_time - start_time FROM sudoku_played JOIN sudoku_puzzles'
+                               'ON puzzle_id_id = puzzle_id WHERE difficulty = 2 AND'
+                               ' end_time - start_time IS NOT NULL ORDER BY end_time - start_time LIMIT 5')
+    diff3 = Played.objects.raw('SELECT user, puzzle_id_id, end_time - start_time FROM sudoku_played JOIN sudoku_puzzles'
+                               'ON puzzle_id_id = puzzle_id WHERE difficulty = 3 AND'
+                               'end_time - start_time IS NOT NULL ORDER BY end_time - start_time LIMIT 5')
+    diff4 = Played.objects.raw('SELECT user, puzzle_id_id, end_time - start_time FROM sudoku_played JOIN sudoku_puzzles'
+                               'ON puzzle_id_id = puzzle_id WHERE difficulty = 4 AND'
+                               'end_time - start_time IS NOT NULL ORDER BY end_time - start_time LIMIT 5')
+    diff5 = Played.objects.raw('SELECT user, puzzle_id_id, end_time - start_time FROM sudoku_played JOIN sudoku_puzzles'
+                               'ON puzzle_id_id = puzzle_id WHERE difficulty = 5 AND'
+                               'end_time - start_time IS NOT NULL ORDER BY end_time - start_time LIMIT 5')
+    return diff1, diff2, diff3, diff4, diff5
