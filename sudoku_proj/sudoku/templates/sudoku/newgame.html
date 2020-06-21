@@ -9,36 +9,82 @@
 </head>
 
 <body>
-    <ul>
-        <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
-        <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
-        <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
-        <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
-        <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
-    </ul>
-    <h1>New Game</h1>
-    {% if error_message %}
-    <p><strong>{{ error_message }}</strong></p>{% endif %}
 
-    <form action="{% url 'sudoku:make_game' %}" method="post">
-        {% csrf_token %}
-        <label for="player_name">Player Name:</label><br>
-        <input type="text" id="player_name" name="player_name"><br>
+<nav class="red darken-4" role="navigation">
+    <div class="nav-wrapper">
+        <a href="#!" class="brand-logo right">Sudoku</a>
+        <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
+            <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+            <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+            <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+        </ul>
+    </div>
+</nav>
+</nav>
+<main>
 
-        <br>Difficulty Level:<br>
-        <input type="radio" id="disability" name="difficulty" value="1">
-        <label for="disability">Borderline mental disability</label><br>
-        <input type="radio" id="intelligent" name="difficulty" value="2">
-        <label for="intelligent">Intelligent</label><br>
-        <input type="radio" id="bright" name="difficulty" value="3">
-        <label for="bright">Bright</label><br>
-        <input type="radio" id="gifted" name="difficulty" value="4">
-        <label for="gifted">Gifted</label><br>
-        <input type="radio" id="genius" name="difficulty" value="5">
-        <label for="genius">Genius</label><br>
+<div class="container">
+   <div class="row">
+      <div class="col s12">
+         <div class="card-panel blue-grey lighten-2">
+         <h2 class="center-align">Create New Game</h2>
+            {% if error_message %}
+            <p><strong>{{ error_message }}</strong></p>
+            {% endif %}
+            <form action="{% url 'sudoku:make_game' %}" method="post">
+               <div class="input-field">
+                   {% csrf_token %}
+                  <label for="player_name" class="black-text">Player Name:</label><br>
+                  <input type="text" id="player_name" name="player_name">
+               </div>
+               <br>Difficulty Level:<br>
+               <p>
+                  <input type="radio" id="disability" name="difficulty" value="1">
+                  <label for="disability" class="black-text">Easy</label><p>
+                  <input type="radio" id="intelligent" name="difficulty" value="2">
+                  <label for="intelligent" class="black-text">Normal</label><p>
+                  <input type="radio" id="bright" name="difficulty" value="3">
+                  <label for="bright" class="black-text">Hard</label><p>
+                  <input type="radio" id="gifted" name="difficulty" value="4">
+                  <label for="gifted" class="black-text">Expert</label><p>
+                  <br><input type="submit" value="Create Game">
+            </form>
+         </div>
+      </div>
+   </div>
+</div>
+</main>
 
-        <br><input type="submit" value="Create Game">
-    </form>
+<footer class="page-footer grey darken-3">
+    <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+    <div class="container">
+    <h5 class="white-text">Developers</h5>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col s3">
+                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a class="LI-simple-link" href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a></div>
+            </div>
+            <div class="col s1">
+            </div>
+            <div class="col s3">
+                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link" href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher Breen</a></div>
+            </div>
+            <div class="col s1">
+            </div>
+            <div class="col s3">
+                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a class="LI-simple-link" href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher Smith</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
+
+        </div>
+    </div>
+</footer>
 </body>
-
 </html>
