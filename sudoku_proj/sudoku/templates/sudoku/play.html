@@ -1,28 +1,30 @@
 <!--
-   # file: play.html
-   # author: Christopher Breen
-   # date:
-   -->
+# file: play.html
+# author: Christopher Breen
+# date:
+-->
 <!DOCTYPE html>
 <html lang="en">
-   {% load static %}
-   <head>
-      <meta charset="UTF-8">
-      <title>Sudoku Let's Play</title>
-      <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-   </head>
-   <main>
-   <script>
-      function drawBoard() {
-          // store django session data into javascript accessible session
-          let sessionBoard = "{{ request.session.board }}";
-          let start_time = "{{ request.session.start_time }}";
-          sessionStorage.setItem("board", sessionBoard);
-          sessionStorage.setItem("orig_board", sessionBoard);
-          sessionStorage.setItem("start_time", start_time);
-          sessionStorage.setItem("status", "I");
-          sessionStorage.setItem("hints", "0");
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sudoku Let's Play</title>
+    <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<main>
+<script>
+    function drawBoard() {
+        // store django session data into javascript accessible session
+        let sessionBoard = "{{ request.session.board }}";
+        let start_time = "{{ request.session.start_time }}";
+        sessionStorage.setItem("board", sessionBoard);
+        sessionStorage.setItem("orig_board", sessionBoard);
+        sessionStorage.setItem("start_time", start_time);
+        sessionStorage.setItem("status", "I");
+        sessionStorage.setItem("hints", "0");
+        saveBoard()
 
           // Draw main puzzle box
           const c = document.getElementById("puzzle");
@@ -177,154 +179,154 @@
               sCtx.fillText(y.toString(), 28, (56 * (y - 1)) + 47, 56);
           }
 
-      }
+    }
 
-      function drawNumber(row, col, num) {
-          // draws a single digit from solution into cell
-          const c = document.getElementById("puzzle");
-          const ctx = c.getContext("2d");
-          ctx.font = "50px Verdana"
-          ctx.fillStyle = "black";
-          ctx.textAlign = "center";
-          ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56);
-      }
+    function drawNumber(row, col, num) {
+        // draws a single digit from solution into cell
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.font = "50px Verdana"
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 56);
+    }
 
-      function drawPencilMark(row, col, num) {
-          // draws single set of available numbers into a cell
-          const c = document.getElementById("puzzle");
-          const ctx = c.getContext("2d");
-          ctx.textAlign = "center";
+    function drawPencilMark(row, col, num) {
+        // draws single set of available numbers into a cell
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.textAlign = "center";
 
-          if (num.length === 1) {
-              ctx.font = "50px Verdana"
-              ctx.fillStyle = "blue";
-              ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 50);
-          } else {
-              num = num.toString().replace(/,/g, ' ')
-              let row1 = num.slice(0, num.length / 2).trim();
-              let row2 = num.slice(num.length / 2).trim();
-              ctx.font = "20px Verdana"
-              ctx.fillStyle = "grey";
-              ctx.fillText(row1, (56 * col) + 28, (56 * row) + 27, 50);
-              ctx.fillText(row2, (56 * col) + 28, (56 * row) + 47, 50);
-          }
-      }
+        if (num.length === 1) {
+            ctx.font = "50px Verdana"
+            ctx.fillStyle = "blue";
+            ctx.fillText(num, (56 * col) + 28, (56 * row) + 47, 50);
+        } else {
+            num = num.toString().replace(/,/g, ' ')
+            let row1 = num.slice(0, num.length / 2).trim();
+            let row2 = num.slice(num.length / 2).trim();
+            ctx.font = "20px Verdana"
+            ctx.fillStyle = "grey";
+            ctx.fillText(row1, (56 * col) + 28, (56 * row) + 27, 50);
+            ctx.fillText(row2, (56 * col) + 28, (56 * row) + 47, 50);
+        }
+    }
 
-      function erasePencilMarks(row, col) {
-          // erase all pencil marks (user deselected checkbox)
-          const c = document.getElementById("puzzle");
-          const ctx = c.getContext("2d");
-          ctx.clearRect(2 + (56 * col), 2 + (56 * row), 52, 52);
-      }
+    function erasePencilMarks(row, col) {
+        // erase all pencil marks (user deselected checkbox)
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.clearRect(2 + (56 * col), 2 + (56 * row), 52, 52);
+    }
 
-      function drawNumbers() {
-          // loop through every cell calling singular drawNumber for each cell
-          let sessionBoard = sessionStorage.getItem("board");
-          let board = JSON.parse(sessionBoard);
-          for (let y = 0; y < board.length; y++) {
-              let row = board[y];
-              for (let x = 0; x < row.length; x++) {
-                  if (Number.isInteger(board[y][x])) {
-                      drawNumber(y, x, board[y][x])
-                  }
-              }
-          }
-      }
+    function drawNumbers() {
+        // loop through every cell calling singular drawNumber for each cell
+        let sessionBoard = sessionStorage.getItem("board");
+        let board = JSON.parse(sessionBoard);
+        for (let y = 0; y < board.length; y++) {
+            let row = board[y];
+            for (let x = 0; x < row.length; x++) {
+                if (Number.isInteger(board[y][x])) {
+                    drawNumber(y, x, board[y][x])
+                }
+            }
+        }
+    }
 
-      function showHidePencilMarks() {
-          let sessionBoard = sessionStorage.getItem("board");
-          let board = JSON.parse(sessionBoard);
+    function showHidePencilMarks() {
+        let sessionBoard = sessionStorage.getItem("board");
+        let board = JSON.parse(sessionBoard);
 
-          let pencilMarks = document.getElementById("checkboxPencilMarks");
+        let pencilMarks = document.getElementById("checkboxPencilMarks");
 
-          for (let y = 0; y < board.length; y++) {
-              let row = board[y];
-              for (let x = 0; x < row.length; x++) {
-                  if (!Number.isInteger(board[y][x])) {
-                      if (pencilMarks.checked === true) {
-                          drawPencilMark(y, x, board[y][x]);
-                      } else {
-                          erasePencilMarks(y, x);
-                      }
-                  }
-              }
-          }
-      }
+        for (let y = 0; y < board.length; y++) {
+            let row = board[y];
+            for (let x = 0; x < row.length; x++) {
+                if (!Number.isInteger(board[y][x])) {
+                    if (pencilMarks.checked === true) {
+                        drawPencilMark(y, x, board[y][x]);
+                    } else {
+                        erasePencilMarks(y, x);
+                    }
+                }
+            }
+        }
+    }
 
-      function saveBoard() {
-          let csrftoken = getCookie('csrftoken');
-          $.ajaxSetup({
-              beforeSend: function (xhr, settings) {
-                  if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                      xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                  }
-              }
-          });
-          $.ajax({
-              type: "POST",
-              url: "{% url 'sudoku:update_board' %}",
-              dataType: 'json',
-              data: {'board': sessionStorage.getItem("board"),
-              'start_time': sessionStorage.getItem("start_time"),
-              'orig_board': sessionStorage.getItem("orig_board"),
-              'status': sessionStorage.getItem("status"),
-              'hints': sessionStorage.getItem("hints")},
-              success: function () {
-                  console.log('Game Saved');
-              }
-          });
-      }
+    function saveBoard() {
+        let csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "{% url 'sudoku:update_board' %}",
+            dataType: 'json',
+            data: {'board': sessionStorage.getItem("board"),
+            'start_time': sessionStorage.getItem("start_time"),
+            'orig_board': sessionStorage.getItem("orig_board"),
+            'status': sessionStorage.getItem("status"),
+            'hints': sessionStorage.getItem("hints")},
+            success: function () {
+                console.log('Game Saved');
+            }
+        });
+    }
 
-      // Source credit: https://docs.djangoproject.com/en/3.0/ref/csrf/
-      function getCookie(name) {
-          var cookieValue = null;
-          if (document.cookie && document.cookie !== '') {
-              var cookies = document.cookie.split(';');
-              for (var i = 0; i < cookies.length; i++) {
-                  var cookie = cookies[i].trim();
-                  // Does this cookie string begin with the name we want?
-                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                      break;
-                  }
-              }
-          }
-          return cookieValue;
-      }
+    // Source credit: https://docs.djangoproject.com/en/3.0/ref/csrf/
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
-      // Source credit: https://docs.djangoproject.com/en/3.0/ref/csrf/
-      function csrfSafeMethod(method) {
-          // these HTTP methods do not require CSRF protection
-          return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-      }
+    // Source credit: https://docs.djangoproject.com/en/3.0/ref/csrf/
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
 
-      function verifySolutions() {
-          let solution = JSON.parse("{{ request.session.solution }}");
-          let sessionBoard = sessionStorage.getItem("board");
-          let board = JSON.parse(sessionBoard);
-          let errorsFound = false;
-          let puzzleComplete = true;
-          for (var row = 0; row < 9; row++) {
-              for (var col = 0; col < 9; col++) {
-                  if (!Number.isInteger(board[row][col])) {
-                      // integer's were provided, user answers are lists of length one (or more if unfinished)
-                      if (board[row][col].length > 1) {
-                          puzzleComplete = false;
-                          // verify correct answer is in remaining set of available numbers
-                          if (!board[row][col].includes(solution[row][col])) {
-                              // correct number was removed
-                              console.log("Correct Number removed from " + row + "," + col)
-                              errorsFound = true;
-                          }
-                      } else {
-                          if (board[row][col][0] !== solution[row][col]) {
-                              console.log("Incorrect solution at " + row + "," + col)
-                              errorsFound = true;
-                          }
-                      }
-                  }
-              }
-          }
+    function verifySolutions() {
+        let solution = JSON.parse("{{ request.session.solution }}");
+        let sessionBoard = sessionStorage.getItem("board");
+        let board = JSON.parse(sessionBoard);
+        let errorsFound = false;
+        let puzzleComplete = true;
+        for (var row = 0; row < 9; row++) {
+            for (var col = 0; col < 9; col++) {
+                if (!Number.isInteger(board[row][col])) {
+                    // integer's were provided, user answers are lists of length one (or more if unfinished)
+                    if (board[row][col].length > 1) {
+                        puzzleComplete = false;
+                        // verify correct answer is in remaining set of available numbers
+                        if (!board[row][col].includes(solution[row][col])) {
+                            // correct number was removed
+                            console.log("Correct Number removed from " + row + "," + col)
+                            errorsFound = true;
+                        }
+                    } else {
+                        if (board[row][col][0] !== solution[row][col]) {
+                            console.log("Incorrect solution at " + row + "," + col)
+                            errorsFound = true;
+                        }
+                    }
+                }
+            }
+        }
 
           if (!errorsFound) {
               if (puzzleComplete) {

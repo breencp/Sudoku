@@ -117,10 +117,8 @@ def update_board(request):
             'status': request.session['status'],
             'hints': request.session['hints']
             }
-    print('Start: ', start_time)
     if end_time:
         data.update({'end_time': end_time})
-        print('End: ', end_time)
 
     save_game(data)
     return HttpResponse(status=204)

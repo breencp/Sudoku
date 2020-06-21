@@ -42,7 +42,7 @@ def save_game(data):
                                   user=saved_puzzle.user, start_time=saved_puzzle.start_time)
     # update an existing entry
     if query:
-        Played.objects.update(saved_board=saved_puzzle.saved_board)
+        query.update(saved_board=saved_puzzle.saved_board)
     # create a new entry
     else:
         saved_puzzle.save()

@@ -17,11 +17,11 @@ note as output
     about.html: information about the project
 end note
 
-(User) - input
-input -> (WebApp)
+User -- input
+input --> (WebApp)
 
-(WebApp) - output
-output -> (User)
+(WebApp) -- output
+output --> (User)
 
 
 @enduml
