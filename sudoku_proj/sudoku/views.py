@@ -1,17 +1,17 @@
 # file: views.py
 # author: Christopher Breen
 # date:
-import math
+import json
+import re
 import time
 
+from django import forms
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
-from django import forms
+
 from .gamerecords import read_file, get_game, save_game
-import re
-import json
 
 
 def index(request):
@@ -40,7 +40,7 @@ def make_game(request):
             'error_message': 'Please select a difficulty level.'
         })
     else:
-        # test code, replace new_board = and solution = with new_board, solution = for production
+        # test code: replace new_board = and solution = with new_board, solution = for production
         # new_board = custom_board('???2?3??5?5?17??687?2?6??????????8?7???7??93??7?81??4???8?47??35?73???8??396????4')
         # solution = custom_board('')
         new_board, solution = get_game(difficulty)
@@ -58,7 +58,7 @@ def make_game(request):
 
 
 def sanitized_diff(diff):
-    if 0 < int(diff) < 3:  # increase 2 as more difficulty levels are programmed
+    if 0 < int(diff) < 3:  # set upper bound to difficulty level not yet ready
         return str(diff)
     else:
         return False

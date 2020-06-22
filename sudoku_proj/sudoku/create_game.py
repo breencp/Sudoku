@@ -2,10 +2,10 @@
 # author: Christopher Breen
 # date:
 import copy
+import json
 import math
 import random
 import time
-import json
 from datetime import date
 
 try:
@@ -181,15 +181,15 @@ def board_to_string(board):
 if __name__ == "__main__":
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # custom = custom_board('???2?3??5?5?17??687?2?6??????????8?7???7??93??7?81??4???8?47??35?73???8??396????4')
+    # custom = custom_board('9??6?8??43?6????????451?6?2?97??5???43??6?5????147?9?????3???911??7?4??6???????7?')
 
     if custom:
         print(custom)
         # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
-        print(solvable_puzzle(copy.deepcopy(custom)))
+        print(solvable_puzzle(copy.deepcopy(custom), True))
     else:
         start = time.time()
-        for i in range(50):
+        for i in range(100):
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
                     'solution': solution,
@@ -209,6 +209,6 @@ if __name__ == "__main__":
                      'Total minutes elapsed:', math.ceil((end - start) / 60)
             print(*output)
 
-            if 'omission' in data['techniques']:
+            if 'naked_triplet' in data['techniques']:
                 print(board_string)
-                #break
+                break
