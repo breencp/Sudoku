@@ -12,6 +12,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .gamerecords import read_file, get_game, save_game
+from .leaderboard import calculate_leaders
 
 
 def index(request):
@@ -74,7 +75,54 @@ def sanitized_player(player):
 
 
 def leaderboard(request):
-    return render(request, 'sudoku/leaderboard.html')
+    diff1_users = calculate_leaders(1)[0]
+    diff1_puzzle_ids = calculate_leaders(1)[1]
+    diff1_completion_times = calculate_leaders(1)[2]
+    if not diff1_users:
+        diff1_users = "No players have played games at this difficulty."
+        diff1_puzzle_ids = None
+        diff1_completion_times = None
+
+    diff2_users = calculate_leaders(2)[0]
+    diff2_puzzle_ids = calculate_leaders(2)[1]
+    diff2_completion_times = calculate_leaders(2)[2]
+    if not diff2_users:
+        diff2_users = "No players have played games at this difficulty."
+        diff2_puzzle_ids = None
+        diff2_completion_times = None
+
+    diff3_users = calculate_leaders(3)[0]
+    diff3_puzzle_ids = calculate_leaders(3)[1]
+    diff3_completion_times = calculate_leaders(3)[2]
+    if not diff3_users:
+        diff3_users = "No players have played games at this difficulty."
+        diff3_puzzle_ids = None
+        diff3_completion_times = None
+
+    diff4_users = calculate_leaders(4)[0]
+    diff4_puzzle_ids = calculate_leaders(4)[1]
+    diff4_completion_times = calculate_leaders(4)[2]
+    if not diff4_users:
+        diff4_users = "No players have played games at this difficulty."
+        diff4_puzzle_ids = None
+        diff4_completion_times = None
+
+    diff5_users = calculate_leaders(5)[0]
+    diff5_puzzle_ids = calculate_leaders(5)[1]
+    diff5_completion_times = calculate_leaders(5)[2]
+    if not diff5_users:
+        diff5_users = "No players have played games at this difficulty."
+        diff5_puzzle_ids = None
+        diff5_completion_times = None
+
+    return render(request, 'sudoku/leaderboard.html',
+                  {'diff1_users': diff1_users, 'diff2_users': diff2_users, 'diff3_users': diff3_users,
+                   'diff4_users': diff4_users, 'diff5_users': diff5_users, 'diff1_puzzle_ids': diff1_puzzle_ids,
+                   'diff2_puzzle_ids': diff2_puzzle_ids, 'diff3_puzzle_ids': diff3_puzzle_ids,
+                   'diff4_puzzle_ids': diff4_puzzle_ids, 'diff5_puzzle_ids': diff5_puzzle_ids,
+                   'diff1_completion_times': diff1_completion_times, 'diff2_completion_times': diff2_completion_times,
+                   'diff3_completion_times': diff3_completion_times, 'diff4_completion_times': diff4_completion_times,
+                   'diff5_completion_times': diff5_completion_times})
 
 
 def play(request):
