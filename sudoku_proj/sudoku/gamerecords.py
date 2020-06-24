@@ -40,7 +40,7 @@ def save_game(data):
     saved_puzzle.puzzle_id = Puzzles.objects.filter(board=orig_board).order_by('puzzle_id')[0]
     query = Played.objects.filter(puzzle_id=saved_puzzle.puzzle_id,
                                   user=saved_puzzle.user, start_time=saved_puzzle.start_time)
-    # update an existing entry
+    # update existing entry
     if query:
         query.update(status=saved_puzzle.status, end_time=saved_puzzle.end_time, saved_board=saved_puzzle.saved_board)
     # create a new entry
