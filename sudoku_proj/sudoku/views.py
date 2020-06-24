@@ -75,34 +75,17 @@ def sanitized_player(player):
 
 
 def leaderboard(request):
-    diff1_users = calculate_leaders(1)[0]
-    diff1_puzzle_ids = calculate_leaders(1)[1]
-    diff1_completion_times = calculate_leaders(1)[2]
-
-    diff2_users = calculate_leaders(2)[0]
-    diff2_puzzle_ids = calculate_leaders(2)[1]
-    diff2_completion_times = calculate_leaders(2)[2]
-
-    diff3_users = calculate_leaders(3)[0]
-    diff3_puzzle_ids = calculate_leaders(3)[1]
-    diff3_completion_times = calculate_leaders(3)[2]
-
-    diff4_users = calculate_leaders(4)[0]
-    diff4_puzzle_ids = calculate_leaders(4)[1]
-    diff4_completion_times = calculate_leaders(4)[2]
-
-    diff5_users = calculate_leaders(5)[0]
-    diff5_puzzle_ids = calculate_leaders(5)[1]
-    diff5_completion_times = calculate_leaders(5)[2]
-
+    diff1_record = calculate_leaders(1)
+    diff2_record = calculate_leaders(2)
+    diff3_record = calculate_leaders(3)
+    diff4_record = calculate_leaders(4)
+    diff5_record = calculate_leaders(5)
     return render(request, 'sudoku/leaderboard.html',
-                  {'diff1_users': diff1_users, 'diff2_users': diff2_users, 'diff3_users': diff3_users,
-                   'diff4_users': diff4_users, 'diff5_users': diff5_users, 'diff1_puzzle_ids': diff1_puzzle_ids,
-                   'diff2_puzzle_ids': diff2_puzzle_ids, 'diff3_puzzle_ids': diff3_puzzle_ids,
-                   'diff4_puzzle_ids': diff4_puzzle_ids, 'diff5_puzzle_ids': diff5_puzzle_ids,
-                   'diff1_completion_times': diff1_completion_times, 'diff2_completion_times': diff2_completion_times,
-                   'diff3_completion_times': diff3_completion_times, 'diff4_completion_times': diff4_completion_times,
-                   'diff5_completion_times': diff5_completion_times})
+                  {'diff1_record': diff1_record,
+                   'diff2_record': diff2_record,
+                   'diff3_record': diff3_record,
+                   'diff4_record': diff4_record,
+                   'diff5_record': diff5_record})
 
 
 def play(request):
