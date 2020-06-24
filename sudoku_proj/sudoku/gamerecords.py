@@ -30,6 +30,7 @@ def get_game(difficulty):
 
 
 def save_game(data):
+    # Written by Christopher Smith
     saved_puzzle: Played = Played()
     saved_puzzle.user = data['user']
     saved_puzzle.start_time = round(data['start_time'])

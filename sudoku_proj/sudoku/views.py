@@ -1,6 +1,6 @@
 # file: views.py
 # author: Christopher Breen
-# date:
+# last updated: June 24, 2020
 import json
 import re
 import time
@@ -16,18 +16,22 @@ from .leaderboard import calculate_leaders
 
 
 def index(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/index.html')
 
 
 def how_to_play(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/howtoplay.html')
 
 
 def new_game(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/newgame.html')
 
 
 def make_game(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     try:
         difficulty = sanitized_diff(request.POST['difficulty'])
         if not difficulty:
@@ -59,6 +63,7 @@ def make_game(request):
 
 
 def sanitized_diff(diff):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if 0 < int(diff) < 3:  # set upper bound to difficulty level not yet ready
         return str(diff)
     else:
@@ -66,6 +71,7 @@ def sanitized_diff(diff):
 
 
 def sanitized_player(player):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     regex = r"^[\w ]{4,20}$"
     match = re.fullmatch(regex, player)
     if match:
@@ -75,6 +81,7 @@ def sanitized_player(player):
 
 
 def leaderboard(request):
+    # Written by Christopher Smith
     diff1_record = calculate_leaders(1)
     diff2_record = calculate_leaders(2)
     diff3_record = calculate_leaders(3)
@@ -89,15 +96,13 @@ def leaderboard(request):
 
 
 def play(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     player = request.session.get('player')
     return render(request, 'sudoku/play.html', {'player': player})
 
 
-def about(request):
-    return render(request, 'sudoku/about.html')
-
-
 def update_board(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     end_time = False
 
     # get JavaScript sessionStorage from POST
@@ -152,6 +157,7 @@ def update_board(request):
 
 
 def corrupted_board(user_board):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # ensure user_board hasn't been tampered with
     try:
         if len(user_board) != 9:
@@ -177,15 +183,18 @@ def corrupted_board(user_board):
 
 
 def upload_success(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/uploadsuccess.html')
 
 
 class UploadFileForm(forms.Form):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     puzzle_file = forms.FileField()
 
 
 @staff_member_required
 def upload(request):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
