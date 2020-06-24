@@ -1,8 +1,3 @@
-<!--
-# file: play.html
-# author: Christopher Breen
-# date:
--->
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
@@ -13,9 +8,9 @@
     <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-<main>
 <script>
     function drawBoard() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // store django session data into javascript accessible session
         let sessionBoard = "{{ request.session.board }}";
         let start_time = "{{ request.session.start_time }}";
@@ -26,162 +21,167 @@
         sessionStorage.setItem("hints", "0");
         saveBoard()
 
-          // Draw main puzzle box
-          const c = document.getElementById("puzzle");
-          const ctx = c.getContext("2d");
-          ctx.lineWidth = 2;
-          for (let x = 0; x < 9; x++) {
-              for (let y = 0; y < 9; y++) {
-                  ctx.strokeRect(56 * x, 56 * y, 56, 56);
-              }
-          }
-          // Draw thick border around blocks
-          ctx.lineWidth = 4;
-          for (let x = 0; x < 9; x += 3) {
-              for (let y = 0; y < 9; y += 3) {
-                  ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3);
-              }
-          }
+        // Draw main puzzle box
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.lineWidth = 2;
+        for (let x = 0; x < 9; x++) {
+            for (let y = 0; y < 9; y++) {
+                ctx.strokeRect(56 * x, 56 * y, 56, 56);
+            }
+        }
+        // Draw thick border around blocks
+        ctx.lineWidth = 4;
+        for (let x = 0; x < 9; x += 3) {
+            for (let y = 0; y < 9; y += 3) {
+                ctx.strokeRect(56 * x, 56 * y, 56 * 3, 56 * 3);
+            }
+        }
 
-          window.scratchVisible = false;
-          window.scratchRow = -1;
-          window.scratchCol = -1;
+        window.scratchVisible = false;
+        window.scratchRow = -1;
+        window.scratchCol = -1;
 
-          drawNumbers()
-          showHidePencilMarks()
+        drawNumbers()
+        showHidePencilMarks()
 
-          c.addEventListener('click', function (event) {
-              let posX = event.pageX - c.offsetLeft - c.clientLeft;
-              let posY = event.pageY - c.offsetTop - c.clientTop;
-              let clickedRow = Math.floor(posY / 56);
-              let clickedCol = Math.floor(posX / 56);
-              if (clickedRow >= 0 && clickedRow < 9 && clickedCol >= 0 && clickedCol < 9) {
-                  // clicked valid cell in puzzle
-                  if (clickedRow === window.scratchRow && clickedCol === window.scratchCol) {
-                      // already had this cell's scratch pad open, hide the scratch
-                      highlightScratchCell(false);
-                      hideScratchPad();
-                  } else {
-                      // scratch either closed or working on different cell
-                      highlightScratchCell(false);
-                      hideScratchPad();
-                      window.scratchRow = clickedRow;
-                      window.scratchCol = clickedCol
-                      showScratchPad();
-                      highlightScratchCell(true);
-                  }
-              }
-          }, false);
-          initiateScratchPad();
-      }
+        c.addEventListener('click', function (event) {
+            let posX = event.pageX - c.offsetLeft - c.clientLeft;
+            let posY = event.pageY - c.offsetTop - c.clientTop;
+            let clickedRow = Math.floor(posY / 56);
+            let clickedCol = Math.floor(posX / 56);
+            if (clickedRow >= 0 && clickedRow < 9 && clickedCol >= 0 && clickedCol < 9) {
+                // clicked valid cell in puzzle
+                if (clickedRow === window.scratchRow && clickedCol === window.scratchCol) {
+                    // already had this cell's scratch pad open, hide the scratch
+                    highlightScratchCell(false);
+                    hideScratchPad();
+                } else {
+                    // scratch either closed or working on different cell
+                    highlightScratchCell(false);
+                    hideScratchPad();
+                    window.scratchRow = clickedRow;
+                    window.scratchCol = clickedCol
+                    showScratchPad();
+                    highlightScratchCell(true);
+                }
+            }
+        }, false);
+        initiateScratchPad();
+    }
 
-      function initiateScratchPad() {
-          // showScratchPad called repeatedly, must separate addEventListener to avoid multiple instances
-          const c = document.getElementById('scratch');
-          c.addEventListener('click', function (event) {
-                  var removed = false;
-                  let posY = event.pageY - c.offsetTop - c.clientTop;
-                  let clickedRow = Math.floor(posY / 56);
-                  if (clickedRow < 0 || clickedRow > 8) {
-                      // clicking the top border of 1 or bottom border of 9 results in an invalid number we need to ignore
-                      return;
-                  }
-                  let sessionBoard = sessionStorage.getItem("board");
-                  let board = JSON.parse(sessionBoard);
-                  let availNumbers = board[window.scratchRow][window.scratchCol];
-                  // check each available number to match against number clicked, remove if match
-                  for (let i = 0; i < availNumbers.length; i++) {
-                      if (availNumbers[i] === clickedRow + 1) {
-                          // row equals an available number, remove it
-                          availNumbers.splice(i, 1);
-                          removed = true;
-                          break;
-                      }
-                  }
-                  // if we didn't remove the number, it must have been previously removed and we should re-add
-                  if (!removed) {
-                      var added = false;
-                      for (let j = 0; j < availNumbers.length; j++) {
-                          if (availNumbers[j] > clickedRow + 1) {
-                              // find index to insert our number
-                              availNumbers.splice(j, 0, clickedRow + 1);
-                              added = true;
-                              break;
-                          }
-                      }
-                      if (!added) {
-                          // number re-adding must be highest number of those available
-                          availNumbers.splice(availNumbers.length, 0, clickedRow + 1);
-                      }
-                  }
+    function initiateScratchPad() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+        // showScratchPad called repeatedly, must separate addEventListener to avoid multiple instances
+        const c = document.getElementById('scratch');
+        c.addEventListener('click', function (event) {
+                var removed = false;
+                let posY = event.pageY - c.offsetTop - c.clientTop;
+                let clickedRow = Math.floor(posY / 56);
+                if (clickedRow < 0 || clickedRow > 8) {
+                    // clicking the top border of 1 or bottom border of 9 results in an invalid number we need to ignore
+                    return;
+                }
+                let sessionBoard = sessionStorage.getItem("board");
+                let board = JSON.parse(sessionBoard);
+                let availNumbers = board[window.scratchRow][window.scratchCol];
+                // check each available number to match against number clicked, remove if match
+                for (let i = 0; i < availNumbers.length; i++) {
+                    if (availNumbers[i] === clickedRow + 1) {
+                        // row equals an available number, remove it
+                        availNumbers.splice(i, 1);
+                        removed = true;
+                        break;
+                    }
+                }
+                // if we didn't remove the number, it must have been previously removed and we should re-add
+                if (!removed) {
+                    var added = false;
+                    for (let j = 0; j < availNumbers.length; j++) {
+                        if (availNumbers[j] > clickedRow + 1) {
+                            // find index to insert our number
+                            availNumbers.splice(j, 0, clickedRow + 1);
+                            added = true;
+                            break;
+                        }
+                    }
+                    if (!added) {
+                        // number re-adding must be highest number of those available
+                        availNumbers.splice(availNumbers.length, 0, clickedRow + 1);
+                    }
+                }
 
-                  sessionStorage.setItem("board", JSON.stringify(board));
-                  showScratchPad();  // refreshes grey/black colors in scratchpad
-              }, false
-          );
-      }
+                sessionStorage.setItem("board", JSON.stringify(board));
+                showScratchPad();  // refreshes grey/black colors in scratchpad
+            }, false
+        );
+    }
 
-      function highlightScratchCell(highlight) {
-          const c = document.getElementById("puzzle");
-          const ctx = c.getContext("2d");
-          ctx.lineWidth = 2;
-          if (highlight) {
-              ctx.strokeStyle = "yellow";
-          } else {
-              ctx.strokeStyle = "black";
-          }
-          ctx.strokeRect(56 * window.scratchCol, 56 * window.scratchRow, 56, 56);
-      }
+    function highlightScratchCell(highlight) {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+        const c = document.getElementById("puzzle");
+        const ctx = c.getContext("2d");
+        ctx.lineWidth = 2;
+        if (highlight) {
+            ctx.strokeStyle = "yellow";
+        } else {
+            ctx.strokeStyle = "black";
+        }
+        ctx.strokeRect(56 * window.scratchCol, 56 * window.scratchRow, 56, 56);
+    }
 
-      function hideScratchPad() {
-          erasePencilMarks(window.scratchRow, window.scratchCol);
-          window.scratchVisible = false;
-          window.scratchCol = -1;
-          window.scratchRow = -1;
-          const c = document.getElementById('scratch');
-          c.style.borderColor = "#7288a1";
-          c.style.backgroundColor = "#7288a1";
-          const ctx = c.getContext("2d");
-          ctx.clearRect(0, 0, 56, 503);
+    function hideScratchPad() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+        erasePencilMarks(window.scratchRow, window.scratchCol);
+        window.scratchVisible = false;
+        window.scratchCol = -1;
+        window.scratchRow = -1;
+        const scratch = document.getElementById('scratch');
+        scratch.style.borderColor = "transparent";
+        scratch.style.backgroundColor = "transparent";
+        const ctx = scratch.getContext("2d");
+        ctx.clearRect(0, 0, 56, 503);
 
-          // refresh puzzle with new pencil marks
-          drawNumbers();
-          showHidePencilMarks();
-          saveBoard();
-      }
+        // refresh puzzle with new pencil marks
+        drawNumbers();
+        showHidePencilMarks();
+        saveBoard();
+    }
 
-      function showScratchPad(event) {
-          let sessionBoard = sessionStorage.getItem("board");
-          let board = JSON.parse(sessionBoard);
-          let availNumbers = board[window.scratchRow][window.scratchCol];
-          if (Number.isInteger(availNumbers)) {
-              // user clicked on cell with solved number, hide scratch if open
-              hideScratchPad();
-              return
-          }
+    function showScratchPad(event) {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+        let sessionBoard = sessionStorage.getItem("board");
+        let board = JSON.parse(sessionBoard);
+        let availNumbers = board[window.scratchRow][window.scratchCol];
+        if (Number.isInteger(availNumbers)) {
+            // user clicked on cell with solved number, hide scratch if open
+            hideScratchPad();
+            return
+        }
 
-          const scratch = document.getElementById("scratch");
-          window.scratchVisible = true;
-          scratch.style.border = "5px solid black";
-          scratch.style.backgroundColor = "lightpink";
+        const scratch = document.getElementById("scratch");
+        window.scratchVisible = true;
+        scratch.style.border = "5px solid black";
+        scratch.style.backgroundColor = "lightpink";
 
-          const sCtx = scratch.getContext("2d");
-          sCtx.lineWidth = 2;
-          sCtx.font = "50px Verdana"
-          sCtx.textAlign = "center";
-          for (let y = 1; y < 10; y++) {
-              sCtx.strokeRect(0, 56 * y, 56, 56);
-              if (availNumbers.includes(y)) {
-                  sCtx.fillStyle = "black";
-              } else {
-                  sCtx.fillStyle = "grey";
-              }
-              sCtx.fillText(y.toString(), 28, (56 * (y - 1)) + 47, 56);
-          }
+        const sCtx = scratch.getContext("2d");
+        sCtx.lineWidth = 2;
+        sCtx.font = "50px Verdana"
+        sCtx.textAlign = "center";
+        for (let y = 1; y < 10; y++) {
+            sCtx.strokeRect(0, 56 * y, 56, 56);
+            if (availNumbers.includes(y)) {
+                sCtx.fillStyle = "black";
+            } else {
+                sCtx.fillStyle = "grey";
+            }
+            sCtx.fillText(y.toString(), 28, (56 * (y - 1)) + 47, 56);
+        }
 
     }
 
     function drawNumber(row, col, num) {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // draws a single digit from solution into cell
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -192,6 +192,7 @@
     }
 
     function drawPencilMark(row, col, num) {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // draws single set of available numbers into a cell
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -213,6 +214,7 @@
     }
 
     function erasePencilMarks(row, col) {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // erase all pencil marks (user deselected checkbox)
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -220,6 +222,7 @@
     }
 
     function drawNumbers() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // loop through every cell calling singular drawNumber for each cell
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
@@ -234,6 +237,7 @@
     }
 
     function showHidePencilMarks() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
 
@@ -254,6 +258,7 @@
     }
 
     function saveBoard() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         let csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
@@ -266,11 +271,13 @@
             type: "POST",
             url: "{% url 'sudoku:update_board' %}",
             dataType: 'json',
-            data: {'board': sessionStorage.getItem("board"),
-            'start_time': sessionStorage.getItem("start_time"),
-            'orig_board': sessionStorage.getItem("orig_board"),
-            'status': sessionStorage.getItem("status"),
-            'hints': sessionStorage.getItem("hints")},
+            data: {
+                'board': sessionStorage.getItem("board"),
+                'start_time': sessionStorage.getItem("start_time"),
+                'orig_board': sessionStorage.getItem("orig_board"),
+                'status': sessionStorage.getItem("status"),
+                'hints': sessionStorage.getItem("hints")
+            },
             success: function () {
                 console.log('Game Saved');
             }
@@ -301,6 +308,7 @@
     }
 
     function verifySolutions() {
+        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         let solution = JSON.parse("{{ request.session.solution }}");
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
@@ -328,84 +336,96 @@
             }
         }
 
-          if (!errorsFound) {
-              if (puzzleComplete) {
-                  alert("Congratulations!  You solved it!")
-                  sessionStorage.setItem("status", "W");
-                  saveBoard();
-              } else {
-                  alert("So far so good!")
-              }
-          } else {
-              alert("Sorry, but you have a mistake somewhere.")
-              sessionStorage.setItem("status", "L");
-              saveBoard();
-          }
-      }
-   </script>
-   <body onload="drawBoard()">
-      <nav class="red darken-4" role="navigation">
-         <div class="nav-wrapper">
-            <a href="#!" class="brand-logo right">Sudoku</a>
-            <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-            <ul id="nav-mobile" class="left hide-on-med-and-down">
-               <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
-               <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-               <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-               <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
-            </ul>
-         </div>
-      </nav>
-      <div class="card-panel blue-grey lighten-2">
-      <div style="text-align: center;">
-         <h1>Welcome {{ request.session.player }}!</h1>
-      </div>
-      <div class="container">
-         <div class="leftSide">
-            <h2><u>Options</u></h2>
-            <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
-               onclick="showHidePencilMarks()" checked><br>
-            <button onclick="verifySolutions()">Verify Solutions</button>
-         </div>
-         <div class="middle">
-            <canvas id="puzzle" width="504" height="503">
-               Browser not supported; Please upgrade to a modern browser.
-            </canvas>
-         </div>
-         <div class="rightSide">
-            <canvas id="scratch" width="56" height="503">
-               Browser not supported; Please upgrade to a modern browser.
-            </canvas>
-         </div>
-      </div>
-   </div>
-      </main>
-      <footer class="page-footer grey darken-3">
-         <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
-         <div class="container">
-            <h5 class="white-text">Developers</h5>
-         </div>
-         <div class="container">
-            <div class="row">
-               <div class="col s3">
-                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a class="LI-simple-link" href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a></div>
-               </div>
-               <div class="col s1">
-               </div>
-               <div class="col s3">
-                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link" href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher Breen</a></div>
-               </div>
-               <div class="col s1">
-               </div>
-               <div class="col s3">
-                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a class="LI-simple-link" href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher Smith</a></div>
-               </div>
+        if (!errorsFound) {
+            if (puzzleComplete) {
+                alert("Congratulations!  You solved it!")
+                sessionStorage.setItem("status", "W");
+                saveBoard();
+            } else {
+                alert("So far so good!")
+            }
+        } else {
+            alert("Sorry, but you have a mistake somewhere.")
+            sessionStorage.setItem("status", "L");
+            saveBoard();
+        }
+    }
+</script>
+<body onload="drawBoard()">
+<nav class="red darken-4" role="navigation">
+    <div class="nav-wrapper">
+        <a href="#!" class="brand-logo right">Sudoku</a>
+        <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+            <li><a href="{% url 'sudoku:index' %}">Home</a></li>
+            <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+            <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+            <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+        </ul>
+    </div>
+</nav>
+<main>
+    <div class="card-panel blue-grey lighten-2">
+        <div style="text-align: center;">
+            <h1>Welcome {{ request.session.player }}!</h1>
+        </div>
+        <div class="container">
+            <div class="leftSide">
+                <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
+                                                                            onclick="showHidePencilMarks()" checked><br>
+                <button onclick="verifySolutions()">Verify Solutions</button>
             </div>
-         </div>
-         <div class="footer-copyright">
-            <div class="container">
-               © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
+            <div class="middle">
+                <canvas id="puzzle" width="504" height="503">
+                    Browser not supported; Please upgrade to a modern browser.
+                </canvas>
             </div>
-         </div>
-      </footer>
-   </body>
+            <div class="rightSide">
+                <canvas id="scratch" width="56" height="503">
+                    Browser not supported; Please upgrade to a modern browser.
+                </canvas>
+            </div>
+        </div>
+    </div>
+</main>
+<footer class="page-footer grey darken-3">
+    <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+    <div class="container">
+        <h5 class="white-text">Developers</h5>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col s3">
+                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
+                     data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a
+                        class="LI-simple-link"
+                        href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a>
+                </div>
+            </div>
+            <div class="col s1">
+            </div>
+            <div class="col s3">
+                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
+                     data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link"
+                                                                                       href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher
+                    Breen</a></div>
+            </div>
+            <div class="col s1">
+            </div>
+            <div class="col s3">
+                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
+                     data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a
+                        class="LI-simple-link"
+                        href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher
+                    Smith</a></div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
+        </div>
+    </div>
+</footer>
+</body>
+</html>

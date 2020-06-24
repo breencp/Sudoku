@@ -1,12 +1,13 @@
 # file: techniques.py
 # author: Christopher Breen
-# date:
+# last updated: June 23, 2020
 import copy
 import math
 
 
 def solvable_puzzle(puzzle_to_solve, hints=False):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = True
     techniques_utilized = dict()
     actual_difficulty = '1'
@@ -70,6 +71,7 @@ def solvable_puzzle(puzzle_to_solve, hints=False):
 def naked_single(solving_puzzle, hints=False):
     """Naked Single removes any number found in the current row, col, and block.  If only one single number remains,
     it is the solution to that cell"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = True
     overall_progress = False
     while progress:
@@ -105,6 +107,7 @@ def naked_single(solving_puzzle, hints=False):
 def hidden_single(solving_puzzle, hints=False):
     """Hidden single looks at the pencil marks in each cell and then each cell within the row/col/block to
     see if it contains a number that is not contained in pencil marks of any other cell in the row/col/block"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     for row in range(9):
         for col in range(9):
             if isinstance(solving_puzzle[row][col], list):
@@ -149,6 +152,7 @@ def hidden_single(solving_puzzle, hints=False):
 def naked_pair(solving_puzzle, hints=False):
     """Naked Pair looks for two cells with an identical pair of remaining numbers.
     These numbers can be removed from any other cell in the col, row, or block."""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = False
     for row in range(9):
         for col in range(9):
@@ -224,8 +228,9 @@ def naked_pair(solving_puzzle, hints=False):
 
 
 def omission(solving_puzzle, hints=False):
-    # if the only cells in a row for a given number lie in the same block,
-    # all other cells in the block must not contain that number
+    """If the only cells in a row for a given number lie in the same block,
+    all other cells in the block must not contain that number"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = False
     for num in range(1, 9):
         for row in range(9):
@@ -386,8 +391,9 @@ def omission(solving_puzzle, hints=False):
 
 
 def naked_triplet(solving_puzzle, hints=False):
-    """Naked Triplet looks for three cells with an identical three candidates.
+    """Naked Triplet looks for three candidates who must exist in one of three cells.
     These numbers can be removed from any other cell in the col, row, or block."""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = False
     cols = set()
     candidates = set()
@@ -490,6 +496,7 @@ def naked_triplet(solving_puzzle, hints=False):
 
 
 def get_location_from_bits(b, block=False):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # block 0, 1, 2: y = 0, x = 0, 3, 6
     # block 3, 4, 5: y = 3, x = 0, 3, 6
     # block 6, 7, 8: y = 6, x = 0, 3, 6
@@ -538,6 +545,7 @@ def get_location_from_bits(b, block=False):
 
 def num_set_bits(n):
     # use python bitwise operators to determine combinations of three cells in a row/col
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     count = 0
     while n:
         count += n & 1
@@ -546,6 +554,7 @@ def num_set_bits(n):
 
 
 def bits(n):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     while n:
         b = n & (~n+1)
         yield b
@@ -554,6 +563,7 @@ def bits(n):
 
 def get_upper_left(row, col):
     """Returns row and col of upper left cell in block"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if row < 3:
         yi = 0
     elif row < 6:
@@ -570,6 +580,7 @@ def get_upper_left(row, col):
 
 
 def is_solved(puzzle):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     for row in range(9):
         for col in range(9):
             if isinstance(puzzle[row][col], list):
@@ -581,6 +592,7 @@ def solved_cell(solving_puzzle, y, x):
     # we removed a number from the scratchpad.
     # if there is only one number remaining we must convert type of cell from list of length one into an integer
     # otherwise we run into problems in various techniques looking for cells with multiple options remaining
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if len(solving_puzzle[y][x]) == 1:
         solving_puzzle[y][x] = solving_puzzle[y][x][0]
         return True

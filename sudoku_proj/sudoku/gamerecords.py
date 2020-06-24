@@ -7,6 +7,7 @@ from .models import Puzzles, Played
 
 
 def read_file(f):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     for row in f:
         data = eval(row)
         new_puzzle = Puzzles()
@@ -23,6 +24,7 @@ def read_file(f):
 
 
 def get_game(difficulty):
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     puzzles = Puzzles.objects.filter(difficulty=difficulty).order_by('?')[0]
     return puzzles.board, puzzles.solution
 

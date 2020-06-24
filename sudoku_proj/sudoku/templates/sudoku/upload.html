@@ -9,22 +9,29 @@
 </head>
 
 <body>
-<ul>
-    <li><a href="{% url 'sudoku:index' %}">Home</a><br></li>
-    <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a><br></li>
-    <li><a href="{% url 'sudoku:new_game' %}">Start a New Game</a><br></li>
-    <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboards</a><br></li>
-    <li><a href="{% url 'sudoku:about' %}">About this Application</a><br></li>
-</ul>
-<h1>Upload Puzzles</h1>
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>{% endif %}
+<main>
+    <nav class="red darken-4" role="navigation">
+        <div class="nav-wrapper">
+            <a href="#!" class="brand-logo right">Sudoku</a>
+            <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+            <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="{% url 'sudoku:index' %}">Home</a></li>
+                <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+                <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+                <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+            </ul>
+        </div>
+    </nav>
+    <h1>Upload Puzzles</h1>
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<form action="{% url 'sudoku:upload' %}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Upload">
-</form>
+    <form action="{% url 'sudoku:upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Upload">
+    </form>
+</main>
 </body>
 
 </html>

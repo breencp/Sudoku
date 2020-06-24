@@ -1,6 +1,6 @@
 # file: create_game.py
 # author: Christopher Breen
-# date:
+# last updated: June 23, 2020
 import copy
 import json
 import math
@@ -18,13 +18,15 @@ except ImportError:
     except ImportError as err:
         print(err)
 
-# globals
+# globals (used when making a board solution to reduce random calls and improve efficiency)
 avail_row_nums = []
 avail_col_nums = []
 avail_block_nums = []
 
 
 def create_game():
+    """Returns board for user to play, the solution, overall difficulty level, and exact techniques required to win."""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     print('Creating game...', end='')
     counter = 0
     while True:
@@ -41,19 +43,21 @@ def create_game():
             if solution:
                 break
             else:
-                # global avail_(row/col_block)_nums get reset to include 1-9 again
+                # global avail_(row/col_block)_nums get reset to include 1-9 again, then loop
                 reset_avail()
 
         # hide_cells returns the original solution but with a random subset of cell numbers removed
         board = hide_cells(solution)
-        # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
+        # solvable_puzzle uses techniques in sequentially incremental difficulty in an attempt to recreate the solution
         solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board))
         if solved:
-            # if successful, return the board modified by hide_cells
+            # if successful, return the board modified by hide_cells, otherwise loops
             return board, solution, actual_difficulty, techniques
 
 
 def hide_cells(solution):
+    """Returns the complete solution but with a random number (and location) of givens replaced with candidates"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # randomly choose number of cells to hide; need minimum 17 visible numbers of 81 total (64 hidden)
     # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
     # puzzles must have at minimum 17 clues to be solvable (64 hidden)
@@ -66,7 +70,7 @@ def hide_cells(solution):
         row = random.randint(0, 8)
         col = random.randint(0, 8)
         if not isinstance(board[row][col], list):
-            # we grabbed a random row and col, and it's not once we have already removed
+            # we grabbed a random row and col, and it's not one we have already removed
             counter += 1
             # change the single int to a nested list of pencil marks
             board[row][col] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -75,6 +79,8 @@ def hide_cells(solution):
 
 
 def custom_board(human_puzzle):
+    """Takes 81 character string of givens and unknowns, returns playable board"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # convert human readable board sequence into multidimensional list used in code.  e.g. follows:
     # 9?67853???????65???8?3216??43??5?9786?????25?????6???5??85???2??4?1?8???
     # The sequence above represents the known numbers and unknown numbers in the puzzle.  It can be read from
@@ -94,7 +100,8 @@ def custom_board(human_puzzle):
 
 
 def reset_avail():
-    # resets avail row/col/block nums to [1, 2, 3, 4, 5, 7, 8, 9]
+    """Resets avail row/col/block nums to [1, 2, 3, 4, 5, 7, 8, 9]"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     global avail_block_nums
     global avail_col_nums
     global avail_row_nums
@@ -104,7 +111,8 @@ def reset_avail():
 
 
 def make_board():
-    # makes a 9x9 multi-dimensional list of zeros
+    """Makes a 9x9 multi-dimensional list of zeros"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     board = [[0 for x in range(9)] for x in range(9)]
 
     for row in range(9):
@@ -128,7 +136,8 @@ def make_board():
 
 
 def get_block(row, col):
-    """determine what block provided row and col are in"""
+    """Determine what block provided row and col are in"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if row <= 2:
         if col <= 2:
             return 0
@@ -153,6 +162,8 @@ def get_block(row, col):
 
 
 def get_avail_nums(row, col, block):
+    """Returns list of numbers not already used in the row, col, or block"""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     avail = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     for x in range(1, 10):
         if x not in avail_row_nums[row] and x in avail:
@@ -165,7 +176,9 @@ def get_avail_nums(row, col, block):
 
 
 def board_to_string(board):
-    """Converts the board from multidimensional list to a string for seeding into sudoku-solutions.com to verify"""
+    """Converts the board from multidimensional list to a string for seeding into sudoku-solutions.com to verify/test.
+    Also returns number of givens in the puzzle."""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     board_string = ''
     givens = 0
     for row in range(9):
@@ -179,17 +192,21 @@ def board_to_string(board):
 
 
 if __name__ == "__main__":
+    """create_game.py is designed to be run in the local IDE.  It creates puzzles and stores them in a JSON file for
+    later import into the database using upload.html."""
+    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
     # custom = custom_board('9??6?8??43?6????????451?6?2?97??5???43??6?5????147?9?????3???911??7?4??6???????7?')
 
     if custom:
         print(custom)
-        # solvable_puzzle uses techniques in requested difficulty to level in an attempt to recreate the solution
+        # solvable_puzzle uses techniques in sequentially incremented difficulty levels in an attempt to solve
         print(solvable_puzzle(copy.deepcopy(custom), True))
     else:
         start = time.time()
-        for i in range(100):
+        for i in range(500):  # change loop range to fit your needs
+            # create_game will loop indefinitely until it creates a valid puzzle
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
                     'solution': solution,
@@ -197,6 +214,7 @@ if __name__ == "__main__":
                     'techniques': techniques
                     }
 
+            # save puzzles in JSON format to a filename of today's date to keep them organized
             filename = 'puzzles/' + date.today().strftime('%Y%m%d') + '.txt'
             with open(filename, 'a+') as f:
                 json.dump(data, f)
@@ -209,6 +227,8 @@ if __name__ == "__main__":
                      'Total minutes elapsed:', math.ceil((end - start) / 60)
             print(*output)
 
+            # used to stop the loop and print board_string for testing on sudoku-solutions.com when creating
+            # new techniques.  Comment break line to allow continuous puzzle creation up to i counter.
             if 'naked_triplet' in data['techniques']:
                 print(board_string)
                 break

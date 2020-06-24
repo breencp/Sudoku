@@ -119,9 +119,25 @@ def update_board(request):
 
     # get JavaScript sessionStorage from POST
     updated_board = json.loads(request.POST.get('board'))
+    if corrupted_board(updated_board):
+        print('corrupt board')
+        # user may have tampered with JavaScript Session Data
+        return HttpResponse(status=400)
+
     start_time = json.loads(request.POST.get('start_time'))
+    if not isinstance(start_time, int):
+        print('corrupt start time')
+        return HttpResponse(status=400)
+
     status = request.POST.get('status')
-    hints = request.POST.get('hints')
+    if status not in ['W', 'L', 'I', 'S']:
+        print('corrupt status')
+        return HttpResponse(status=400)
+
+    try:
+        hints = int(request.POST.get('hints'))
+    except ValueError:
+        return HttpResponse(status=400)
 
     if status == "W" and request.session['status'] != "W":
         # wasn't won before but it is now
@@ -150,6 +166,31 @@ def update_board(request):
 
     save_game(data)
     return HttpResponse(status=204)
+
+
+def corrupted_board(user_board):
+    # ensure user_board hasn't been tampered with
+    try:
+        if len(user_board) != 9:
+            raise ValueError
+        for row in user_board:
+            if len(row) != 9:
+                raise ValueError
+            for col in row:
+                if isinstance(col, list):
+                    if not 0 < len(col) < 10:
+                        raise ValueError
+                    for candidates in col:
+                        if not isinstance(candidates, int):
+                            raise ValueError
+                        elif not 0 < candidates < 10:
+                            raise ValueError
+                elif not isinstance(col, int):
+                    raise ValueError
+                elif not 0 < col < 10:
+                    raise ValueError
+    except:
+        return True
 
 
 def upload_success(request):
