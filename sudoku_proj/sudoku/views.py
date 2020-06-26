@@ -82,17 +82,28 @@ def sanitized_player(player):
 
 def leaderboard(request):
     # Written by Christopher Smith
-    diff1_record = calculate_leaders(1)
-    diff2_record = calculate_leaders(2)
-    diff3_record = calculate_leaders(3)
-    diff4_record = calculate_leaders(4)
-    diff5_record = calculate_leaders(5)
+    diff1_record1 = calculate_leaders(1)[0]
+    diff1_record2 = calculate_leaders(1)[1]
+    diff1_record3 = calculate_leaders(1)[2]
+    diff1_record4 = calculate_leaders(1)[3]
+    diff1_record5 = calculate_leaders(1)[4]
+    diff2_record1 = calculate_leaders(2)[0]
+    diff2_record2 = calculate_leaders(2)[1]
+    diff2_record3 = calculate_leaders(2)[2]
+    diff2_record4 = calculate_leaders(2)[3]
+    diff2_record5 = calculate_leaders(2)[4]
+
     return render(request, 'sudoku/leaderboard.html',
-                  {'diff1_record': diff1_record,
-                   'diff2_record': diff2_record,
-                   'diff3_record': diff3_record,
-                   'diff4_record': diff4_record,
-                   'diff5_record': diff5_record})
+                  {'diff1_record1': diff1_record1,
+                   'diff1_record2': diff1_record2,
+                   'diff1_record3': diff1_record3,
+                   'diff1_record4': diff1_record4,
+                   'diff1_record5': diff1_record5,
+                   'diff2_record1': diff2_record1,
+                   'diff2_record2': diff2_record2,
+                   'diff2_record3': diff2_record3,
+                   'diff2_record4': diff2_record4,
+                   'diff2_record5': diff2_record5})
 
 
 def play(request):
