@@ -1,6 +1,18 @@
 /*
 Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
 */
+/* Makes footers sticky
+*/
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
 
 .icon-block {
   padding: 0 15px;
