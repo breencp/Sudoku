@@ -1,4 +1,6 @@
-
+/*
+Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+*/
 
 .icon-block {
   padding: 0 15px;
@@ -27,6 +29,7 @@ background-color: lightblue;
 }
 #scratch {
 background-size: 200%;
+border: 5px solid transparent;
 
 }
 .leftSide {

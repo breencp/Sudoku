@@ -1,126 +1,127 @@
+<!--
+   Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+   -->
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
-
-<head>
-    <meta charset="UTF-8">
-    <title>Leaderboard</title>
-    <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
-</head>
-<body>
-    <nav class="red darken-4" role="navigation">
-        <div class="nav-wrapper">
+   {% load static %}
+   <head>
+      <meta charset="UTF-8">
+      <title>Leaderboard</title>
+      <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
+   </head>
+   <body>
+      <nav class="red darken-4" role="navigation">
+         <div class="nav-wrapper">
             <a class="brand-logo right">Sudoku</a>
             <ul id="nav-mobile" class="align-left">
-                <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
-                <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-                <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-                <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+               <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
+               <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+               <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+               <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
             </ul>
-        </div>
-    </nav>
-    <main>
-        <h1 class="center-align">Easy Difficulty</h1>
-        <div class="container">
+         </div>
+      </nav>
+      <main>
+         <h1 class="center-align">Easy Difficulty</h1>
+         <div class="container">
             <table>
-                <tr>
-                    <th> Username</th>
-                    <th>Puzzle ID</th>
-                    <th>Time to Complete</th>
-                </tr>
-                <tr>
-                    <td>{{diff1_record1.user}} </td>
-                    <td> {{ diff1_record1.puzzle_id }}</td>
-                    <td> {{ diff1_record1.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff1_record2.user}} </td>
-                    <td> {{ diff1_record2.puzzle_id }}</td>
-                    <td> {{ diff1_record2.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff1_record3.user}} </td>
-                    <td> {{ diff1_record3.puzzle_id }}</td>
-                    <td> {{ diff1_record3.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff1_record4.user}} </td>
-                    <td> {{ diff1_record4.puzzle_id }}</td>
-                    <td> {{ diff1_record4.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff1_record5.user}} </td>
-                    <td> {{ diff1_record5.puzzle_id }}</td>
-                    <td> {{ diff1_record5.completion_time }}</td>
-                </tr>
+               <tr>
+                  <th> Username</th>
+                  <th>Puzzle ID</th>
+                  <th>Time to Complete</th>
+               </tr>
+               <tr>
+                  <td>{{diff1_record1.user}} </td>
+                  <td> {{ diff1_record1.puzzle_id }}</td>
+                  <td> {{ diff1_record1.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff1_record2.user}} </td>
+                  <td> {{ diff1_record2.puzzle_id }}</td>
+                  <td> {{ diff1_record2.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff1_record3.user}} </td>
+                  <td> {{ diff1_record3.puzzle_id }}</td>
+                  <td> {{ diff1_record3.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff1_record4.user}} </td>
+                  <td> {{ diff1_record4.puzzle_id }}</td>
+                  <td> {{ diff1_record4.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff1_record5.user}} </td>
+                  <td> {{ diff1_record5.puzzle_id }}</td>
+                  <td> {{ diff1_record5.completion_time }}</td>
+               </tr>
             </table>
-        </div>
-        <h1 class="center-align">Normal Difficulty</h1>
-        <div class="container">
+         </div>
+         <h1 class="center-align">Normal Difficulty</h1>
+         <div class="container">
             <table>
-                <tr>
-                    <th> Username</th>
-                    <th>Puzzle ID</th>
-                    <th>Time to Complete</th>
-                </tr>
-                <tr>
-                    <td>{{diff2_record1.user}} </td>
-                    <td> {{ diff2_record1.puzzle_id }}</td>
-                    <td> {{ diff2_record1.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff2_record2.user}} </td>
-                    <td> {{ diff2_record2.puzzle_id }}</td>
-                    <td> {{ diff2_record2.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff2_record3.user}} </td>
-                    <td> {{ diff2_record3.puzzle_id }}</td>
-                    <td> {{ diff2_record3.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff2_record4.user}} </td>
-                    <td> {{ diff2_record4.puzzle_id }}</td>
-                    <td> {{ diff2_record4.completion_time }}</td>
-                </tr>
-                <tr>
-                    <td>{{diff2_record5.user}} </td>
-                    <td> {{ diff2_record5.puzzle_id }}</td>
-                    <td> {{ diff2_record5.completion_time }}</td>
-                </tr>
+               <tr>
+                  <th> Username</th>
+                  <th>Puzzle ID</th>
+                  <th>Time to Complete</th>
+               </tr>
+               <tr>
+                  <td>{{diff2_record1.user}} </td>
+                  <td> {{ diff2_record1.puzzle_id }}</td>
+                  <td> {{ diff2_record1.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff2_record2.user}} </td>
+                  <td> {{ diff2_record2.puzzle_id }}</td>
+                  <td> {{ diff2_record2.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff2_record3.user}} </td>
+                  <td> {{ diff2_record3.puzzle_id }}</td>
+                  <td> {{ diff2_record3.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff2_record4.user}} </td>
+                  <td> {{ diff2_record4.puzzle_id }}</td>
+                  <td> {{ diff2_record4.completion_time }}</td>
+               </tr>
+               <tr>
+                  <td>{{diff2_record5.user}} </td>
+                  <td> {{ diff2_record5.puzzle_id }}</td>
+                  <td> {{ diff2_record5.completion_time }}</td>
+               </tr>
             </table>
-        </div>
-    </main>
-    <footer class="page-footer grey darken-3">
-        <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
-        <div class="container">
+         </div>
+      </main>
+      <footer class="page-footer grey darken-3">
+         <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+         <div class="container">
             <h5 class="white-text">Developers</h5>
-        </div>
-        <div class="container">
+         </div>
+         <div class="container">
             <div class="row">
-                <div class="col s3">
-                    <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a class="LI-simple-link" href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a></div>
-                </div>
-                <div class="col s1">
-                </div>
-                <div class="col s3">
-                    <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link" href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher Breen</a></div>
-                </div>
-                <div class="col s1">
-                </div>
-                <div class="col s3">
-                    <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a class="LI-simple-link" href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher Smith</a></div>
-                </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a class="LI-simple-link" href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a></div>
+               </div>
+               <div class="col s1">
+               </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link" href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher Breen</a></div>
+               </div>
+               <div class="col s1">
+               </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a class="LI-simple-link" href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher Smith</a></div>
+               </div>
             </div>
-        </div>
-        <div class="footer-copyright">
+         </div>
+         <div class="footer-copyright">
             <div class="container">
-                © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
+               © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
             </div>
-        </div>
-    </footer>
-</body>
-
+         </div>
+      </footer>
+   </body>
 </html>

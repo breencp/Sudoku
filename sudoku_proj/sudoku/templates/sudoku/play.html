@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
    {% load static %}
+   <!--
+      Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+      -->
    <head>
       <meta charset="UTF-8">
       <title>Sudoku Let's Play</title>
@@ -9,6 +12,9 @@
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
    </head>
+   <!--
+      Written by Chris Breen for Sprint 1, last update June 23, 2020
+      -->
    <script>
       function drawBoard() {
           // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
@@ -352,6 +358,9 @@
             }
         }
    </script>
+   <!--
+      Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+      -->
    <body onload="drawBoard()">
       <nav class="red darken-4" role="navigation">
          <div class="nav-wrapper">
@@ -368,7 +377,7 @@
          <h1 class="center-align">Welcome {{ request.session.player }}!</h1>
          <div class="container">
             <div class="leftSide">
-               <h3><u>Options</u></h3>
+               <h4><u>Options</u></h4>
                <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
                   onclick="showHidePencilMarks()" checked><br>
                <button onclick="verifySolutions()">Verify Solutions</button>
