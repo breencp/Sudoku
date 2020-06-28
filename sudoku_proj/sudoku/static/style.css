@@ -1,0 +1,51 @@
+
+
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+	font-size: inherit;
+}
+
+
+section {
+  display: flex;
+  flex-flow: row wrap;
+}
+section > div {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+
+/* Here starts Play.html style block used to create the Sudoku board and the scratch pad used in the game
+*/
+#puzzle {
+border: 5px solid black;
+background-size: 200%;
+background-color: lightblue;
+}
+#scratch {
+background-size: 200%;
+
+}
+.leftSide {
+flex-grow: 1;
+text-align: center;
+}
+.rightSide {
+flex-grow: 1;
+}
+.middle {
+text-align: center;
+flex-basis: auto;
+}
+.container {
+display: flex;
+}
+input[type=text] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+}

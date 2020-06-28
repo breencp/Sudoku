@@ -4,31 +4,32 @@
    <head>
       <meta charset="UTF-8">
       <title>How to Play</title>
-      <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
+      <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
    </head>
    <body>
+      <nav class="red darken-4" role="navigation">
+         <div class="nav-wrapper">
+            <a class="brand-logo right">Sudoku</a>
+            <ul id="nav-mobile" class="align-left">
+               <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
+               <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+               <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+               <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+            </ul>
+         </div>
+      </nav>
       <main>
-         <nav class="red darken-4" role="navigation">
-            <div class="nav-wrapper">
-               <a href="#!" class="brand-logo right">Sudoku</a>
-               <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-               <ul id="nav-mobile" class="left hide-on-med-and-down">
-                  <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
-                  <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-                  <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-                  <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
-               </ul>
-            </div>
-         </nav>
-         <div class="container">
+         <div class="container center-align">
             <div class="card-panel blue-grey lighten-2">
                <h1>How to play Sudoku</h1>
-               <P>Sudoku is a game that is both easy to learn and difficult to master. Puzzles can vary from extremely simple to seemingly impossible.<br>
-                  Each puzzle has a unique solution and you will never have to guess at answers. Rather than being a math game, Sudoku uses numbers<br>
+               <P>Sudoku is a game that is both easy to learn and difficult to master. Puzzles can vary from extremely simple to seemingly impossible.
+                  Each puzzle has a unique solution and you will never have to guess at answers. Rather than being a math game, Sudoku uses numbers
                   to create logic based puzzles which use the same set of consistent rules. This creates elegant and intuitive gameplay mechanics.
                </P>
                <figure>
-                  <img src="{% static 'placeholder.png' %}" alt="Placeholder">
+                  <img src="{% static 'placeholder.png' %}" alt="Placeholder"style="width: auto; height: auto;max-width: 520px;max-height: 500px">
                   <figcaption>Example of a typical Sudoku board</figcaption>
                </figure>
                <P> Your goal when playing Sudoku is to fill in the numbers 1-9 <b>EXACTLY ONCE</b> in each row, column, and 3x3 region.</P>
@@ -38,7 +39,7 @@
       <footer class="page-footer grey darken-3">
          <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
          <div class="container">
-            <h5 class="white-text">Developers</h5>
+            <h5 class="white-text left-align">Developers</h5>
          </div>
          <div class="container">
             <div class="row">

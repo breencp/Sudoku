@@ -4,16 +4,16 @@
    <head>
       <meta charset="UTF-8">
       <title>UMGC CMSC495 Sudoku Project</title>
-      <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
+      <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
       <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
    </head>
    <body>
       <main>
          <nav class="red darken-4" role="navigation">
             <div class="nav-wrapper">
-               <a href="#!" class="brand-logo right">Sudoku</a>
-               <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-               <ul id="nav-mobile" class="left hide-on-med-and-down">
+               <a class="brand-logo right">Sudoku</a>
+               <ul id="nav-mobile" class="align-left">
                   <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
                   <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
                   <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
@@ -21,36 +21,22 @@
                </ul>
             </div>
          </nav>
-         <!-- #TODO fix implementation of sidenav
-            <ul class="sidenav" id="mobile">
-               <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
-                     <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-                     <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-                   <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
-             </ul>
-            <script>
-             document.addEventListener('DOMContentLoaded', function() {
-               var elems = document.querySelectorAll('.sidenav');
-               var instances = M.Sidenav.init(elems, options);
-             });
-            </script>
-            -->
          <div class="container">
             <div class="card-panel blue-grey lighten-2">
-               <h1 class="center-align">CMSC495 Group 7 Project</h1>
-               <h2 class="center-align">Sudoku Application</h2>
+               <h1 class="center-align">Sudoku Application</h1>
                <figure class="center-align">
-                  <img src="{% static 'indexBoard.png' %}">
+                  <img src="{% static 'indexBoard.png' %}"style="width: auto; height: auto;max-width: 520px;max-height: 500px">
                </figure>
-               <h5 class="center-align">
-               This application was created by students at the University of Maryland Global Campus for Current Trends and Projects in Computer Science (CMSC495). The developers are:<br> Ben Brandhorst, Christopher Breen, and Christopher Smith.
+               <p class="center-align">
+                  This application was created by students at the University of Maryland Global Campus for Current Trends and Projects in Computer Science (CMSC495). The developers are: Ben Brandhorst, Christopher Breen, and Christopher Smith.
+               </p>
             </div>
          </div>
       </main>
       <footer class="page-footer grey darken-3">
          <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
          <div class="container">
-            <h5 class="white-text">Developers</h5>
+            <h5 class="white-text left-align">Developers</h5>
          </div>
          <div class="container">
             <div class="row">

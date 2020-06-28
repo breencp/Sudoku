@@ -8,23 +8,24 @@ Written by Christopher Breen for Sprint 1, last updated June 23, 2020
 <head>
     <meta charset="UTF-8">
     <title>Upload Sudoku Puzzles</title>
-    <link rel="stylesheet" type="text/css" href="{%  static 'StyleSheet.css' %}">
+    <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+       <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
 </head>
 
 <body>
-<main>
     <nav class="red darken-4" role="navigation">
-        <div class="nav-wrapper">
-            <a href="#!" class="brand-logo right">Sudoku</a>
-            <a href="#" data-target="mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-            <ul id="nav-mobile" class="left hide-on-med-and-down">
-                <li><a href="{% url 'sudoku:index' %}">Home</a></li>
-                <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-                <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-                <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
-            </ul>
-        </div>
-    </nav>
+            <div class="nav-wrapper">
+               <a href="#!" class="brand-logo right">Sudoku</a>
+               <ul id="nav-mobile" class="align-left">
+                  <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
+                  <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+                  <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+                  <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+               </ul>
+            </div>
+         </nav>
+<main>
     <h1>Upload Puzzles</h1>
     {% if error_message %}
     <p><strong>{{ error_message }}</strong></p>{% endif %}
