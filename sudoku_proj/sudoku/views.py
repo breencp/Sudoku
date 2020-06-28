@@ -119,18 +119,15 @@ def update_board(request):
     # get JavaScript sessionStorage from POST
     updated_board = json.loads(request.POST.get('board'))
     if corrupted_board(updated_board):
-        print('corrupt board')
         # user may have tampered with JavaScript Session Data
         return HttpResponse(status=400)
 
     start_time = json.loads(request.POST.get('start_time'))
     if not isinstance(start_time, int):
-        print('corrupt start time')
         return HttpResponse(status=400)
 
     status = request.POST.get('status')
     if status not in ['W', 'L', 'I', 'S']:
-        print('corrupt status')
         return HttpResponse(status=400)
 
     try:

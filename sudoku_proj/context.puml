@@ -2,7 +2,7 @@
 (Sudoku\nPython Django Web App) as (WebApp)
 
 note as input
-    Index.html: Home; How to Play; Start a New Game; Leaderboards; About Us
+    Index.html: Home; How to Play; Play Game; Leaderboards
     new_game.html: player_name; difficulty_level
     play.html: pencil_marks (true/false); verify_solutions; open scratchpad; close scratchpad
     play.html.scratchpad: [1-9] ON; [1-9] OFF
@@ -14,7 +14,6 @@ note as output
     play.html: puzzle; solution_matches message (true/false); pencil_marks display status (checkbox)
     howtoplay.html: basics, rules, and techniques
     leaderboard.html: game statistics
-    about.html: information about the project
 end note
 
 User -- input
