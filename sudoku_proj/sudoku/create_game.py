@@ -197,7 +197,7 @@ if __name__ == "__main__":
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # custom = custom_board('9??6?8??43?6????????451?6?2?97??5???43??6?5????147?9?????3???911??7?4??6???????7?')
+    # custom = custom_board('??3?7???584?5????35??8???26??41?5??9?8??6??5?1????26??92???8?6?4????9?37????4?59?')
 
     if custom:
         print(custom)
@@ -229,6 +229,10 @@ if __name__ == "__main__":
 
             # used to stop the loop and print board_string for testing on sudoku-solutions.com when creating
             # new techniques.  Comment break line to allow continuous puzzle creation up to i counter.
-            if 'naked_triplet' in data['techniques']:
+            if 'hidden_pair' in data['techniques']:
+                print(board_string)
+                break
+
+            if actual_difficulty == '3':
                 print(board_string)
                 break
