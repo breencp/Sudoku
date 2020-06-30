@@ -111,8 +111,9 @@ def reset_avail():
 
 
 def make_board():
-    """Makes a 9x9 multi-dimensional list of zeros"""
+    """Returns a valid sudoku solution, i.e. 9x9 of [1-9] with no dup nums in row, col, or block"""
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+    # Makes a 9x9 multi-dimensional list of zeros
     board = [[0 for x in range(9)] for x in range(9)]
 
     for row in range(9):
@@ -202,10 +203,10 @@ if __name__ == "__main__":
     if custom:
         print(custom)
         # solvable_puzzle uses techniques in sequentially incremented difficulty levels in an attempt to solve
-        print(solvable_puzzle(copy.deepcopy(custom), True))
+        print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(500):  # change loop range to fit your needs
+        for i in range(1000):  # change loop range to fit your needs
             # create_game will loop indefinitely until it creates a valid puzzle
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
@@ -229,9 +230,9 @@ if __name__ == "__main__":
 
             # used to stop the loop and print board_string for testing on sudoku-solutions.com when creating
             # new techniques.  Comment break line to allow continuous puzzle creation up to i counter.
-            if 'hidden_pair' in data['techniques']:
-                print(board_string)
-                break
+            #if 'hidden_pair' in data['techniques']:
+            #    print(board_string)
+            #    # break
 
             if actual_difficulty == '3':
                 print(board_string)

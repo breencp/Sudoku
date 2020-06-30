@@ -1,6 +1,7 @@
 # file: views.py
 # author: Christopher Breen
-# last updated: June 24, 2020
+# last updated: June 29, 2020
+import copy
 import json
 import re
 import time
@@ -13,6 +14,9 @@ from django.urls import reverse
 
 from .gamerecords import read_file, get_game, save_game
 from .leaderboard import calculate_leaders
+from .techniques import hidden_pair, naked_quad, hidden_triplet
+from .techniques import naked_pair, omission, naked_triplet
+from .techniques import naked_single, hidden_single
 
 
 def index(request):
@@ -211,3 +215,80 @@ def upload(request):
     else:
         form = UploadFileForm()
         return render(request, 'sudoku/upload.html', {'form': form})
+
+
+def get_hint(request):
+    # Written by Christopher Breen for Sprint 2, last updated June 29, 2020
+    # get JavaScript sessionStorage from POST
+    current_board = json.loads(request.POST.get('board'))
+    if corrupted_board(current_board):
+        # user may have tampered with JavaScript Session Data
+        return HttpResponse(status=400)
+
+    # replace length one lists with integers
+    current_board = convert_board(current_board, 'Int', False)
+
+    result = naked_single(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = hidden_single(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = naked_pair(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = omission(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = naked_triplet(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = hidden_pair(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = naked_quad(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = hidden_triplet(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+
+    return HttpResponse(json.dumps(
+        'Sorry, your on your own.  You may want to Verify Solutions to see if any mistakes have been made.'))
+
+
+def convert_board(old_board, direction, orig_board):
+    new_board = copy.deepcopy(old_board)
+    if direction == 'Int':
+        # user solved cells remain as length one lists to differentiate givens from user solved cells
+        # This is NOT the case when using techniques to solve puzzles, and will cause issues with hints
+        # We must convert single length lists (user solved cells) to integers to find correct hint
+        for row in range(9):
+            for col in range(9):
+                if isinstance(new_board[row][col], list) and len(new_board[row][col]) == 1:
+                    new_board[row][col] = new_board[row][col][0]
+    elif direction == 'List':
+        # convert user solved cells back to length one lists
+        for row in range(9):
+            for col in range(9):
+                if isinstance(new_board[row][col], int) and isinstance(orig_board[row][col], list):
+                    new_board[row][col] = [new_board[row][col]]
+    return new_board
+
+
+def erase_obvious(request):
+    """Automatically remove all candidates from a cell when that candidate has already been solved in the cell's
+    row, column, or block"""
+    # It takes 10 minutes of tediously removing numbers from scratchpads before the board is in a state that requires
+    # any mental effort.  This function automates the easy stuff so the player can focus on the more challenging
+    # techniques.
+    orig_board = json.loads(request.session['orig_board'])
+    board = convert_board(request.session['board'], 'Int', False)
+    progress = True
+    while progress:
+        progress = naked_single(board)
+    board = convert_board(board, 'List', orig_board)
+    response = {
+        'cleaned_board': board
+    }
+    return HttpResponse(json.dumps(response))

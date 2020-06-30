@@ -139,7 +139,7 @@
 
     function hideScratchPad() {
         // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-        erasePencilMarks(window.scratchRow, window.scratchCol);
+        erasePencilMark(window.scratchRow, window.scratchCol);
         window.scratchVisible = false;
         window.scratchCol = -1;
         window.scratchRow = -1;
@@ -220,12 +220,20 @@
         }
     }
 
-    function erasePencilMarks(row, col) {
+    function erasePencilMark(row, col) {
         // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // erase all pencil marks (user deselected checkbox)
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
         ctx.clearRect(2 + (56 * col), 2 + (56 * row), 52, 52);
+    }
+
+    function erasePencilMarks() {
+        for (let y = 0; y < 9; y++) {
+            for (let x = 0; x < 9; x++) {
+                erasePencilMark(y, x);
+            }
+        }
     }
 
     function drawNumbers() {
@@ -254,10 +262,11 @@
             let row = board[y];
             for (let x = 0; x < row.length; x++) {
                 if (!Number.isInteger(board[y][x])) {
-                    if (pencilMarks.checked === true) {
+                    // Ensure solved cells still remain even with pencil marks turned off
+                    if (pencilMarks.checked === true || board[y][x].length === 1) {
                         drawPencilMark(y, x, board[y][x]);
                     } else {
-                        erasePencilMarks(y, x);
+                        erasePencilMark(y, x);
                     }
                 }
             }
@@ -286,7 +295,7 @@
                 'hints': sessionStorage.getItem("hints")
             },
             success: function () {
-                console.log('Game Saved');
+                // console.log('Game Saved');
             }
         });
     }
@@ -315,7 +324,7 @@
     }
 
     function verifySolutions() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+        // Written by Christopher Breen for Sprint 1, last updated June 29, 2020 for Sprint 2
         let solution = JSON.parse("{{ request.session.solution }}");
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
@@ -357,6 +366,57 @@
             saveBoard();
         }
     }
+
+    function getHint() {
+        // Written by Christopher Breen for Sprint 2, last updated June 29, 2020
+        let csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "{% url 'sudoku:get_hint' %}",
+            dataType: 'json',
+            data: {
+                'board': sessionStorage.getItem("board"),
+            },
+            success: function(msg) {
+                let hints = parseInt(sessionStorage.getItem("hints")) + 1;
+                sessionStorage.setItem("hints", hints.toString());
+                // alert(msg);
+                console.log(msg);
+            },
+        });
+    }
+
+    function eraseObvious() {
+        // Written by Christopher Breen for Sprint 2, last updated June 29, 2020
+        let csrftoken = getCookie('csrftoken');
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+        $.ajax({
+            type: "POST",
+            url: "{% url 'sudoku:erase_obvious' %}",
+            success: function(data) {
+                let response = JSON.parse(data);
+                let new_board = response['cleaned_board'];
+                sessionStorage.setItem("board", JSON.stringify(new_board));
+                saveBoard();
+                erasePencilMarks();
+                highlightScratchCell(false);
+                hideScratchPad();
+            },
+        });
+    }
 </script>
 <!--
    Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
@@ -380,6 +440,8 @@
             <h4><u>Options</u></h4>
             <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
                                                                         onclick="showHidePencilMarks()" checked><br>
+            <p><button onclick="getHint()">Get Hint</button></p>
+            <p><button onclick="eraseObvious()">Erase Obvious</button></p>
             <button onclick="verifySolutions()">Verify Solutions</button>
         </div>
         <div class="middle">

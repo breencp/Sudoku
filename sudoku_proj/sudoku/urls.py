@@ -1,4 +1,4 @@
-# Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+# Written by Christopher Breen for Sprint 1, last updated June 29, 2020 for Sprint 2
 from django.urls import path
 
 from . import views
@@ -13,5 +13,7 @@ urlpatterns = [
     path('makegame/', views.make_game, name='make_game'),
     path('update_board/', views.update_board, name='update_board'),
     path('upload/', views.upload, name='upload'),
-    path('uploadsuccess/', views.upload_success, name='upload_success')
+    path('uploadsuccess/', views.upload_success, name='upload_success'),
+    path('get_hint/', views.get_hint, name='get_hint'),
+    path('erase_obvious/', views.erase_obvious, name='erase_obvious')
 ]

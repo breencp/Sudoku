@@ -4,8 +4,10 @@
 import copy
 import math
 
+from .create_game import get_block
 
-def solvable_puzzle(puzzle_to_solve, hints=False):
+
+def solvable_puzzle(puzzle_to_solve):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = True
@@ -16,32 +18,32 @@ def solvable_puzzle(puzzle_to_solve, hints=False):
 
         # Difficulty Level 1
         # Naked Single: only technique that solves more than one within function
-        if naked_single(puzzle_to_solve, hints):
+        if naked_single(puzzle_to_solve):
             techniques_utilized.update({'naked_single': 'True'})
             progress = True
         # Hidden Single
-        if hidden_single(puzzle_to_solve, hints):
+        if hidden_single(puzzle_to_solve):
             techniques_utilized.update({'hidden_single': 'True'})
             progress = True
 
         # Difficulty Level 2
         # Naked Pair
         if not progress:  # repeatedly try easier techniques until no longer making progress without advanced techniques
-            if naked_pair(puzzle_to_solve, hints):
+            if naked_pair(puzzle_to_solve):
                 techniques_utilized.update({'naked_pair': 'True'})
                 progress = True
                 if actual_difficulty < '2':
                     actual_difficulty = '2'
         # Omission (a.k.a. Intersection, Pointing)
         if not progress:
-            if omission(puzzle_to_solve, hints):
+            if omission(puzzle_to_solve):
                 techniques_utilized.update({'omission': 'True'})
                 progress = True
                 if actual_difficulty < '2':
                     actual_difficulty = '2'
         # Naked Triplet
         if not progress:
-            if naked_triplet(puzzle_to_solve, hints):
+            if naked_triplet(puzzle_to_solve):
                 techniques_utilized.update({'naked_triplet': 'True'})
                 progress = True
                 if actual_difficulty < '2':
@@ -50,21 +52,21 @@ def solvable_puzzle(puzzle_to_solve, hints=False):
         # Level 3 Difficulty
         # Hidden Pair
         if not progress:
-            if hidden_pair(puzzle_to_solve, hints):
+            if hidden_pair(puzzle_to_solve):
                 techniques_utilized.update({'hidden_pair': 'True'})
                 progress = True
                 if actual_difficulty < '3':
                     actual_difficulty = '3'
         # Naked Quad
         if not progress:
-            if naked_quad(puzzle_to_solve, hints):
+            if naked_quad(puzzle_to_solve):
                 techniques_utilized.update({'naked_quad': 'True'})
                 progress = True
                 if actual_difficulty < '3':
                     actual_difficulty = '3'
         # Hidden Triplet
         if not progress:
-            if hidden_triplet(puzzle_to_solve, hints):
+            if hidden_triplet(puzzle_to_solve):
                 techniques_utilized.update({'hidden_triplet': 'True'})
                 progress = True
                 if actual_difficulty < '3':
@@ -111,14 +113,17 @@ def naked_single(solving_puzzle, hints=False):
                                 nums_used.add(solving_puzzle[y][x])
                     for digit in nums_used:
                         if digit in solving_puzzle[row][col]:
-                            solving_puzzle[row][col].remove(digit)
-                            progress = True
-                            overall_progress = True
                             if hints:
-                                print('Naked Single:', digit, 'removed from', row, col)
-                    if solved_cell(solving_puzzle, row, col):
-                        # other techniques need to be exited to allow cleanup by naked_single
-                        pass
+                                return 'Row ' + str(row + 1) + ', Col ' + str(col + 1) + \
+                                       ' contains a candidate that has already been solved in the same ' \
+                                       'row, column, or block.'
+                            else:
+                                solving_puzzle[row][col].remove(digit)
+                                progress = True
+                                overall_progress = True
+                    if not hints:
+                        solved_cell(solving_puzzle, row, col)
+
     return overall_progress
 
 
@@ -138,9 +143,11 @@ def hidden_single(solving_puzzle, hints=False):
                             if cell_possibles[i] in solving_puzzle[row][x]:
                                 single = False
                     if single:
-                        # print([row], [col], 'Hidden Single: ', cell_possibles[i])
-                        solving_puzzle[row][col] = cell_possibles[i]
-                        return True
+                        if hints:
+                            return 'There is a Hidden Single in Row ' + str(row + 1)
+                        else:
+                            solving_puzzle[row][col] = cell_possibles[i]
+                            return True
 
                     single = True
                     for y in range(9):
@@ -148,9 +155,11 @@ def hidden_single(solving_puzzle, hints=False):
                             if cell_possibles[i] in solving_puzzle[y][col]:
                                 single = False
                     if single:
-                        # print([row], [col], 'Hidden Single: ', cell_possibles[i])
-                        solving_puzzle[row][col] = cell_possibles[i]
-                        return True
+                        if hints:
+                            return 'There is a Hidden Single in Column ' + str(col + 1)
+                        else:
+                            solving_puzzle[row][col] = cell_possibles[i]
+                            return True
 
                     single = True
                     yi, xi = get_upper_left(row, col)
@@ -160,9 +169,11 @@ def hidden_single(solving_puzzle, hints=False):
                                 if cell_possibles[i] in solving_puzzle[y][x]:
                                     single = False
                     if single:
-                        # print([row], [col], 'Hidden Single: ', cell_possibles[i])
-                        solving_puzzle[row][col] = cell_possibles[i]
-                        return True
+                        if hints:
+                            return 'There is a Hidden Single in Block ' + str(get_block(row, col) + 1)
+                        else:
+                            solving_puzzle[row][col] = cell_possibles[i]
+                            return True
 
     return False
 
@@ -187,13 +198,19 @@ def naked_pair(solving_puzzle, hints=False):
                         for x in range(9):
                             if x != col and x != col2 and isinstance(solving_puzzle[row][x], list):
                                 if solving_puzzle[row][col][0] in solving_puzzle[row][x]:
-                                    solving_puzzle[row][x].remove(solving_puzzle[row][col][0])
-                                    progress = True
+                                    if hints:
+                                        return 'There is a Naked Pair in Row ' + str(row + 1)
+                                    else:
+                                        solving_puzzle[row][x].remove(solving_puzzle[row][col][0])
+                                        progress = True
                                 if not solved_cell(solving_puzzle, row, x):
                                     if solving_puzzle[row][col][1] in solving_puzzle[row][x]:
-                                        solving_puzzle[row][x].remove(solving_puzzle[row][col][1])
-                                        progress = True
-                                        solved_cell(solving_puzzle, row, x)
+                                        if hints:
+                                            return 'There is a Naked Pair in Row ' + str(row + 1)
+                                        else:
+                                            solving_puzzle[row][x].remove(solving_puzzle[row][col][1])
+                                            progress = True
+                                            solved_cell(solving_puzzle, row, x)
                         if progress:
                             # clean up with easier techniques before continuing
                             return True
@@ -209,13 +226,19 @@ def naked_pair(solving_puzzle, hints=False):
                         for y in range(9):
                             if y != row and y != row2 and isinstance(solving_puzzle[y][col], list):
                                 if solving_puzzle[row][col][0] in solving_puzzle[y][col]:
-                                    solving_puzzle[y][col].remove(solving_puzzle[row][col][0])
-                                    progress = True
+                                    if hints:
+                                        return 'There is a Naked Pair in Column ' + str(col + 1)
+                                    else:
+                                        solving_puzzle[y][col].remove(solving_puzzle[row][col][0])
+                                        progress = True
                                 if not solved_cell(solving_puzzle, y, col):
                                     if solving_puzzle[row][col][1] in solving_puzzle[y][col]:
-                                        solving_puzzle[y][col].remove(solving_puzzle[row][col][1])
-                                        progress = True
-                                        solved_cell(solving_puzzle, y, col)
+                                        if hints:
+                                            return 'There is a Naked Pair in Column ' + str(col + 1)
+                                        else:
+                                            solving_puzzle[y][col].remove(solving_puzzle[row][col][1])
+                                            progress = True
+                                            solved_cell(solving_puzzle, y, col)
                         if progress:
                             # clean up with easier techniques before continuing
                             return True
@@ -235,13 +258,19 @@ def naked_pair(solving_puzzle, hints=False):
                                 if not (x == col and y == row) and not (x == col2 and y == row2) and isinstance(
                                         solving_puzzle[y][x], list):
                                     if solving_puzzle[row][col][0] in solving_puzzle[y][x]:
-                                        solving_puzzle[y][x].remove(solving_puzzle[row][col][0])
-                                        progress = True
+                                        if hints:
+                                            return 'There is a Naked Pair in Block ' + str(get_block(y, x) + 1)
+                                        else:
+                                            solving_puzzle[y][x].remove(solving_puzzle[row][col][0])
+                                            progress = True
                                     if not solved_cell(solving_puzzle, y, x):
                                         if solving_puzzle[row][col][1] in solving_puzzle[y][x]:
-                                            solving_puzzle[y][x].remove(solving_puzzle[row][col][1])
-                                            progress = True
-                                            solved_cell(solving_puzzle, y, x)
+                                            if hints:
+                                                return 'There is a Naked Pair in Block ' + str(get_block(y, x) + 1)
+                                            else:
+                                                solving_puzzle[y][x].remove(solving_puzzle[row][col][1])
+                                                progress = True
+                                                solved_cell(solving_puzzle, y, x)
     return progress
 
 
@@ -279,12 +308,16 @@ def omission(solving_puzzle, hints=False):
                         for x in range(bx, bx + 3):
                             if isinstance(solving_puzzle[y][x], list):
                                 if num in solving_puzzle[y][x]:
-                                    solving_puzzle[y][x].remove(num)
-                                    # print(*'#', num, 'f', y, x, end='')
-                                    progress = True
-                                    if solved_cell(solving_puzzle, y, x):
-                                        # naked_single must cleanup puzzle
-                                        return progress
+                                    if hints:
+                                        return 'The number ' + str(num) + \
+                                               ' can be removed from Row ' + \
+                                               str(y + 1) + ', Col ' + str(x + 1) + ' (Omission)'
+                                    else:
+                                        solving_puzzle[y][x].remove(num)
+                                        progress = True
+                                        if solved_cell(solving_puzzle, y, x):
+                                            # naked_single must cleanup puzzle
+                                            return progress
 
     # if the only cells in a column for a given number lie in the same block,
     # all other cells in the block must not contain that number
@@ -317,11 +350,15 @@ def omission(solving_puzzle, hints=False):
                         for y in range(by, by + 3):
                             if isinstance(solving_puzzle[y][x], list):
                                 if num in solving_puzzle[y][x]:
-                                    solving_puzzle[y][x].remove(num)
-                                    # print(*'#', num, 'f', y, x, end='')
-                                    progress = True
-                                    if solved_cell(solving_puzzle, y, x):
-                                        return progress
+                                    if hints:
+                                        return 'The number ' + str(num) + \
+                                               ' can be removed from Row ' + \
+                                               str(y + 1) + ', Col ' + str(x + 1) + ' (Omission)'
+                                    else:
+                                        solving_puzzle[y][x].remove(num)
+                                        progress = True
+                                        if solved_cell(solving_puzzle, y, x):
+                                            return progress
 
     # if the only cells in a block for a given number lie in the same row,
     # all other cells in the row must not contain that number
@@ -358,11 +395,15 @@ def omission(solving_puzzle, hints=False):
                         if x not in [bx, bx + 1, bx + 2]:
                             # we are not in the block of constrained number
                             if num in solving_puzzle[row][x]:
-                                solving_puzzle[row][x].remove(num)
-                                # print(*'#', num, 'f', row, x, end='')
-                                progress = True
-                                if solved_cell(solving_puzzle, row, x):
-                                    return progress
+                                if hints:
+                                    return 'The number ' + str(num) + \
+                                           ' can be removed from Row ' + \
+                                           str(row + 1) + ', Col ' + str(x + 1) + ' (Omission)'
+                                else:
+                                    solving_puzzle[row][x].remove(num)
+                                    progress = True
+                                    if solved_cell(solving_puzzle, row, x):
+                                        return progress
 
     # if the only cells in a block for a given number lie in the same column,
     # all other cells in the column must not contain that number
@@ -399,12 +440,15 @@ def omission(solving_puzzle, hints=False):
                         if y not in [by, by + 1, by + 2]:
                             # we are not in the block of constrained number
                             if num in solving_puzzle[y][col]:
-                                solving_puzzle[y][col].remove(num)
-                                # print(*'#', num, 'f', y, col, end='')
-                                progress = True
-                                if solved_cell(solving_puzzle, y, col):
-                                    return progress
-
+                                if hints:
+                                    return 'The number ' + str(num) + \
+                                           ' can be removed from Row ' + \
+                                           str(y + 1) + ', Col ' + str(col + 1) + ' (Omission)'
+                                else:
+                                    solving_puzzle[y][col].remove(num)
+                                    progress = True
+                                    if solved_cell(solving_puzzle, y, col):
+                                        return progress
     return progress
 
 
@@ -438,9 +482,14 @@ def naked_triplet(solving_puzzle, hints=False):
                             for digit in candidates:
                                 if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
                                     if not solved_cell(solving_puzzle, row, x):
-                                        solving_puzzle[row][x].remove(digit)
-                                        solved_cell(solving_puzzle, row, x)
-                                        progress = True
+                                        if hints:
+                                            return 'The number ' + str(digit) + \
+                                                   ' can be removed from Row ' + \
+                                                   str(row + 1) + ', Col ' + str(x + 1) + ' (Naked Triplet)'
+                                        else:
+                                            solving_puzzle[row][x].remove(digit)
+                                            solved_cell(solving_puzzle, row, x)
+                                            progress = True
     if progress:
         return progress
 
@@ -471,9 +520,14 @@ def naked_triplet(solving_puzzle, hints=False):
                             for digit in candidates:
                                 if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
                                     if not solved_cell(solving_puzzle, y, col):
-                                        solving_puzzle[y][col].remove(digit)
-                                        solved_cell(solving_puzzle, y, col)
-                                        progress = True
+                                        if hints:
+                                            return 'The number ' + str(digit) + \
+                                                   ' can be removed from Row ' + \
+                                                   str(y + 1) + ', Col ' + str(col + 1) + ' (Naked Triplet)'
+                                        else:
+                                            solving_puzzle[y][col].remove(digit)
+                                            solved_cell(solving_puzzle, y, col)
+                                            progress = True
     if progress:
         return progress
 
@@ -507,9 +561,14 @@ def naked_triplet(solving_puzzle, hints=False):
                                 for digit in candidates:
                                     if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
                                         if not solved_cell(solving_puzzle, y, x):
-                                            solving_puzzle[y][x].remove(digit)
-                                            solved_cell(solving_puzzle, y, x)
-                                            progress = True
+                                            if hints:
+                                                return 'The number ' + str(digit) + \
+                                                       ' can be removed from Row ' + \
+                                                       str(y + 1) + ', Col ' + str(x + 1) + ' (Naked Triplet)'
+                                            else:
+                                                solving_puzzle[y][x].remove(digit)
+                                                solved_cell(solving_puzzle, y, x)
+                                                progress = True
     return progress
 
 
@@ -537,11 +596,19 @@ def hidden_pair(solving_puzzle, hints=False):
                         col1 = digit_locations[i][0]
                         col2 = digit_locations[i][1]
                         if len(solving_puzzle[row][col1]) > 2:
-                            solving_puzzle[row][col1] = [i, j]
-                            progress = True
+                            if hints:
+                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row) \
+                                       + ' Col ' + str(col1)
+                            else:
+                                solving_puzzle[row][col1] = [i, j]
+                                progress = True
                         if len(solving_puzzle[row][col2]) > 2:
-                            solving_puzzle[row][col2] = [i, j]
-                            progress = True
+                            if hints:
+                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row) \
+                                       + ' Col ' + str(col2)
+                            else:
+                                solving_puzzle[row][col2] = [i, j]
+                                progress = True
                         if progress:
                             return progress
         digit_locations.clear()
@@ -565,11 +632,19 @@ def hidden_pair(solving_puzzle, hints=False):
                         row1 = digit_locations[i][0]
                         row2 = digit_locations[i][1]
                         if len(solving_puzzle[row1][col]) > 2:
-                            solving_puzzle[row1][col] = [i, j]
-                            progress = True
+                            if hints:
+                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row1) \
+                                       + ' Col ' + str(col)
+                            else:
+                                solving_puzzle[row1][col] = [i, j]
+                                progress = True
                         if len(solving_puzzle[row2][col]) > 2:
-                            solving_puzzle[row2][col] = [i, j]
-                            progress = True
+                            if hints:
+                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row2) \
+                                       + ' Col ' + str(col)
+                            else:
+                                solving_puzzle[row2][col] = [i, j]
+                                progress = True
                         if progress:
                             return progress
         digit_locations.clear()
@@ -598,11 +673,19 @@ def hidden_pair(solving_puzzle, hints=False):
                         row2 = digit_locations[i][1][0]
                         col2 = digit_locations[i][1][1]
                         if len(solving_puzzle[row1][col1]) > 2:
-                            solving_puzzle[row1][col1] = [i, j]
-                            progress = True
+                            if hints:
+                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row1) \
+                                       + ' Col ' + str(col1)
+                            else:
+                                solving_puzzle[row1][col1] = [i, j]
+                                progress = True
                         if len(solving_puzzle[row2][col2]) > 2:
-                            solving_puzzle[row2][col2] = [i, j]
-                            progress = True
+                            if hints:
+                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row2) \
+                                       + ' Col ' + str(col2)
+                            else:
+                                solving_puzzle[row2][col2] = [i, j]
+                                progress = True
                         if progress:
                             return progress
         digit_locations.clear()
@@ -640,9 +723,14 @@ def naked_quad(solving_puzzle, hints=False):
                             for digit in candidates:
                                 if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
                                     if not solved_cell(solving_puzzle, row, x):
-                                        solving_puzzle[row][x].remove(digit)
-                                        solved_cell(solving_puzzle, row, x)
-                                        progress = True
+                                        if hints:
+                                            return 'The number ' + str(digit) + \
+                                                   ' can be removed from Row ' + \
+                                                   str(row + 1) + ', Col ' + str(x + 1) + ' (Naked Quad)'
+                                        else:
+                                            solving_puzzle[row][x].remove(digit)
+                                            solved_cell(solving_puzzle, row, x)
+                                            progress = True
     if progress:
         return progress
 
@@ -673,9 +761,14 @@ def naked_quad(solving_puzzle, hints=False):
                             for digit in candidates:
                                 if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
                                     if not solved_cell(solving_puzzle, y, col):
-                                        solving_puzzle[y][col].remove(digit)
-                                        solved_cell(solving_puzzle, y, col)
-                                        progress = True
+                                        if hints:
+                                            return 'The number ' + str(digit) + \
+                                                   ' can be removed from Row ' + \
+                                                   str(y + 1) + ', Col ' + str(col + 1) + ' (Naked Quad)'
+                                        else:
+                                            solving_puzzle[y][col].remove(digit)
+                                            solved_cell(solving_puzzle, y, col)
+                                            progress = True
     if progress:
         return progress
 
@@ -709,9 +802,14 @@ def naked_quad(solving_puzzle, hints=False):
                                 for digit in candidates:
                                     if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
                                         if not solved_cell(solving_puzzle, y, x):
-                                            solving_puzzle[y][x].remove(digit)
-                                            solved_cell(solving_puzzle, y, x)
-                                            progress = True
+                                            if hints:
+                                                return 'The number ' + str(digit) + \
+                                                       ' can be removed from Row ' + \
+                                                       str(y + 1) + ', Col ' + str(x + 1) + ' (Naked Quad)'
+                                            else:
+                                                solving_puzzle[y][x].remove(digit)
+                                                solved_cell(solving_puzzle, y, x)
+                                                progress = True
     return progress
 
 
@@ -741,13 +839,26 @@ def hidden_triplet(solving_puzzle, hints=False):
                             col2 = digit_locations[i][1]
                             col3 = digit_locations[i][2]
                             if len(solving_puzzle[row][col1]) > 3:
-                                solving_puzzle[row][col1] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row) + ' Col ' + str(col1)
+                                else:
+                                    solving_puzzle[row][col1] = [i, j, k]
+                                    progress = True
                             if len(solving_puzzle[row][col2]) > 3:
-                                solving_puzzle[row][col2] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row) + ' Col ' + str(col2)
+                                else:
+                                    solving_puzzle[row][col2] = [i, j, k]
+                                    progress = True
                             if len(solving_puzzle[row][col3]) > 3:
-                                solving_puzzle[row][col3] = [i, j, k]
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row) + ' Col ' + str(col3)
+                                else:
+                                    solving_puzzle[row][col3] = [i, j, k]
+                                    progress = True
                             if progress:
                                 return progress
         digit_locations.clear()
@@ -772,13 +883,26 @@ def hidden_triplet(solving_puzzle, hints=False):
                             row2 = digit_locations[i][1]
                             row3 = digit_locations[i][2]
                             if len(solving_puzzle[row1][col]) > 3:
-                                solving_puzzle[row1][col] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row1) + ' Col ' + str(col)
+                                else:
+                                    solving_puzzle[row1][col] = [i, j, k]
+                                    progress = True
                             if len(solving_puzzle[row2][col]) > 3:
-                                solving_puzzle[row2][col] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row2) + ' Col ' + str(col)
+                                else:
+                                    solving_puzzle[row2][col] = [i, j, k]
+                                    progress = True
                             if len(solving_puzzle[row3][col]) > 3:
-                                solving_puzzle[row3][col] = [i, j, k]
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row3) + ' Col ' + str(col)
+                                else:
+                                    solving_puzzle[row3][col] = [i, j, k]
+                                    progress = True
                             if progress:
                                 return progress
         digit_locations.clear()
@@ -810,14 +934,26 @@ def hidden_triplet(solving_puzzle, hints=False):
                             row3 = digit_locations[i][2][0]
                             col3 = digit_locations[i][2][1]
                             if len(solving_puzzle[row1][col1]) > 3:
-                                solving_puzzle[row1][col1] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row1) + ' Col ' + str(col1)
+                                else:
+                                    solving_puzzle[row1][col1] = [i, j, k]
+                                    progress = True
                             if len(solving_puzzle[row2][col2]) > 3:
-                                solving_puzzle[row2][col2] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row2) + ' Col ' + str(col2)
+                                else:
+                                    solving_puzzle[row2][col2] = [i, j, k]
+                                    progress = True
                             if len(solving_puzzle[row3][col3]) > 3:
-                                solving_puzzle[row3][col3] = [i, j, k]
-                                progress = True
+                                if hints:
+                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
+                                           ') exists in Row ' + str(row3) + ' Col ' + str(col3)
+                                else:
+                                    solving_puzzle[row3][col3] = [i, j, k]
+                                    progress = True
                             if progress:
                                 return progress
         digit_locations.clear()
