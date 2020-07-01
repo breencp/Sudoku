@@ -1,6 +1,6 @@
 # file: create_game.py
 # author: Christopher Breen
-# last updated: June 23, 2020
+# last updated: June 30, 2020
 import copy
 import json
 import math
@@ -26,17 +26,12 @@ avail_block_nums = []
 
 def create_game():
     """Returns board for user to play, the solution, overall difficulty level, and exact techniques required to win."""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    print('Creating game...', end='')
-    counter = 0
+    # Written by Christopher Breen for Sprint 1, last updated June 30, 2020 for Sprint 2
+    print('\nCreating solution', end='')
+    failed_solves = 0
     while True:
-        # developer code to know app not hung, looking for valid puzzle
-        counter += 1
-        if counter == 50:
-            print('.', end='')
-            counter = 0
-
         reset_avail()
+        failed_solutions = 0
         while True:
             # make_board returns a complete solution with every cell filled in, or false if it failed
             solution = make_board()
@@ -45,14 +40,25 @@ def create_game():
             else:
                 # global avail_(row/col_block)_nums get reset to include 1-9 again, then loop
                 reset_avail()
+                failed_solutions += 1
+                if failed_solutions % 50 == 0:
+                    print('.', end='')
 
-        # hide_cells returns the original solution but with a random subset of cell numbers removed
-        board = hide_cells(solution)
-        # solvable_puzzle uses techniques in sequentially incremental difficulty in an attempt to recreate the solution
-        solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board))
-        if solved:
-            # if successful, return the board modified by hide_cells, otherwise loops
-            return board, solution, actual_difficulty, techniques
+        print('...done.  Hiding & Solving', end='')
+        while True:
+            # hide_cells returns the original solution but with a random subset of cell numbers removed
+            board = hide_cells(solution)
+            # solvable_puzzle uses techniques in sequentially incremental difficulty attempting to recreate the solution
+            solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board))
+            if solved:
+                # if successful, return the board modified by hide_cells, otherwise loops
+                print('...done. Iterations to get solution: ' + str(failed_solutions), end='')
+                print(', Iterations to solve: ' + str(failed_solves))
+                return board, solution, actual_difficulty, techniques
+            else:
+                failed_solves += 1
+                if failed_solves % 50 == 0:
+                    print('.', end='')
 
 
 def hide_cells(solution):
@@ -62,7 +68,7 @@ def hide_cells(solution):
     # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
     # puzzles must have at minimum 17 clues to be solvable (64 hidden)
     board = copy.deepcopy(solution)
-    givens = random.randint(27, 30)
+    givens = random.randint(26, 30)
     hide_count = 81 - givens
 
     counter = 0
@@ -198,7 +204,8 @@ if __name__ == "__main__":
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # custom = custom_board('??3?7???584?5????35??8???26??41?5??9?8??6??5?1????26??92???8?6?4????9?37????4?59?')
+    # puzzle: 8321
+    # custom = custom_board('?6?7???1???759????954??1287????6?8??4?2?5?????1???9?522????59?83??????2???5?4????')
 
     if custom:
         print(custom)
@@ -224,16 +231,16 @@ if __name__ == "__main__":
 
             board_string, givens = board_to_string(board)
             end = time.time()
-            output = '\n', 'Difficulty:', data['difficulty'], data['techniques'], 'Givens:', givens, \
-                     'Total minutes elapsed:', math.ceil((end - start) / 60)
+            output = '#', i, '- Difficulty:', data['difficulty'], data['techniques'], '- Givens:', givens, \
+                     '- Total minutes elapsed:', math.ceil((end - start) / 60)
             print(*output)
 
             # used to stop the loop and print board_string for testing on sudoku-solutions.com when creating
             # new techniques.  Comment break line to allow continuous puzzle creation up to i counter.
-            #if 'hidden_pair' in data['techniques']:
+            # if 'hidden_pair' in data['techniques']:
             #    print(board_string)
             #    # break
 
             if actual_difficulty == '3':
                 print(board_string)
-                break
+                # break

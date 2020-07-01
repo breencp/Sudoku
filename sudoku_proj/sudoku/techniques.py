@@ -81,7 +81,6 @@ def solvable_puzzle(puzzle_to_solve):
 
     # we have continually looped through all techniques in the given difficulty level
     # we may or may not have removed all available numbers down to a single int.  Let's check.
-    # if is_solved(puzzle_to_solve):  # test code, replace with line below
     if is_solved(puzzle_to_solve):
         return True, actual_difficulty, techniques_utilized
     else:
@@ -589,8 +588,8 @@ def hidden_pair(solving_puzzle, hints=False):
                         # add col digit appears in
                         digit_locations[digit].append(col)
         # finished with the row, look for 2 digits that only exist in same 2 cells
-        for i in range(9):
-            for j in range(9):
+        for i in range(1, 10):
+            for j in range(1, 10):
                 if i != j and digit_locations[i] == digit_locations[j]:
                     if len(digit_locations[i]) == 2:
                         col1 = digit_locations[i][0]
@@ -625,8 +624,8 @@ def hidden_pair(solving_puzzle, hints=False):
                         # keep track of each location for each digit
                         digit_locations[digit].append(row)
         # finished with the col, look for 2 digits that only exist in same 2 cells
-        for i in range(9):
-            for j in range(9):
+        for i in range(1, 10):
+            for j in range(1, 10):
                 if i != j and digit_locations[i] == digit_locations[j]:
                     if len(digit_locations[i]) == 2:
                         row1 = digit_locations[i][0]
@@ -664,8 +663,8 @@ def hidden_pair(solving_puzzle, hints=False):
                             digit_locations[digit].append((row, col))
 
         # finished with the block, look for 2 digits that only exist in same 2 cells
-        for i in range(9):
-            for j in range(9):
+        for i in range(1, 10):
+            for j in range(1, 10):
                 if i != j and digit_locations[i] == digit_locations[j]:
                     if len(digit_locations[i]) == 2:
                         row1 = digit_locations[i][0][0]
@@ -724,9 +723,7 @@ def naked_quad(solving_puzzle, hints=False):
                                 if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
                                     if not solved_cell(solving_puzzle, row, x):
                                         if hints:
-                                            return 'The number ' + str(digit) + \
-                                                   ' can be removed from Row ' + \
-                                                   str(row + 1) + ', Col ' + str(x + 1) + ' (Naked Quad)'
+                                            return 'There is a Naked Quad in Row ' + str(row + 1)
                                         else:
                                             solving_puzzle[row][x].remove(digit)
                                             solved_cell(solving_puzzle, row, x)
@@ -762,9 +759,7 @@ def naked_quad(solving_puzzle, hints=False):
                                 if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
                                     if not solved_cell(solving_puzzle, y, col):
                                         if hints:
-                                            return 'The number ' + str(digit) + \
-                                                   ' can be removed from Row ' + \
-                                                   str(y + 1) + ', Col ' + str(col + 1) + ' (Naked Quad)'
+                                            return 'There is a Naked Quad in Column ' + str(col + 1)
                                         else:
                                             solving_puzzle[y][col].remove(digit)
                                             solved_cell(solving_puzzle, y, col)
@@ -803,9 +798,7 @@ def naked_quad(solving_puzzle, hints=False):
                                     if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
                                         if not solved_cell(solving_puzzle, y, x):
                                             if hints:
-                                                return 'The number ' + str(digit) + \
-                                                       ' can be removed from Row ' + \
-                                                       str(y + 1) + ', Col ' + str(x + 1) + ' (Naked Quad)'
+                                                return 'There is a Naked Quad in Block ' + get_block(y, x) + 1
                                             else:
                                                 solving_puzzle[y][x].remove(digit)
                                                 solved_cell(solving_puzzle, y, x)
@@ -830,9 +823,9 @@ def hidden_triplet(solving_puzzle, hints=False):
                         # add col digit appears in
                         digit_locations[digit].append(col)
         # finished with the row, look for 3 digits that only exist in same 3 cells
-        for i in range(9):
-            for j in range(9):
-                for k in range(9):
+        for i in range(1, 10):
+            for j in range(1, 10):
+                for k in range(1, 10):
                     if i != j and j != k and i != k and digit_locations[i] == digit_locations[j] == digit_locations[k]:
                         if len(digit_locations[i]) == 3:
                             col1 = digit_locations[i][0]
@@ -840,22 +833,19 @@ def hidden_triplet(solving_puzzle, hints=False):
                             col3 = digit_locations[i][2]
                             if len(solving_puzzle[row][col1]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row) + ' Col ' + str(col1)
+                                    return 'There is a Hidden Triplet in Row ' + str(row + 1)
                                 else:
                                     solving_puzzle[row][col1] = [i, j, k]
                                     progress = True
                             if len(solving_puzzle[row][col2]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row) + ' Col ' + str(col2)
+                                    return 'There is a Hidden Triplet in Row ' + str(row + 1)
                                 else:
                                     solving_puzzle[row][col2] = [i, j, k]
                                     progress = True
                             if len(solving_puzzle[row][col3]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row) + ' Col ' + str(col3)
+                                    return 'There is a Hidden Triplet in Row ' + str(row + 1)
                                 else:
                                     solving_puzzle[row][col3] = [i, j, k]
                                     progress = True
@@ -874,9 +864,9 @@ def hidden_triplet(solving_puzzle, hints=False):
                         # keep track of each location for each digit
                         digit_locations[digit].append(row)
         # finished with the col, look for 3 digits that only exist in same 3 cells
-        for i in range(9):
-            for j in range(9):
-                for k in range(9):
+        for i in range(1, 10):
+            for j in range(1, 10):
+                for k in range(1, 10):
                     if i != j and i != k and j != k and digit_locations[i] == digit_locations[j] == digit_locations[k]:
                         if len(digit_locations[i]) == 3:
                             row1 = digit_locations[i][0]
@@ -884,22 +874,19 @@ def hidden_triplet(solving_puzzle, hints=False):
                             row3 = digit_locations[i][2]
                             if len(solving_puzzle[row1][col]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row1) + ' Col ' + str(col)
+                                    return 'There is a Hidden Triplet in Column ' + str(col + 1)
                                 else:
                                     solving_puzzle[row1][col] = [i, j, k]
                                     progress = True
                             if len(solving_puzzle[row2][col]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row2) + ' Col ' + str(col)
+                                    return 'There is a Hidden Triplet in Column ' + str(col + 1)
                                 else:
                                     solving_puzzle[row2][col] = [i, j, k]
                                     progress = True
                             if len(solving_puzzle[row3][col]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row3) + ' Col ' + str(col)
+                                    return 'There is a Hidden Triplet in Column ' + str(col + 1)
                                 else:
                                     solving_puzzle[row3][col] = [i, j, k]
                                     progress = True
@@ -922,9 +909,9 @@ def hidden_triplet(solving_puzzle, hints=False):
                             digit_locations[digit].append((row, col))
 
         # finished with the block, look for 3 digits that only exist in same 3 cells
-        for i in range(9):
-            for j in range(9):
-                for k in range(9):
+        for i in range(1, 10):
+            for j in range(1, 10):
+                for k in range(1, 10):
                     if i != j and i != k and j != k and digit_locations[i] == digit_locations[j] == digit_locations[k]:
                         if len(digit_locations[i]) == 3:
                             row1 = digit_locations[i][0][0]
@@ -935,22 +922,19 @@ def hidden_triplet(solving_puzzle, hints=False):
                             col3 = digit_locations[i][2][1]
                             if len(solving_puzzle[row1][col1]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row1) + ' Col ' + str(col1)
+                                    return 'There is a Hidden Triplet in Block ' + str(get_block(row1, col1) + 1)
                                 else:
                                     solving_puzzle[row1][col1] = [i, j, k]
                                     progress = True
                             if len(solving_puzzle[row2][col2]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row2) + ' Col ' + str(col2)
+                                    return 'There is a Hidden Triplet in Block ' + str(get_block(row1, col1) + 1)
                                 else:
                                     solving_puzzle[row2][col2] = [i, j, k]
                                     progress = True
                             if len(solving_puzzle[row3][col3]) > 3:
                                 if hints:
-                                    return 'The Hidden Triplet (' + str(i) + ', ' + str(j) + ', ' + str(k) + \
-                                           ') exists in Row ' + str(row3) + ' Col ' + str(col3)
+                                    return 'There is a Hidden Triplet in Block ' + str(get_block(row1, col1) + 1)
                                 else:
                                     solving_puzzle[row3][col3] = [i, j, k]
                                     progress = True

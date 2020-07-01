@@ -50,13 +50,12 @@ def make_game(request):
         })
     else:
         # test code: replace new_board = and solution = with new_board, solution = for production
-        # new_board = custom_board('???2?3??5?5?17??687?2?6??????????8?7???7??93??7?81??4???8?47??35?73???8??396????4')
-        # solution = custom_board('')
+        # new_board = json.dumps(custom_board('??3?7???584?5????35??8???26??41?5??9?8??6??5?1????26??92???8?6?4????9?37????4?59?'))
+        # solution = json.dumps(custom_board('263471985849526713571893426634185279782964351195732648927358164456219837318647592'))
         new_board, solution = get_game(difficulty)
-
-        request.session['orig_board'] = new_board
-        request.session['board'] = new_board
-        request.session['solution'] = solution
+        request.session['orig_board'] = json.loads(new_board)
+        request.session['board'] = json.loads(new_board)
+        request.session['solution'] = json.loads(solution)
         request.session['start_time'] = round(time.time())
         if 'end_time' in request.session:
             del request.session['end_time']
@@ -68,7 +67,7 @@ def make_game(request):
 
 def sanitized_diff(diff):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    if 0 < int(diff) < 3:  # set upper bound to difficulty level not yet ready
+    if 0 < int(diff) < 4:  # set upper bound to difficulty level not yet ready
         return str(diff)
     else:
         return False
@@ -282,7 +281,7 @@ def erase_obvious(request):
     # It takes 10 minutes of tediously removing numbers from scratchpads before the board is in a state that requires
     # any mental effort.  This function automates the easy stuff so the player can focus on the more challenging
     # techniques.
-    orig_board = json.loads(request.session['orig_board'])
+    orig_board = request.session['orig_board']
     board = convert_board(request.session['board'], 'Int', False)
     progress = True
     while progress:
