@@ -30,7 +30,7 @@ def get_game(difficulty):
 
 
 def save_game(data):
-    # Written by Christopher Smith
+    # Written by Christopher Smith for Sprint 1 with modifications for Sprint 2
     saved_puzzle: Played = Played()
     saved_puzzle.user = data['user']
     saved_puzzle.start_time = round(data['start_time'])
@@ -45,7 +45,8 @@ def save_game(data):
                                   user=saved_puzzle.user, start_time=saved_puzzle.start_time)
     # update existing entry
     if query:
-        query.update(status=saved_puzzle.status, end_time=saved_puzzle.end_time, saved_board=saved_puzzle.saved_board)
+        query.update(status=saved_puzzle.status, end_time=saved_puzzle.end_time, saved_board=saved_puzzle.saved_board,
+                     hints=saved_puzzle.hints)
     # create a new entry
     else:
         saved_puzzle.save()
