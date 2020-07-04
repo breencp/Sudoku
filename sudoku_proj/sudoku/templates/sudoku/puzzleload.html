@@ -1,0 +1,88 @@
+<!--
+   Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
+   -->
+<!DOCTYPE html>
+<html lang="en">
+   {% load static %}
+   <head>
+      <meta charset="UTF-8">
+      <title>UMGC CMSC495 Sudoku Project</title>
+      <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
+      <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+   </head>
+   <body onload ="fillForm()">
+      <main>
+         <nav class="red darken-4" role="navigation">
+            <div class="nav-wrapper">
+               <a class="brand-logo right">Sudoku</a>
+               <ul id="nav-mobile" class="align-left">
+                  <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
+                  <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+                  <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+                  <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+               </ul>
+            </div>
+         </nav>
+         <div class="container" id="load_puzzle_form">
+            <div class="row">
+               <h2 class="center-align">Load Puzzle</h2>
+               {% if error_message %}
+               <p><strong>{{ error_message }}</strong></p>
+               {% endif %}
+               <form action="{% url 'sudoku:load_puzzle' %}" method="post">
+                  <div class="input-field">
+                     {% csrf_token %}
+                     <label for="player_name" class="black-text">Player Name:</label><br>
+                     <input type="text" id="player_name" name="player_name"><br>
+                  </div>
+                  <p>
+                  <div class="input-field">
+                     {% csrf_token %}
+                     <label for="puzzle" class="black-text">Puzzle ID:</label><br>
+                     <input type="text" id="puzzleID" name="puzzleID"
+                        readonly><br>
+                  </div>
+                  <br><input type="submit" value="Load Puzzle">
+               </form>
+            </div>
+         </div>
+
+<script>
+   function fillForm(){
+      var puz = "{{ request.session.puzzleID}}";
+      var inputText = document.getElementById("puzzleID");
+      inputText.setAttribute('value', puz);}
+</script>
+
+      </main>
+      <footer class="page-footer grey darken-3">
+         <div class="container">
+            <h5 class="white-text left-align">Developers</h5>
+         </div>
+         <div class="container">
+            <div class="row">
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a class="LI-simple-link" href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a></div>
+               </div>
+               <div class="col s1">
+               </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link" href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher Breen</a></div>
+               </div>
+               <div class="col s1">
+               </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a class="LI-simple-link" href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher Smith</a></div>
+               </div>
+            </div>
+         </div>
+         <div class="footer-copyright">
+            <div class="container">
+               © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
+            </div>
+         </div>
+      </footer>
+   </body>
+</html>

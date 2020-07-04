@@ -33,6 +33,11 @@ def new_game(request):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/newgame.html')
 
+def puzzleload(request):
+    # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
+    puzzleID = request.POST.get('puzzleID')
+    request.session['puzzleID'] = request.POST['puzzleID']
+    return render(request, 'sudoku/puzzleload.html',)
 
 def make_game(request):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
@@ -42,7 +47,6 @@ def make_game(request):
             return render(request, 'sudoku/newgame.html', {
                 'error_message': 'Sorry, that difficulty level is not yet available.'
             })
-
         request.session['player'] = sanitized_player(request.POST['player_name'])
     except KeyError:
         return render(request, 'sudoku/newgame.html', {
@@ -53,7 +57,6 @@ def make_game(request):
         # new_board = custom_board('???2?3??5?5?17??687?2?6??????????8?7???7??93??7?81??4???8?47??35?73???8??396????4')
         # solution = custom_board('')
         new_board, solution = get_game(difficulty)
-
         request.session['orig_board'] = new_board
         request.session['board'] = new_board
         request.session['solution'] = solution
@@ -64,6 +67,8 @@ def make_game(request):
         request.session['status'] = 'I'
         request.session['hints'] = 0
         return HttpResponseRedirect(reverse('sudoku:play'))
+
+
 
 
 def load_puzzle(request):
