@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .gamerecords import read_file, get_game, save_game
+from .gamerecords import read_file, get_game, save_game, retrieve_puzzle
 from .leaderboard import calculate_leaders
 from .techniques import hidden_pair, naked_quad, hidden_triplet
 from .techniques import naked_pair, omission, naked_triplet
@@ -63,6 +63,29 @@ def make_game(request):
         request.session['status'] = 'I'
         request.session['hints'] = 0
         return HttpResponseRedirect(reverse('sudoku:play'))
+
+
+def load_puzzle(request):
+    # Written by Ben Brandhorst for Sprint 2, last updated July 3, 2020
+    try:
+        puzzleid = request.POST['puzzleID']
+    except KeyError:
+        return render(request, 'sudoku/leaderboard.html', {
+            'error_message': 'Please select a puzzle to load.'
+        })
+    new_board, solution = retrieve_puzzle(puzzleid)
+    request.session['player'] = sanitized_player(request.POST['player_name'])
+    request.session['orig_board'] = new_board
+    request.session['board'] = new_board
+    request.session['solution'] = solution
+    request.session['start_time'] = round(time.time())
+    if 'end_time' in request.session:
+        del request.session['end_time']
+    # W = Win, I = In-Progress, L = Lost, S = Surrendered
+    request.session['status'] = 'I'
+    request.session['hints'] = 0
+    return HttpResponseRedirect(reverse('sudoku:play'))
+
 
 
 def sanitized_diff(diff):
