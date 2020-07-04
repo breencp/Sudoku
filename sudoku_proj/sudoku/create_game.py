@@ -41,7 +41,7 @@ def create_game():
                 # global avail_(row/col_block)_nums get reset to include 1-9 again, then loop
                 reset_avail()
                 failed_solutions += 1
-                if failed_solutions % 50 == 0:
+                if failed_solutions % 200 == 0:
                     print('.', end='')
 
         print('...done.  Hiding & Solving', end='')
@@ -50,20 +50,22 @@ def create_game():
             board = hide_cells(solution)
             # solvable_puzzle uses techniques in sequentially incremental difficulty attempting to recreate the solution
             solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board))
-            if solved:
+            if solved and actual_difficulty > '1':
                 # if successful, return the board modified by hide_cells, otherwise loops
                 print('...done. Iterations to get solution: ' + str(failed_solutions), end='')
                 print(', Iterations to solve: ' + str(failed_solves))
                 return board, solution, actual_difficulty, techniques
             else:
                 failed_solves += 1
-                if failed_solves % 50 == 0:
+                if failed_solves % 20000 == 0:
+                    print('\n.', end='')
+                elif failed_solves % 200 == 0:
                     print('.', end='')
 
 
 def hide_cells(solution):
     """Returns the complete solution but with a random number (and location) of givens replaced with candidates"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+    # Written by Christopher Breen for Sprint 1
     # randomly choose number of cells to hide; need minimum 17 visible numbers of 81 total (64 hidden)
     # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
     # puzzles must have at minimum 17 clues to be solvable (64 hidden)
@@ -76,11 +78,10 @@ def hide_cells(solution):
         row = random.randint(0, 8)
         col = random.randint(0, 8)
         if not isinstance(board[row][col], list):
-            # we grabbed a random row and col, and it's not one we have already removed
+            # we grabbed a random row and col, it's not one we have already removed
             counter += 1
             # change the single int to a nested list of pencil marks
             board[row][col] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
     return board
 
 
@@ -204,8 +205,8 @@ if __name__ == "__main__":
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # puzzle: 8321
-    # custom = custom_board('?6?7???1???759????954??1287????6?8??4?2?5?????1???9?522????59?83??????2???5?4????')
+    # puzzle: 7314
+    # custom = custom_board('9?????8????6??1?3??4??2????3????6?7???7???5???5?7????1????3??9??1?4??2????4?????8')
 
     if custom:
         print(custom)
@@ -213,7 +214,7 @@ if __name__ == "__main__":
         print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(1000):  # change loop range to fit your needs
+        for i in range(1):  # change loop range to fit your needs
             # create_game will loop indefinitely until it creates a valid puzzle
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
@@ -241,6 +242,6 @@ if __name__ == "__main__":
             #    print(board_string)
             #    # break
 
-            if actual_difficulty == '3':
+            if actual_difficulty > '2':
                 print(board_string)
-                # break
+                break

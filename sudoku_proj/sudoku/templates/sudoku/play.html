@@ -387,8 +387,8 @@
             success: function(msg) {
                 let hints = parseInt(sessionStorage.getItem("hints")) + 1;
                 sessionStorage.setItem("hints", hints.toString());
-                // alert(msg);
-                console.log(msg);
+                alert(msg);
+                //console.log(msg);
             },
         });
     }

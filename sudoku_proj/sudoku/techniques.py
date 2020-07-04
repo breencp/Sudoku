@@ -1,6 +1,6 @@
 # file: techniques.py
 # author: Christopher Breen
-# last updated: June 23, 2020
+# last updated: July 3, 2020
 import copy
 import math
 
@@ -74,6 +74,13 @@ def solvable_puzzle(puzzle_to_solve):
 
         # Level 4 Difficulty
         # Hidden Quad
+        if not progress:
+            if hidden_quad(puzzle_to_solve):
+                techniques_utilized.update({'hidden_quad': 'True'})
+                progress = True
+                if actual_difficulty < '4':
+                    actual_difficulty = '4'
+
         # X-Wing
         # Swordfish
         # XY-Wing
@@ -276,7 +283,7 @@ def naked_pair(solving_puzzle, hints=False):
 def omission(solving_puzzle, hints=False):
     """If the only cells in a row for a given number lie in the same block,
     all other cells in the block must not contain that number"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+    # Written by Christopher Breen for Sprint 1, last updated July 2, 2020 for Sprint 2
     progress = False
     for num in range(1, 9):
         for row in range(9):
@@ -308,9 +315,8 @@ def omission(solving_puzzle, hints=False):
                             if isinstance(solving_puzzle[y][x], list):
                                 if num in solving_puzzle[y][x]:
                                     if hints:
-                                        return 'The number ' + str(num) + \
-                                               ' can be removed from Row ' + \
-                                               str(y + 1) + ', Col ' + str(x + 1) + ' (Omission)'
+                                        return 'Omission can be applied between Row ' + str(
+                                            row + 1) + ' and Block ' + str(get_block(y, x) + 1)
                                     else:
                                         solving_puzzle[y][x].remove(num)
                                         progress = True
@@ -345,14 +351,13 @@ def omission(solving_puzzle, hints=False):
                         break  # this number is solved
             if constrained_to_block:
                 for x in range(bx, bx + 3):
-                    if x is not col:  # skip over row we found the number in
+                    if x is not col:  # skip over col we found the number in
                         for y in range(by, by + 3):
                             if isinstance(solving_puzzle[y][x], list):
                                 if num in solving_puzzle[y][x]:
                                     if hints:
-                                        return 'The number ' + str(num) + \
-                                               ' can be removed from Row ' + \
-                                               str(y + 1) + ', Col ' + str(x + 1) + ' (Omission)'
+                                        return 'Omission can be applied between Column ' + str(
+                                            col + 1) + ' and Block ' + str(get_block(y, x) + 1)
                                     else:
                                         solving_puzzle[y][x].remove(num)
                                         progress = True
@@ -395,9 +400,8 @@ def omission(solving_puzzle, hints=False):
                             # we are not in the block of constrained number
                             if num in solving_puzzle[row][x]:
                                 if hints:
-                                    return 'The number ' + str(num) + \
-                                           ' can be removed from Row ' + \
-                                           str(row + 1) + ', Col ' + str(x + 1) + ' (Omission)'
+                                    return 'Omission can be applied between Row ' + str(
+                                        row + 1) + ' and Block ' + str(get_block(row, x) + 1)
                                 else:
                                     solving_puzzle[row][x].remove(num)
                                     progress = True
@@ -440,9 +444,8 @@ def omission(solving_puzzle, hints=False):
                             # we are not in the block of constrained number
                             if num in solving_puzzle[y][col]:
                                 if hints:
-                                    return 'The number ' + str(num) + \
-                                           ' can be removed from Row ' + \
-                                           str(y + 1) + ', Col ' + str(col + 1) + ' (Omission)'
+                                    return 'Omission can be applied between Column ' + str(
+                                        col + 1) + ' and Block ' + str(get_block(y, col) + 1)
                                 else:
                                     solving_puzzle[y][col].remove(num)
                                     progress = True
@@ -454,120 +457,112 @@ def omission(solving_puzzle, hints=False):
 def naked_triplet(solving_puzzle, hints=False):
     """Naked Triplet looks for three candidates who must exist in one of three cells.
     These numbers can be removed from any other cell in the col, row, or block."""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+    # Written by Christopher Breen for Sprint 1, last updated July 3, 2020 for Sprint 2
     progress = False
     cols = set()
     candidates = set()
     for row in range(9):
-        for i in range(7, 448):  # range within 512 we are interested in
-            # looking for all possible combinations of 3 cells in a given row
-            candidates.clear()
-            cols.clear()
-            valid_set_cols = True
-            if num_set_bits(i) == 3:
-                for b in bits(i):
-                    col = get_location_from_bits(b)
-                    cols.add(col)
-                    if isinstance(solving_puzzle[row][col], list):
-                        for digit in solving_puzzle[row][col]:
-                            candidates.add(digit)
-                    else:
-                        # one of our three is already solved, move on
-                        valid_set_cols = False
-                if valid_set_cols and len(candidates) == 3:
-                    # we have three cells with only 3 candidates
-                    for x in range(9):
-                        if x not in cols:
-                            for digit in candidates:
-                                if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
-                                    if not solved_cell(solving_puzzle, row, x):
-                                        if hints:
-                                            return 'The number ' + str(digit) + \
-                                                   ' can be removed from Row ' + \
-                                                   str(row + 1) + ', Col ' + str(x + 1) + ' (Naked Triplet)'
-                                        else:
-                                            solving_puzzle[row][x].remove(digit)
-                                            solved_cell(solving_puzzle, row, x)
-                                            progress = True
+        for i in range(9):
+            for j in range(i + 1, 9):
+                for k in range(j + 1, 9):
+                    valid_set_cols = True
+                    candidates.clear()
+                    cols.clear()
+                    for n in [i, j, k]:
+                        cols.add(n)
+                        if isinstance(solving_puzzle[row][n], list):
+                            for digit in solving_puzzle[row][n]:
+                                candidates.add(digit)
+                        else:
+                            # one of our three is already solved
+                            valid_set_cols = False
+
+                    if valid_set_cols and len(candidates) == 3:
+                        # we have three cells with only 3 candidates
+                        for x in range(9):
+                            if x not in cols:
+                                for digit in candidates:
+                                    if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
+                                        if not solved_cell(solving_puzzle, row, x):
+                                            if hints:
+                                                return 'There is a Naked Triplet in Row ' + str(row + 1)
+                                            else:
+                                                solving_puzzle[row][x].remove(digit)
+                                                solved_cell(solving_puzzle, row, x)
+                                                progress = True
     if progress:
         return progress
 
-    # scan columns
-    progress = False
+    # columns
     rows = set()
     candidates = set()
     for col in range(9):
-        for i in range(7, 448):  # range within 512 we are interested in
-            # looking for all possible combinations of 3 cells in a given col
-            candidates.clear()
-            rows.clear()
-            valid_set_rows = True
-            if num_set_bits(i) == 3:
-                for b in bits(i):
-                    row = get_location_from_bits(b)
-                    rows.add(row)
-                    if isinstance(solving_puzzle[row][col], list):
-                        for digit in solving_puzzle[row][col]:
-                            candidates.add(digit)
-                    else:
-                        # one of our three is already solved, move on
-                        valid_set_rows = False
-                if valid_set_rows and len(candidates) == 3:
-                    # we have three cells with only 3 candidates
-                    for y in range(9):
-                        if y not in rows:
-                            for digit in candidates:
-                                if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
-                                    if not solved_cell(solving_puzzle, y, col):
-                                        if hints:
-                                            return 'The number ' + str(digit) + \
-                                                   ' can be removed from Row ' + \
-                                                   str(y + 1) + ', Col ' + str(col + 1) + ' (Naked Triplet)'
-                                        else:
-                                            solving_puzzle[y][col].remove(digit)
-                                            solved_cell(solving_puzzle, y, col)
-                                            progress = True
+        for i in range(9):
+            for j in range(i + 1, 9):
+                for k in range(j + 1, 9):
+                    valid_set_rows = True
+                    candidates.clear()
+                    rows.clear()
+                    for n in [i, j, k]:
+                        rows.add(n)
+                        if isinstance(solving_puzzle[n][col], list):
+                            for digit in solving_puzzle[n][col]:
+                                candidates.add(digit)
+                        else:
+                            # one of our three is already solved
+                            valid_set_rows = False
+
+                    if valid_set_rows and len(candidates) == 3:
+                        # we have three cells with only 3 candidates
+                        for y in range(9):
+                            if y not in rows:
+                                for digit in candidates:
+                                    if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
+                                        if not solved_cell(solving_puzzle, y, col):
+                                            if hints:
+                                                return 'There is a Naked Triplet in Column ' + str(col + 1)
+                                            else:
+                                                solving_puzzle[y][col].remove(digit)
+                                                solved_cell(solving_puzzle, y, col)
+                                                progress = True
     if progress:
         return progress
 
-    # scan blocks
-    progress = False
-    candidates = set()
+    # blocks
     locations = set()
+    candidates = set()
     for block in range(9):
-        for i in range(7, 448):  # range within 512 we are interested in
-            # looking for all possible combinations of 3 cells in a given block
-            candidates.clear()
-            locations.clear()
-            valid_combo = True
-            if num_set_bits(i) == 3:
-                for b in bits(i):
-                    row, col = get_location_from_bits(b, block)
-                    locations.add(str(row) + (str(col)))
-                    if isinstance(solving_puzzle[row][col], list):
-                        for digit in solving_puzzle[row][col]:
-                            candidates.add(digit)
-                    else:
-                        # one of our three is already solved, move on
-                        valid_combo = False
-                if valid_combo and len(candidates) == 3:
-                    # we have three cells with only 3 candidates
-                    yi = math.floor(block / 3) * 3
-                    xi = (block % 3) * 3
-                    for y in range(yi, yi + 3):
-                        for x in range(xi, xi + 3):
-                            if (str(y) + (str(x))) not in locations:
-                                for digit in candidates:
-                                    if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
-                                        if not solved_cell(solving_puzzle, y, x):
-                                            if hints:
-                                                return 'The number ' + str(digit) + \
-                                                       ' can be removed from Row ' + \
-                                                       str(y + 1) + ', Col ' + str(x + 1) + ' (Naked Triplet)'
-                                            else:
-                                                solving_puzzle[y][x].remove(digit)
-                                                solved_cell(solving_puzzle, y, x)
-                                                progress = True
+        for i in range(9):
+            for j in range(i + 1, 9):
+                for k in range(j + 1, 9):
+                    valid_set = True
+                    candidates.clear()
+                    locations.clear()
+                    for n in [i, j, k]:
+                        row, col = block_to_coords(block, n)
+                        locations.add(str(row) + (str(col)))
+                        if isinstance(solving_puzzle[row][col], list):
+                            for digit in solving_puzzle[row][col]:
+                                candidates.add(digit)
+                        else:
+                            # one of our three is already solved
+                            valid_set = False
+
+                    if valid_set and len(candidates) == 3:
+                        # we have three cells with only 3 candidates
+                        yi, xi = block_to_coords(block, 0)
+                        for y in range(yi, yi + 3):
+                            for x in range(xi, xi + 3):
+                                if (str(y) + str(x)) not in locations:
+                                    for digit in candidates:
+                                        if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
+                                            if not solved_cell(solving_puzzle, y, x):
+                                                if hints:
+                                                    return 'There is a Naked Triplet in Block ' + get_block(y, x) + 1
+                                                else:
+                                                    solving_puzzle[y][x].remove(digit)
+                                                    solved_cell(solving_puzzle, y, x)
+                                                    progress = True
     return progress
 
 
@@ -596,15 +591,13 @@ def hidden_pair(solving_puzzle, hints=False):
                         col2 = digit_locations[i][1]
                         if len(solving_puzzle[row][col1]) > 2:
                             if hints:
-                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row) \
-                                       + ' Col ' + str(col1)
+                                return 'There is a Hidden Pair in Row ' + str(row + 1)
                             else:
                                 solving_puzzle[row][col1] = [i, j]
                                 progress = True
                         if len(solving_puzzle[row][col2]) > 2:
                             if hints:
-                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row) \
-                                       + ' Col ' + str(col2)
+                                return 'There is a Hidden Pair in Row ' + str(row + 1)
                             else:
                                 solving_puzzle[row][col2] = [i, j]
                                 progress = True
@@ -632,15 +625,13 @@ def hidden_pair(solving_puzzle, hints=False):
                         row2 = digit_locations[i][1]
                         if len(solving_puzzle[row1][col]) > 2:
                             if hints:
-                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row1) \
-                                       + ' Col ' + str(col)
+                                return 'There is a Hidden Pair in Column ' + str(col + 1)
                             else:
                                 solving_puzzle[row1][col] = [i, j]
                                 progress = True
                         if len(solving_puzzle[row2][col]) > 2:
                             if hints:
-                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row2) \
-                                       + ' Col ' + str(col)
+                                return 'There is a Hidden Pair in Column ' + str(col + 1)
                             else:
                                 solving_puzzle[row2][col] = [i, j]
                                 progress = True
@@ -673,15 +664,13 @@ def hidden_pair(solving_puzzle, hints=False):
                         col2 = digit_locations[i][1][1]
                         if len(solving_puzzle[row1][col1]) > 2:
                             if hints:
-                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row1) \
-                                       + ' Col ' + str(col1)
+                                return 'There is a Hidden Pair in Block ' + str(get_block(row1, col1) + 1)
                             else:
                                 solving_puzzle[row1][col1] = [i, j]
                                 progress = True
                         if len(solving_puzzle[row2][col2]) > 2:
                             if hints:
-                                return 'The Hidden Pair (' + str(i) + ', ' + str(j) + ' exists in Row ' + str(row2) \
-                                       + ' Col ' + str(col2)
+                                return 'There is a Hidden Pair in Block ' + str(get_block(row2, col2) + 1)
                             else:
                                 solving_puzzle[row2][col2] = [i, j]
                                 progress = True
@@ -695,114 +684,115 @@ def hidden_pair(solving_puzzle, hints=False):
 def naked_quad(solving_puzzle, hints=False):
     """Naked Quad looks for four candidates who must exist in one of four cells.
     These numbers can be removed from any other cell in the col, row, or block."""
-    # Written by Christopher Breen for Sprint 2, last updated June 29, 2020
+    # Written by Christopher Breen for Sprint 2, last updated July 3, 2020
     progress = False
     cols = set()
     candidates = set()
     for row in range(9):
-        for i in range(7, 448):  # range within 512 we are interested in
-            # looking for all possible combinations of 4 cells in a given row
-            candidates.clear()
-            cols.clear()
-            valid_set_cols = True
-            if num_set_bits(i) == 4:
-                for b in bits(i):
-                    col = get_location_from_bits(b)
-                    cols.add(col)
-                    if isinstance(solving_puzzle[row][col], list):
-                        for digit in solving_puzzle[row][col]:
-                            candidates.add(digit)
-                    else:
-                        # one of our four is already solved, move on
-                        valid_set_cols = False
-                if valid_set_cols and len(candidates) == 4:
-                    # we have four cells with only 4 candidates
-                    for x in range(9):
-                        if x not in cols:
-                            for digit in candidates:
-                                if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
-                                    if not solved_cell(solving_puzzle, row, x):
-                                        if hints:
-                                            return 'There is a Naked Quad in Row ' + str(row + 1)
-                                        else:
-                                            solving_puzzle[row][x].remove(digit)
-                                            solved_cell(solving_puzzle, row, x)
-                                            progress = True
+        for i in range(9):
+            for j in range(i + 1, 9):
+                for k in range(j + 1, 9):
+                    for m in range(k + 1, 9):
+                        valid_set_cols = True
+                        candidates.clear()
+                        cols.clear()
+                        for n in [i, j, k, m]:
+                            cols.add(n)
+                            if isinstance(solving_puzzle[row][n], list):
+                                for digit in solving_puzzle[row][n]:
+                                    candidates.add(digit)
+                            else:
+                                # one of our four is already solved
+                                valid_set_cols = False
+
+                        if valid_set_cols and len(candidates) == 4:
+                            # we have four cells with only 4 candidates
+                            for x in range(9):
+                                if x not in cols:
+                                    for digit in candidates:
+                                        if isinstance(solving_puzzle[row][x], list) and digit in solving_puzzle[row][x]:
+                                            if not solved_cell(solving_puzzle, row, x):
+                                                if hints:
+                                                    return 'There is a Naked Quad in Row ' + str(row + 1)
+                                                else:
+                                                    solving_puzzle[row][x].remove(digit)
+                                                    solved_cell(solving_puzzle, row, x)
+                                                    progress = True
     if progress:
         return progress
 
-    # scan columns
-    progress = False
+    # columns
     rows = set()
     candidates = set()
     for col in range(9):
-        for i in range(7, 448):  # range within 512 we are interested in
-            # looking for all possible combinations of 4 cells in a given col
-            candidates.clear()
-            rows.clear()
-            valid_set_rows = True
-            if num_set_bits(i) == 4:
-                for b in bits(i):
-                    row = get_location_from_bits(b)
-                    rows.add(row)
-                    if isinstance(solving_puzzle[row][col], list):
-                        for digit in solving_puzzle[row][col]:
-                            candidates.add(digit)
-                    else:
-                        # one of our four is already solved, move on
-                        valid_set_rows = False
-                if valid_set_rows and len(candidates) == 4:
-                    # we have four cells with only 4 candidates
-                    for y in range(9):
-                        if y not in rows:
-                            for digit in candidates:
-                                if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
-                                    if not solved_cell(solving_puzzle, y, col):
-                                        if hints:
-                                            return 'There is a Naked Quad in Column ' + str(col + 1)
-                                        else:
-                                            solving_puzzle[y][col].remove(digit)
-                                            solved_cell(solving_puzzle, y, col)
-                                            progress = True
+        for i in range(9):
+            for j in range(i + 1, 9):
+                for k in range(j + 1, 9):
+                    for m in range(k + 1, 9):
+                        valid_set_rows = True
+                        candidates.clear()
+                        rows.clear()
+                        for n in [i, j, k, m]:
+                            rows.add(n)
+                            if isinstance(solving_puzzle[n][col], list):
+                                for digit in solving_puzzle[n][col]:
+                                    candidates.add(digit)
+                            else:
+                                # one of our four is already solved
+                                valid_set_rows = False
+
+                        if valid_set_rows and len(candidates) == 4:
+                            # we have four cells with only 4 candidates
+                            for y in range(9):
+                                if y not in rows:
+                                    for digit in candidates:
+                                        if isinstance(solving_puzzle[y][col], list) and digit in solving_puzzle[y][col]:
+                                            if not solved_cell(solving_puzzle, y, col):
+                                                if hints:
+                                                    return 'There is a Naked Quad in Column ' + str(col + 1)
+                                                else:
+                                                    solving_puzzle[y][col].remove(digit)
+                                                    solved_cell(solving_puzzle, y, col)
+                                                    progress = True
     if progress:
         return progress
 
-    # scan blocks
-    progress = False
-    candidates = set()
+    # blocks
     locations = set()
+    candidates = set()
     for block in range(9):
-        for i in range(7, 448):  # range within 512 we are interested in
-            # looking for all possible combinations of 4 cells in a given block
-            candidates.clear()
-            locations.clear()
-            valid_combo = True
-            if num_set_bits(i) == 4:
-                for b in bits(i):
-                    row, col = get_location_from_bits(b, block)
-                    locations.add(str(row) + (str(col)))
-                    if isinstance(solving_puzzle[row][col], list):
-                        for digit in solving_puzzle[row][col]:
-                            candidates.add(digit)
-                    else:
-                        # one of our four is already solved, move on
-                        valid_combo = False
-                if valid_combo and len(candidates) == 4:
-                    # we have four cells with only 4 candidates
-                    yi = math.floor(block / 3) * 3
-                    xi = (block % 3) * 3
-                    for y in range(yi, yi + 3):
-                        for x in range(xi, xi + 3):
-                            if (str(y) + (str(x))) not in locations:
-                                for digit in candidates:
-                                    if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
-                                        if not solved_cell(solving_puzzle, y, x):
-                                            if hints:
-                                                return 'There is a Naked Quad in Block ' + get_block(y, x) + 1
-                                            else:
-                                                solving_puzzle[y][x].remove(digit)
-                                                solved_cell(solving_puzzle, y, x)
-                                                progress = True
+        for i in range(9):
+            for j in range(i + 1, 9):
+                for k in range(j + 1, 9):
+                    for m in range(k + 1, 9):
+                        valid_set = True
+                        candidates.clear()
+                        locations.clear()
+                        for n in [i, j, k, m]:
+                            row, col = block_to_coords(block, n)
+                            locations.add(str(row) + (str(col)))
+                            if isinstance(solving_puzzle[row][col], list):
+                                for digit in solving_puzzle[row][col]:
+                                    candidates.add(digit)
+                            else:
+                                # one of our four is already solved
+                                valid_set = False
+
+                        if valid_set and len(candidates) == 4:
+                            # we have four cells with only 4 candidates
+                            yi, xi = block_to_coords(block, 0)
+                            for y in range(yi, yi + 3):
+                                for x in range(xi, xi + 3):
+                                    if (str(y) + str(x)) not in locations:
+                                        for digit in candidates:
+                                            if isinstance(solving_puzzle[y][x], list) and digit in solving_puzzle[y][x]:
+                                                if not solved_cell(solving_puzzle, y, x):
+                                                    if hints:
+                                                        return 'There is a Naked Quad in Block ' + get_block(y, x) + 1
+                                                    else:
+                                                        solving_puzzle[y][x].remove(digit)
+                                                        solved_cell(solving_puzzle, y, x)
+                                                        progress = True
     return progress
 
 
@@ -945,70 +935,202 @@ def hidden_triplet(solving_puzzle, hints=False):
     return progress
 
 
-def get_location_from_bits(b, block=False):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    # block 0, 1, 2: y = 0, x = 0, 3, 6
-    # block 3, 4, 5: y = 3, x = 0, 3, 6
-    # block 6, 7, 8: y = 6, x = 0, 3, 6
-    if block is not False:
+def hidden_quad(solving_puzzle, hints=False):
+    """Four cells in same row/col/block that contain the only four locations for four numbers indicates those same
+    four cells must not contain any of the other remaining candidates"""
+    # Written by Christopher Breen for Sprint 3, last updated July 2, 2020
+
+    # scan row
+    progress = False
+    for row in range(9):
+        # digit locs len(10) to skip index 0
+        digit_locations = [[], [], [], [], [], [], [], [], [], []]
+        for digit in range(1, 10):
+            for col in range(9):
+                if isinstance(solving_puzzle[row][col], list):
+                    if digit in solving_puzzle[row][col]:
+                        # add col digit appears in
+                        digit_locations[digit].append(col)
+        # finished with the row, look for 4 digits that only exist in same 4 cells
+        for i in range(1, 10):
+            for j in range(i + 1, 10):
+                for k in range(j + 1, 10):
+                    for m in range(k + 1, 10):
+                        if i != j and i != k and i != m and j != k and j != m and k != m and \
+                                digit_locations[i] == digit_locations[j] == digit_locations[k] == digit_locations[m]:
+                            if len(digit_locations[i]) == 4:
+                                col1 = digit_locations[i][0]
+                                col2 = digit_locations[i][1]
+                                col3 = digit_locations[i][2]
+                                col4 = digit_locations[i][3]
+                                if len(solving_puzzle[row][col1]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Row ' + str(row + 1)
+                                    else:
+                                        solving_puzzle[row][col1] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row][col2]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Row ' + str(row + 1)
+                                    else:
+                                        solving_puzzle[row][col2] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row][col3]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Row ' + str(row + 1)
+                                    else:
+                                        solving_puzzle[row][col3] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row][col4]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Row ' + str(row + 1)
+                                    else:
+                                        solving_puzzle[row][col4] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if progress:
+                                    return progress
+        digit_locations.clear()
+
+    # scan col
+    progress = False
+    for col in range(9):
+        digit_locations = [[], [], [], [], [], [], [], [], [], []]
+        for digit in range(1, 10):
+            for row in range(9):
+                if isinstance(solving_puzzle[row][col], list):
+                    if digit in solving_puzzle[row][col]:
+                        # keep track of each location for each digit
+                        digit_locations[digit].append(row)
+        # finished with the col, look for 4 digits that only exist in same 4 cells
+        for i in range(1, 10):
+            for j in range(i + 1, 10):
+                for k in range(j + 1, 10):
+                    for m in range(k + 1, 10):
+                        if i != j and i != k and i != m and j != k and j != m and k != m and \
+                                digit_locations[i] == digit_locations[j] == digit_locations[k] == digit_locations[m]:
+                            if len(digit_locations[i]) == 4:
+                                row1 = digit_locations[i][0]
+                                row2 = digit_locations[i][1]
+                                row3 = digit_locations[i][2]
+                                row4 = digit_locations[i][3]
+                                if len(solving_puzzle[row1][col]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Column ' + str(col + 1)
+                                    else:
+                                        solving_puzzle[row1][col] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row2][col]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Column ' + str(col + 1)
+                                    else:
+                                        solving_puzzle[row2][col] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row3][col]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Column ' + str(col + 1)
+                                    else:
+                                        solving_puzzle[row3][col] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row4][col]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Column ' + str(col + 1)
+                                    else:
+                                        solving_puzzle[row3][col] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if progress:
+                                    return progress
+        digit_locations.clear()
+
+    # scan block
+    progress = False
+    for block in range(9):
         by = math.floor(block / 3) * 3
         bx = (block % 3) * 3
+        digit_locations = [[], [], [], [], [], [], [], [], [], []]
+        for digit in range(1, 10):
+            for row in range(by, by + 3):
+                for col in range(bx, bx + 3):
+                    if isinstance(solving_puzzle[row][col], list):
+                        if digit in solving_puzzle[row][col]:
+                            # keep track of each location for each digit
+                            digit_locations[digit].append((row, col))
 
-        if b == 1:
-            return by + 2, bx + 2
-        if b == 2:
-            return by + 2, bx + 1
-        if b == 4:
-            return by + 2, bx
-        if b == 8:
-            return by + 1, bx + 2
-        if b == 16:
-            return by + 1, bx + 1
-        if b == 32:
-            return by + 1, bx
-        if b == 64:
-            return by, bx + 2
-        if b == 128:
-            return by, bx + 1
-        if b == 256:
-            return by, bx
-    else:
-        if b == 1:
-            return 8
-        if b == 2:
-            return 7
-        if b == 4:
-            return 6
-        if b == 8:
-            return 5
-        if b == 16:
-            return 4
-        if b == 32:
-            return 3
-        if b == 64:
-            return 2
-        if b == 128:
-            return 1
-        if b == 256:
-            return 0
+        # finished with the block, look for 3 digits that only exist in same 3 cells
+        for i in range(1, 10):
+            for j in range(i + 1, 10):
+                for k in range(j + 1, 10):
+                    for m in range(k + 1, 10):
+                        if i != j and i != k and i != m and j != k and j != m and k != m and \
+                                digit_locations[i] == digit_locations[j] == digit_locations[k] == digit_locations[m]:
+                            if len(digit_locations[i]) == 4:
+                                row1 = digit_locations[i][0][0]
+                                col1 = digit_locations[i][0][1]
+                                row2 = digit_locations[i][1][0]
+                                col2 = digit_locations[i][1][1]
+                                row3 = digit_locations[i][2][0]
+                                col3 = digit_locations[i][2][1]
+                                row4 = digit_locations[i][3][0]
+                                col4 = digit_locations[i][3][1]
+                                if len(solving_puzzle[row1][col1]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Block ' + str(get_block(row1, col1) + 1)
+                                    else:
+                                        solving_puzzle[row1][col1] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row2][col2]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Block ' + str(get_block(row2, col2) + 1)
+                                    else:
+                                        solving_puzzle[row2][col2] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row3][col3]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Block ' + str(get_block(row3, col3) + 1)
+                                    else:
+                                        solving_puzzle[row3][col3] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if len(solving_puzzle[row4][col4]) > 4:
+                                    if hints:
+                                        return 'There is a Hidden Quad in Block ' + str(get_block(row4, col4) + 1)
+                                    else:
+                                        solving_puzzle[row4][col4] = [i, j, k, m]
+                                        print('HQ', end='')
+                                        progress = True
+                                if progress:
+                                    return progress
+        digit_locations.clear()
+
+    return progress
 
 
-def num_set_bits(n):
-    # use python bitwise operators to determine combinations of three cells in a row/col
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    count = 0
-    while n:
-        count += n & 1
-        n >>= 1
-    return count
-
-
-def bits(n):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    while n:
-        b = n & (~n + 1)
-        yield b
-        n ^= b
+def block_to_coords(block, sequence):
+    """Receives block number 1 through 9 and sequence 1 through 9, both read left to right, top to bottom, and
+    returns the y, x coordinates on the puzzle"""
+    #     0 1 2 3 4 5 6 7 8
+    #     - - - - - - - - -
+    # 0 - 0 1 2 0 1 2 0 1 2
+    # 1 - 3 4 5 3 4 5 3 4 5
+    # 2 - 6 7 8 6 7 8 6 7 8
+    # 3 - 0 1 2 0 1 2 0 1 2
+    # 4 - 3 4 5 3 4 5 3 4 5
+    # 5 - 6 7 8 6 7 8 6 7 8
+    # 6 - 0 1 2 0 1 2 0 1 2
+    # 7 - 3 4 5 3 4 5 3 4 5
+    # 8 - 6 7 8 6 7 8 6 7 8
+    y = (math.floor(block / 3) * 3) + (math.floor(sequence / 3))
+    x = ((block % 3) * 3) + (sequence % 3)
+    return y, x
 
 
 def get_upper_left(row, col):
