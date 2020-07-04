@@ -29,6 +29,12 @@ def get_game(difficulty):
     return puzzles.board, puzzles.solution
 
 
+def retrieve_puzzle(puzzleid):
+    # Written by Ben Brandhorst for Sprint 2, last updated July 3, 2020
+    puzzles = Puzzles.objects.filter(puzzle_id=puzzleid).order_by('?')[0]
+    return puzzles.board, puzzles.solution
+
+
 def save_game(data):
     # Written by Christopher Smith for Sprint 1 with modifications for Sprint 2
     saved_puzzle: Played = Played()

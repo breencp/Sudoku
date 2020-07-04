@@ -1,32 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
-<!--
-   Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
-   -->
-<head>
-    <meta charset="UTF-8">
-    <title>Sudoku Let's Play</title>
-    <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
-    <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-<!--
-   Written by Chris Breen for Sprint 1, last update June 23, 2020
-   -->
-<script>
-    function drawBoard() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-        // store django session data into javascript accessible session
-        let sessionBoard = "{{ request.session.board }}";
-        let start_time = "{{ request.session.start_time }}";
-        sessionStorage.setItem("board", sessionBoard);
-        sessionStorage.setItem("orig_board", sessionBoard);
-        sessionStorage.setItem("start_time", start_time);
-        sessionStorage.setItem("status", "I");
-        sessionStorage.setItem("hints", "0");
-        saveBoard()
+   {% load static %}
+   <!--
+      Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+      -->
+   <head>
+      <meta charset="UTF-8">
+      <title>Sudoku Let's Play</title>
+      <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
+      <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
+   </head>
+   <!--
+      Written by Chris Breen for Sprint 1, last update June 23, 2020
+      -->
+   <script>
+      function drawBoard() {
+          // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
+          // store django session data into javascript accessible session
+          let sessionBoard = "{{ request.session.board }}";
+          let start_time = "{{ request.session.start_time }}";
+          sessionStorage.setItem("board", sessionBoard);
+          sessionStorage.setItem("orig_board", sessionBoard);
+          sessionStorage.setItem("start_time", start_time);
+          sessionStorage.setItem("status", "I");
+          sessionStorage.setItem("hints", "0");
+          saveBoard()
 
         // Draw main puzzle box
         const c = document.getElementById("puzzle");
@@ -418,82 +419,70 @@
         });
     }
 </script>
-<!--
-   Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
-   -->
-<body onload="drawBoard()">
-<nav class="red darken-4" role="navigation">
-    <div class="nav-wrapper">
-        <a class="brand-logo right">Sudoku</a>
-        <ul id="nav-mobile" class="align-left">
-            <li><a href="{% url 'sudoku:index' %}">Home</a></li>
-            <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-            <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-            <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
-        </ul>
-    </div>
-</nav>
-<main>
-    <h1 class="center-align">Welcome {{ request.session.player }}!</h1>
-    <div class="container">
-        <div class="leftSide">
-            <h4><u>Options</u></h4>
-            <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
+   <!--
+      Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+      -->
+   <body onload="drawBoard()">
+      <nav class="red darken-4" role="navigation">
+         <div class="nav-wrapper">
+            <a class="brand-logo right">Sudoku</a>
+            <ul id="nav-mobile" class="align-left">
+               <li> <a href="{% url 'sudoku:index' %}">Home</a></li>
+               <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
+               <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
+               <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
+            </ul>
+         </div>
+      </nav>
+      <main>
+         <h1 class="center-align">Welcome {{ request.session.player }}!</h1>
+         <div class="container">
+            <div class="leftSide">
+               <h4><u>Options</u></h4>
+                <label for="checkboxPencilMarks">Pencil Marks</label><input type="checkbox" id="checkboxPencilMarks"
                                                                         onclick="showHidePencilMarks()" checked><br>
             <p><button onclick="getHint()">Get Hint</button></p>
             <p><button onclick="eraseObvious()">Erase Obvious</button></p>
             <button onclick="verifySolutions()">Verify Solutions</button>
-        </div>
-        <div class="middle">
-            <canvas id="puzzle" width="504" height="503">
-                Browser not supported; Please upgrade to a modern browser.
-            </canvas>
-        </div>
-        <div class="rightSide">
-            <canvas id="scratch" width="56" height="503">
-                Browser not supported; Please upgrade to a modern browser.
-            </canvas>
-        </div>
-    </div>
-</main>
-<footer class="page-footer grey darken-3">
-    <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
-    <div class="container">
-        <h5 class="white-text">Developers</h5>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col s3">
-                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
-                     data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a
-                        class="LI-simple-link"
-                        href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a>
-                </div>
+         </div>
+            <div class="middle">
+               <canvas id="puzzle" width="504" height="503">
+                  Browser not supported; Please upgrade to a modern browser.
+               </canvas>
             </div>
-            <div class="col s1">
+            <div class="rightSide">
+               <canvas id="scratch" width="56" height="503">
+                  Browser not supported; Please upgrade to a modern browser.
+               </canvas>
             </div>
-            <div class="col s3">
-                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
-                     data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link"
-                                                                                       href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher
-                    Breen</a></div>
+         </div>
+      </main>
+      <footer class="page-footer grey darken-3">
+         <div class="container">
+            <h5 class="white-text">Developers</h5>
+         </div>
+         <div class="container">
+            <div class="row">
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a class="LI-simple-link" href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a></div>
+               </div>
+               <div class="col s1">
+               </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link" href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher Breen</a></div>
+               </div>
+               <div class="col s1">
+               </div>
+               <div class="col s3">
+                  <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US" data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a class="LI-simple-link" href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher Smith</a></div>
+               </div>
             </div>
-            <div class="col s1">
+         </div>
+         <div class="footer-copyright">
+            <div class="container">
+               © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
             </div>
-            <div class="col s3">
-                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
-                     data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a
-                        class="LI-simple-link"
-                        href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher
-                    Smith</a></div>
-            </div>
-        </div>
-    </div>
-    <div class="footer-copyright">
-        <div class="container">
-            © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
-        </div>
-    </div>
-</footer>
-</body>
+         </div>
+      </footer>
+   </body>
 </html>
