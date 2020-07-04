@@ -121,7 +121,7 @@ def sanitized_puzzleid(puzzleid):
 
 
 def leaderboard(request):
-    # Written by Christopher Smith
+    # Written by Christopher Smith and modified for Sprint 2
     diff1_record1 = calculate_leaders(1)[0]
     diff1_record2 = calculate_leaders(1)[1]
     diff1_record3 = calculate_leaders(1)[2]
@@ -132,7 +132,11 @@ def leaderboard(request):
     diff2_record3 = calculate_leaders(2)[2]
     diff2_record4 = calculate_leaders(2)[3]
     diff2_record5 = calculate_leaders(2)[4]
-
+    diff3_record1 = calculate_leaders(3)[0]
+    diff3_record2 = calculate_leaders(3)[1]
+    diff3_record3 = calculate_leaders(3)[2]
+    diff3_record4 = calculate_leaders(3)[3]
+    diff3_record5 = calculate_leaders(3)[4]
     return render(request, 'sudoku/leaderboard.html',
                   {'diff1_record1': diff1_record1,
                    'diff1_record2': diff1_record2,
@@ -143,7 +147,12 @@ def leaderboard(request):
                    'diff2_record2': diff2_record2,
                    'diff2_record3': diff2_record3,
                    'diff2_record4': diff2_record4,
-                   'diff2_record5': diff2_record5})
+                   'diff2_record5': diff2_record5,
+                   'diff3_record1': diff3_record1,
+                   'diff3_record2': diff3_record2,
+                   'diff3_record3': diff3_record3,
+                   'diff3_record4': diff3_record4,
+                   'diff3_record5': diff3_record5})
 
 
 def play(request):
