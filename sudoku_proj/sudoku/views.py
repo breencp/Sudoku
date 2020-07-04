@@ -36,8 +36,7 @@ def new_game(request):
 
 def puzzleload(request):
     # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
-    puzzleID = request.POST.get('puzzleID')
-    request.session['puzzleID'] = request.POST['puzzleID']
+    request.session['puzzleID'] = sanitized_puzzleid(request.POST['puzzleID'])
     return render(request, 'sudoku/puzzleload.html', )
 
 
@@ -82,9 +81,9 @@ def load_puzzle(request):
         })
     new_board, solution = retrieve_puzzle(puzzleid)
     request.session['player'] = sanitized_player(request.POST['player_name'])
-    request.session['orig_board'] = new_board
-    request.session['board'] = new_board
-    request.session['solution'] = solution
+    request.session['orig_board'] = json.loads(new_board)
+    request.session['board'] = json.loads(new_board)
+    request.session['solution'] = json.loads(solution)
     request.session['start_time'] = round(time.time())
     if 'end_time' in request.session:
         del request.session['end_time']
@@ -110,6 +109,15 @@ def sanitized_player(player):
         return match[0]
     else:
         return 'Anonymous'
+
+def sanitized_puzzleid(puzzleid):
+    # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
+    regex = r"^[0-9]+$"
+    match = re.fullmatch(regex, puzzleid)
+    if match:
+        return str(puzzleid)
+    else:
+        return False
 
 
 def leaderboard(request):
