@@ -33,11 +33,13 @@ def new_game(request):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/newgame.html')
 
+
 def puzzleload(request):
     # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
     puzzleID = request.POST.get('puzzleID')
     request.session['puzzleID'] = request.POST['puzzleID']
-    return render(request, 'sudoku/puzzleload.html',)
+    return render(request, 'sudoku/puzzleload.html', )
+
 
 def make_game(request):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
@@ -90,7 +92,6 @@ def load_puzzle(request):
     request.session['status'] = 'I'
     request.session['hints'] = 0
     return HttpResponseRedirect(reverse('sudoku:play'))
-
 
 
 def sanitized_diff(diff):

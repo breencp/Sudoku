@@ -205,7 +205,6 @@ if __name__ == "__main__":
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # puzzle: 7314
     # custom = custom_board('9?????8????6??1?3??4??2????3????6?7???7???5???5?7????1????3??9??1?4??2????4?????8')
 
     if custom:
@@ -214,7 +213,7 @@ if __name__ == "__main__":
         print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(1):  # change loop range to fit your needs
+        for i in range(250):  # change loop range to fit your needs
             # create_game will loop indefinitely until it creates a valid puzzle
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,

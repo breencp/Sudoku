@@ -180,7 +180,6 @@ def hidden_single(solving_puzzle, hints=False):
                         else:
                             solving_puzzle[row][col] = cell_possibles[i]
                             return True
-
     return False
 
 
