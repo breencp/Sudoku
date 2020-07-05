@@ -105,6 +105,46 @@
                </table>
             </div>
          </div>
+         <div class="container">
+            <div class="row">
+               <h1 class="center-align">Hard Puzzles</h1>
+               <table class="table_fields">
+                  <tr class="table_fields_top">
+                     <td> Username</td>
+                     <td>Puzzle ID</td>
+                     <td>Time to Complete</td>
+                  </tr>
+                  <form action="{% url 'sudoku:puzzleload' %}" method="post">
+                     <tr>
+                        {% csrf_token %}
+                        <td>{{ diff3_record1.user }} </td>
+                        <td><input type='submit' name="puzzleID" value={{ diff3_record1.puzzle_id }}></td>
+                        <td> {{ diff3_record1.completion_time }}</td>
+                     </tr>
+                     <tr>
+                        <td>{{ diff3_record2.user }} </td>
+                        <td><input type='submit' name="puzzleID" value={{ diff3_record2.puzzle_id }}></td>
+                        <td> {{ diff3_record2.completion_time }}</td>
+                     </tr>
+                     <tr>
+                        <td>{{ diff3_record3.user }} </td>
+                        <td><input type='submit' name="puzzleID" value={{ diff3_record3.puzzle_id }}></td>
+                        <td> {{ diff3_record3.completion_time }}</td>
+                     </tr>
+                     <tr>
+                        <td>{{ diff3_record4.user }} </td>
+                        <td><input type='submit' name="puzzleID" value={{ diff3_record4.puzzle_id }}></td>
+                        <td> {{ diff3_record4.completion_time }}</td>
+                     </tr>
+                     <tr>
+                        <td>{{ diff3_record5.user }} </td>
+                        <td><input type='submit' name="puzzleID" value={{ diff3_record5.puzzle_id }}></td>
+                        <td> {{ diff3_record5.completion_time }}</td>
+                  </form>
+                  </tr>
+               </table>
+            </div>
+         </div>
          <script>
             function loadGame(puzzleID) {
                 var inputText = document.getElementById("puzzleID");
