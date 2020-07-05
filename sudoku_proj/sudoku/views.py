@@ -96,7 +96,7 @@ def load_puzzle(request):
 
 def sanitized_diff(diff):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    if 0 < int(diff) < 4:  # set upper bound to difficulty level not yet ready
+    if 0 < int(diff) < 5:  # set upper bound to difficulty level not yet ready
         return str(diff)
     else:
         return False
