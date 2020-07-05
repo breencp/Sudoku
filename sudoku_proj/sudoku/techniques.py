@@ -1,6 +1,6 @@
 # file: techniques.py
 # author: Christopher Breen
-# last updated: July 3, 2020
+# last updated: July 5, 2020
 import copy
 import math
 
@@ -88,6 +88,12 @@ def solvable_puzzle(puzzle_to_solve):
                 if actual_difficulty < '4':
                     actual_difficulty = '4'
         # Swordfish
+        if not progress:
+            if swordfish(puzzle_to_solve):
+                techniques_utilized.update({'swordfish': 'True'})
+                progress = True
+                if actual_difficulty < '4':
+                    actual_difficulty = '4'
         # XY-Wing
         # Unique Rectangle
 
@@ -287,7 +293,7 @@ def naked_pair(solving_puzzle, hints=False):
 def omission(solving_puzzle, hints=False):
     """If the only cells in a row for a given number lie in the same block,
     all other cells in the block must not contain that number"""
-    # Written by Christopher Breen for Sprint 1, last updated July 2, 2020 for Sprint 2
+    # Written by Christopher Breen for Sprint 1, last updated July 5, 2020 for Sprint 2
     progress = False
     for num in range(1, 10):
         for row in range(9):
@@ -1145,75 +1151,97 @@ def swordfish(solving_puzzle, hints=False):
             for row2 in range(row1 + 1, 9):
                 for row3 in range(row2 + 1, 9):
                     locations.clear()
-                    invalid = False
                     for col1 in range(9):
                         for col2 in range(col1 + 1, 9):
                             for col3 in range(col2 + 1, 9):
-                                if isinstance(solving_puzzle[row1][col1], list) and \
-                                        isinstance(solving_puzzle[row1][col2], list) and \
-                                        isinstance(solving_puzzle[row2][col1], list) and \
-                                        isinstance(solving_puzzle[row2][col2], list) and \
-                                        isinstance(solving_puzzle[row3][col3], list):
-                                    if digit in solving_puzzle[row1][col1] or digit in solving_puzzle[row1][col2] or \
-                                            digit in solving_puzzle[row2][col1] or \
-                                            digit in solving_puzzle[row2][col2] or \
-                                            digit in solving_puzzle[row3][col3]:
-                                        # we have six cells where our digit can be,
-                                        # but can it be anywhere else in the two rows?
+                                invalid = False
+                                for y in [row1, row2, row3]:
+                                    digit_count = 0
+                                    for x in [col1, col2, col3]:
+                                        if isinstance(solving_puzzle[y][x], list):
+                                            if digit in solving_puzzle[y][x]:
+                                                digit_count += 1
+                                    if digit_count <= 1:
+                                        invalid = True
+                                if not invalid:
+                                    # we have six cells where our digit exists 2 or more times,
+                                    # but can it be anywhere else in the three rows?
+                                    for x in range(9):
+                                        if x != col1 and x != col2 and x != col3:
+                                            if isinstance(solving_puzzle[row1][x], list):
+                                                if digit in solving_puzzle[row1][x]:
+                                                    invalid = True
+                                            if isinstance(solving_puzzle[row2][x], list):
+                                                if digit in solving_puzzle[row2][x]:
+                                                    invalid = True
+                                            if isinstance(solving_puzzle[row3][x], list):
+                                                if digit in solving_puzzle[row3][x]:
+                                                    invalid = True
+                                    if not invalid:
+                                        for y in range(9):
+                                            if y != row1 and y != row2 and y != row3:
+                                                if isinstance(solving_puzzle[y][col1], list):
+                                                    if digit in solving_puzzle[y][col1]:
+                                                        if hints:
+                                                            return 'There is a Swordfish with the number ' + str(digit)
+                                                        else:
+                                                            solving_puzzle[y][col1].remove(digit)
+                                                            progress = True
+                                                            solved_cell(solving_puzzle, y, col1)
+                                                if isinstance(solving_puzzle[y][col2], list):
+                                                    if digit in solving_puzzle[y][col2]:
+                                                        if hints:
+                                                            return 'There is a Swordfish with the number ' + str(digit)
+                                                        else:
+                                                            solving_puzzle[y][col2].remove(digit)
+                                                            progress = True
+                                                            solved_cell(solving_puzzle, y, col2)
+                                                if isinstance(solving_puzzle[y][col3], list):
+                                                    if digit in solving_puzzle[y][col3]:
+                                                        if hints:
+                                                            return 'There is a Swordfish with the number ' + str(digit)
+                                                        else:
+                                                            solving_puzzle[y][col3].remove(digit)
+                                                            progress = True
+                                                            solved_cell(solving_puzzle, y, col3)
+                                    for y in range(9):
+                                        if y != row1 and y != row2 and y != row3:
+                                            if isinstance(solving_puzzle[y][col1], list):
+                                                if digit in solving_puzzle[y][col1]:
+                                                    invalid = True
+                                            if isinstance(solving_puzzle[y][col2], list):
+                                                if digit in solving_puzzle[y][col2]:
+                                                    invalid = True
+                                            if isinstance(solving_puzzle[y][col3], list):
+                                                if digit in solving_puzzle[y][col3]:
+                                                    invalid = True
+                                    if not invalid:
                                         for x in range(9):
                                             if x != col1 and x != col2 and x != col3:
                                                 if isinstance(solving_puzzle[row1][x], list):
                                                     if digit in solving_puzzle[row1][x]:
-                                                        invalid = True
+                                                        if hints:
+                                                            return 'There is a Swordfish with the number ' + str(digit)
+                                                        else:
+                                                            solving_puzzle[row1][x].remove(digit)
+                                                            progress = True
+                                                            solved_cell(solving_puzzle, row1, x)
                                                 if isinstance(solving_puzzle[row2][x], list):
                                                     if digit in solving_puzzle[row2][x]:
-                                                        invalid = True
-                                        if not invalid:
-                                            for y in range(9):
-                                                if y != row1 and y != row2:
-                                                    if isinstance(solving_puzzle[y][col1], list):
-                                                        if digit in solving_puzzle[y][col1]:
-                                                            if hints:
-                                                                return 'There is an X-Wing with the number ' + str(digit)
-                                                            else:
-                                                                solving_puzzle[y][col1].remove(digit)
-                                                                progress = True
-                                                                solved_cell(solving_puzzle, y, col1)
-                                                    if isinstance(solving_puzzle[y][col2], list):
-                                                        if digit in solving_puzzle[y][col2]:
-                                                            if hints:
-                                                                return 'There is an X-Wing with the number ' + str(digit)
-                                                            else:
-                                                                solving_puzzle[y][col2].remove(digit)
-                                                                progress = True
-                                                                solved_cell(solving_puzzle, y, col2)
-                                        for y in range(9):
-                                            if y != row1 and y != row2:
-                                                if isinstance(solving_puzzle[y][col1], list):
-                                                    if digit in solving_puzzle[y][col1]:
-                                                        invalid = True
-                                                if isinstance(solving_puzzle[y][col2], list):
-                                                    if digit in solving_puzzle[y][col2]:
-                                                        invalid = True
-                                        if not invalid:
-                                            for x in range(9):
-                                                if x != col1 and x != col2:
-                                                    if isinstance(solving_puzzle[row1][x], list):
-                                                        if digit in solving_puzzle[row1][x]:
-                                                            if hints:
-                                                                return 'There is an X-Wing with the number ' + str(digit)
-                                                            else:
-                                                                solving_puzzle[row1][x].remove(digit)
-                                                                progress = True
-                                                                solved_cell(solving_puzzle, row1, x)
-                                                    if isinstance(solving_puzzle[row2][x], list):
-                                                        if digit in solving_puzzle[row2][x]:
-                                                            if hints:
-                                                                return 'There is an X-Wing with the number ' + str(digit)
-                                                            else:
-                                                                solving_puzzle[row2][x].remove(digit)
-                                                                progress = True
-                                                                solved_cell(solving_puzzle, row2, x)
+                                                        if hints:
+                                                            return 'There is a Swordfish with the number ' + str(digit)
+                                                        else:
+                                                            solving_puzzle[row2][x].remove(digit)
+                                                            progress = True
+                                                            solved_cell(solving_puzzle, row2, x)
+                                                if isinstance(solving_puzzle[row3][x], list):
+                                                    if digit in solving_puzzle[row3][x]:
+                                                        if hints:
+                                                            return 'There is a Swordfish with the number ' + str(digit)
+                                                        else:
+                                                            solving_puzzle[row3][x].remove(digit)
+                                                            progress = True
+                                                            solved_cell(solving_puzzle, row3, x)
     return progress
 
 

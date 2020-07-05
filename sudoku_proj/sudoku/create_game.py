@@ -206,7 +206,7 @@ if __name__ == "__main__":
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
-    # custom = custom_board('???4??7????3????8?6429?7??1?9???24?????????????81???2?5??2?9346?6????8????1??4???')
+    # custom = custom_board('?5736?2846?4825???28?7?465??924?6???3619?7?42?45132?964?62???75?2?57?46?57864?32?')
 
     if custom:
         print(custom)
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     else:
         start = time.time()
         for i in range(500):  # change loop range to fit your needs
-            # create_game will loop indefinitely until it creates a valid puzzle
+            # create_game will loop until it creates a puzzle we want to break on for testing
             board, solution, actual_difficulty, techniques = create_game()
             data = {'board': board,
                     'solution': solution,
@@ -241,10 +241,6 @@ if __name__ == "__main__":
 
             # used to stop the loop and print board_string for testing on sudoku-solutions.com when creating
             # new techniques.  Comment break line to allow continuous puzzle creation up to i counter.
-            # if 'hidden_pair' in data['techniques']:
-            #    print(board_string)
-            #    # break
-
-            if actual_difficulty > '2':
+            if actual_difficulty == '4' or 'hidden_triplet' in data['techniques'] or 'naked_quad' in data['techniques']:
                 print(board_string)
                 break

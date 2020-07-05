@@ -15,7 +15,7 @@ from django.urls import reverse
 from .gamerecords import read_file, get_game, save_game, retrieve_puzzle
 from .leaderboard import calculate_leaders
 from .techniques import hidden_pair, naked_quad, hidden_triplet
-from .techniques import hidden_quad, xwing
+from .techniques import hidden_quad, xwing, swordfish
 from .techniques import naked_pair, omission, naked_triplet
 from .techniques import naked_single, hidden_single
 
@@ -96,7 +96,7 @@ def load_puzzle(request):
 
 def sanitized_diff(diff):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    if 0 < int(diff) < 5:  # set upper bound to difficulty level not yet ready
+    if 0 < int(diff) < 4:  # set upper bound to difficulty level not yet ready
         return str(diff)
     else:
         return False
@@ -275,12 +275,14 @@ def get_hint(request):
     # replace length one lists with integers
     current_board = convert_board(current_board, 'Int', False)
 
+    # level 1
     result = naked_single(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
     result = hidden_single(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
+    # level 2
     result = naked_pair(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
@@ -290,6 +292,7 @@ def get_hint(request):
     result = naked_triplet(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
+    # level 3
     result = hidden_pair(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
@@ -299,12 +302,17 @@ def get_hint(request):
     result = hidden_triplet(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
+    # level 4
     result = hidden_quad(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
     result = xwing(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
+    result = swordfish(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+
 
     return HttpResponse(json.dumps(
         'Sorry, your on your own.  You may want to Verify Solutions to see if any mistakes have been made.'))
