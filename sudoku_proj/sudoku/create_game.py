@@ -4,6 +4,7 @@
 import copy
 import json
 import math
+import os
 import random
 import time
 from datetime import date
@@ -223,7 +224,10 @@ if __name__ == "__main__":
                     }
 
             # save puzzles in JSON format to a filename of today's date to keep them organized
-            filename = 'puzzles/' + date.today().strftime('%Y%m%d') + '.txt'
+            dev_name = os.environ.get('LOGNAME')
+            if not dev_name:
+                dev_name = '???'
+            filename = 'puzzles/' + date.today().strftime('%Y%m%d_') + dev_name + '.txt'
             with open(filename, 'a+') as f:
                 json.dump(data, f)
                 f.write('\n')

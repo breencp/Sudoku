@@ -15,7 +15,7 @@ from django.urls import reverse
 from .gamerecords import read_file, get_game, save_game, retrieve_puzzle
 from .leaderboard import calculate_leaders
 from .techniques import hidden_pair, naked_quad, hidden_triplet
-from .techniques import hidden_quad
+from .techniques import hidden_quad, xwing
 from .techniques import naked_pair, omission, naked_triplet
 from .techniques import naked_single, hidden_single
 
@@ -96,7 +96,7 @@ def load_puzzle(request):
 
 def sanitized_diff(diff):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    if 0 < int(diff) < 4:  # set upper bound to difficulty level not yet ready
+    if 0 < int(diff) < 5:  # set upper bound to difficulty level not yet ready
         return str(diff)
     else:
         return False
@@ -300,6 +300,9 @@ def get_hint(request):
     if result:
         return HttpResponse(json.dumps(result))
     result = hidden_quad(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = xwing(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
 

@@ -289,7 +289,7 @@ def omission(solving_puzzle, hints=False):
     all other cells in the block must not contain that number"""
     # Written by Christopher Breen for Sprint 1, last updated July 2, 2020 for Sprint 2
     progress = False
-    for num in range(1, 9):
+    for num in range(1, 10):
         for row in range(9):
             # scanning new row, reset block details
             constrained_to_block = True
@@ -320,7 +320,7 @@ def omission(solving_puzzle, hints=False):
                                 if num in solving_puzzle[y][x]:
                                     if hints:
                                         return 'Omission can be applied between Row ' + str(
-                                            row + 1) + ' and Block ' + str(get_block(y, x) + 1)
+                                            y + 1) + ' and Block ' + str(get_block(y, x) + 1)
                                     else:
                                         solving_puzzle[y][x].remove(num)
                                         progress = True
@@ -330,7 +330,7 @@ def omission(solving_puzzle, hints=False):
 
     # if the only cells in a column for a given number lie in the same block,
     # all other cells in the block must not contain that number
-    for num in range(1, 9):
+    for num in range(1, 10):
         for col in range(9):
             # scanning new col, reset block details
             constrained_to_block = True
@@ -361,7 +361,7 @@ def omission(solving_puzzle, hints=False):
                                 if num in solving_puzzle[y][x]:
                                     if hints:
                                         return 'Omission can be applied between Column ' + str(
-                                            col + 1) + ' and Block ' + str(get_block(y, x) + 1)
+                                            x + 1) + ' and Block ' + str(get_block(y, x) + 1)
                                     else:
                                         solving_puzzle[y][x].remove(num)
                                         progress = True
@@ -370,7 +370,7 @@ def omission(solving_puzzle, hints=False):
 
     # if the only cells in a block for a given number lie in the same row,
     # all other cells in the row must not contain that number
-    for num in range(1, 9):
+    for num in range(1, 10):
         for block in range(9):
             # block 0, 1, 2: y = 0, x = 0, 3, 6
             # block 3, 4, 5: y = 3, x = 0, 3, 6
@@ -414,7 +414,7 @@ def omission(solving_puzzle, hints=False):
 
     # if the only cells in a block for a given number lie in the same column,
     # all other cells in the column must not contain that number
-    for num in range(1, 9):
+    for num in range(1, 10):
         for block in range(9):
             # block 0, 1, 2: y = 0, x = 0, 3, 6
             # block 3, 4, 5: y = 3, x = 0, 3, 6
@@ -688,7 +688,7 @@ def hidden_pair(solving_puzzle, hints=False):
 def naked_quad(solving_puzzle, hints=False):
     """Naked Quad looks for four candidates who must exist in one of four cells.
     These numbers can be removed from any other cell in the col, row, or block."""
-    # Written by Christopher Breen for Sprint 2, last updated July 3, 2020
+    # Written by Christopher Breen for Sprint 2, last updated July 5, 2020
     progress = False
     cols = set()
     candidates = set()
@@ -1128,6 +1128,92 @@ def xwing(solving_puzzle, hints=False):
                                                         solving_puzzle[row2][x].remove(digit)
                                                         progress = True
                                                         solved_cell(solving_puzzle, row2, x)
+    return progress
+
+
+def swordfish(solving_puzzle, hints=False):
+    """X-Wing but three rows or columns sharing three positions for the same value"""
+    # Written by Christopher Breen for Sprint 3, last updated July 4, 2020
+    locations = set()
+
+    # uncomment line below for testing
+    # print(board_to_string(solving_puzzle))
+
+    progress = False
+    for digit in range(1, 10):
+        for row1 in range(9):
+            for row2 in range(row1 + 1, 9):
+                for row3 in range(row2 + 1, 9):
+                    locations.clear()
+                    invalid = False
+                    for col1 in range(9):
+                        for col2 in range(col1 + 1, 9):
+                            for col3 in range(col2 + 1, 9):
+                                if isinstance(solving_puzzle[row1][col1], list) and \
+                                        isinstance(solving_puzzle[row1][col2], list) and \
+                                        isinstance(solving_puzzle[row2][col1], list) and \
+                                        isinstance(solving_puzzle[row2][col2], list) and \
+                                        isinstance(solving_puzzle[row3][col3], list):
+                                    if digit in solving_puzzle[row1][col1] or digit in solving_puzzle[row1][col2] or \
+                                            digit in solving_puzzle[row2][col1] or \
+                                            digit in solving_puzzle[row2][col2] or \
+                                            digit in solving_puzzle[row3][col3]:
+                                        # we have six cells where our digit can be,
+                                        # but can it be anywhere else in the two rows?
+                                        for x in range(9):
+                                            if x != col1 and x != col2 and x != col3:
+                                                if isinstance(solving_puzzle[row1][x], list):
+                                                    if digit in solving_puzzle[row1][x]:
+                                                        invalid = True
+                                                if isinstance(solving_puzzle[row2][x], list):
+                                                    if digit in solving_puzzle[row2][x]:
+                                                        invalid = True
+                                        if not invalid:
+                                            for y in range(9):
+                                                if y != row1 and y != row2:
+                                                    if isinstance(solving_puzzle[y][col1], list):
+                                                        if digit in solving_puzzle[y][col1]:
+                                                            if hints:
+                                                                return 'There is an X-Wing with the number ' + str(digit)
+                                                            else:
+                                                                solving_puzzle[y][col1].remove(digit)
+                                                                progress = True
+                                                                solved_cell(solving_puzzle, y, col1)
+                                                    if isinstance(solving_puzzle[y][col2], list):
+                                                        if digit in solving_puzzle[y][col2]:
+                                                            if hints:
+                                                                return 'There is an X-Wing with the number ' + str(digit)
+                                                            else:
+                                                                solving_puzzle[y][col2].remove(digit)
+                                                                progress = True
+                                                                solved_cell(solving_puzzle, y, col2)
+                                        for y in range(9):
+                                            if y != row1 and y != row2:
+                                                if isinstance(solving_puzzle[y][col1], list):
+                                                    if digit in solving_puzzle[y][col1]:
+                                                        invalid = True
+                                                if isinstance(solving_puzzle[y][col2], list):
+                                                    if digit in solving_puzzle[y][col2]:
+                                                        invalid = True
+                                        if not invalid:
+                                            for x in range(9):
+                                                if x != col1 and x != col2:
+                                                    if isinstance(solving_puzzle[row1][x], list):
+                                                        if digit in solving_puzzle[row1][x]:
+                                                            if hints:
+                                                                return 'There is an X-Wing with the number ' + str(digit)
+                                                            else:
+                                                                solving_puzzle[row1][x].remove(digit)
+                                                                progress = True
+                                                                solved_cell(solving_puzzle, row1, x)
+                                                    if isinstance(solving_puzzle[row2][x], list):
+                                                        if digit in solving_puzzle[row2][x]:
+                                                            if hints:
+                                                                return 'There is an X-Wing with the number ' + str(digit)
+                                                            else:
+                                                                solving_puzzle[row2][x].remove(digit)
+                                                                progress = True
+                                                                solved_cell(solving_puzzle, row2, x)
     return progress
 
 
