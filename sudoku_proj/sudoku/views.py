@@ -15,6 +15,7 @@ from django.urls import reverse
 from .gamerecords import read_file, get_game, save_game, retrieve_puzzle
 from .leaderboard import calculate_leaders
 from .techniques import hidden_pair, naked_quad, hidden_triplet
+from .techniques import hidden_quad
 from .techniques import naked_pair, omission, naked_triplet
 from .techniques import naked_single, hidden_single
 
@@ -56,8 +57,8 @@ def make_game(request):
         })
     else:
         # test code: replace new_board = and solution = with new_board, solution = for production
-        # new_board = json.dumps(custom_board('??3?7???584?5????35??8???26??41?5??9?8??6??5?1????26??92???8?6?4????9?37????4?59?'))
-        # solution = json.dumps(custom_board('263471985849526713571893426634185279782964351195732648927358164456219837318647592'))
+        # new_board = json.dumps(custom_board('63214597881??9???4?4??8??1????85????16?274??????96????481529?6?753416??9296738?4?'))
+        # solution = json.dumps(custom_board('632145978817692534945387612324851796169274853578963421481529367753416289296738145'))
         new_board, solution = get_game(difficulty)
         request.session['orig_board'] = json.loads(new_board)
         request.session['board'] = json.loads(new_board)
@@ -209,6 +210,7 @@ def update_board(request):
     if end_time:
         data.update({'end_time': end_time})
 
+    # uncomment save_game when not using custom board for testing, comment when testing or save will crash
     save_game(data)
     return HttpResponse(status=204)
 
@@ -295,6 +297,9 @@ def get_hint(request):
     if result:
         return HttpResponse(json.dumps(result))
     result = hidden_triplet(current_board, hints=True)
+    if result:
+        return HttpResponse(json.dumps(result))
+    result = hidden_quad(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
 
