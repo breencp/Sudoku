@@ -81,7 +81,12 @@ def solvable_puzzle(puzzle_to_solve):
                 if actual_difficulty < '4':
                     actual_difficulty = '4'
         # X-Wing
-
+        if not progress:
+            if xwing(puzzle_to_solve):
+                techniques_utilized.update({'x_wing': 'True'})
+                progress = True
+                if actual_difficulty < '4':
+                    actual_difficulty = '4'
         # Swordfish
         # XY-Wing
         # Unique Rectangle
@@ -1042,6 +1047,87 @@ def hidden_quad(solving_puzzle, hints=False):
                                 return progress
         digit_locations.clear()
 
+    return progress
+
+
+def xwing(solving_puzzle, hints=False):
+    """Two rows or columns with the same number appearing in the same position of both, must not exist elsewhere
+    in those rows or columns"""
+    # Written by Christopher Breen for Sprint 3, last updated July 4, 2020
+    locations = set()
+
+    # uncomment line below for testing
+    # print(board_to_string(solving_puzzle))
+
+    progress = False
+    for digit in range(1, 10):
+        for row1 in range(9):
+            for row2 in range(row1 + 1, 9):
+                locations.clear()
+                invalid = False
+                for col1 in range(9):
+                    for col2 in range(col1 + 1, 9):
+                        if isinstance(solving_puzzle[row1][col1], list) and \
+                                isinstance(solving_puzzle[row1][col2], list) and \
+                                isinstance(solving_puzzle[row2][col1], list) and \
+                                isinstance(solving_puzzle[row2][col2], list):
+                            if digit in solving_puzzle[row1][col1] and digit in solving_puzzle[row1][col2] and \
+                                    digit in solving_puzzle[row2][col1] and digit in solving_puzzle[row2][col2]:
+                                # we have four cells where our digit can be, but can it be anywhere else in the two rows
+                                for x in range(9):
+                                    if x != col1 and x != col2:
+                                        if isinstance(solving_puzzle[row1][x], list):
+                                            if digit in solving_puzzle[row1][x]:
+                                                invalid = True
+                                        if isinstance(solving_puzzle[row2][x], list):
+                                            if digit in solving_puzzle[row2][x]:
+                                                invalid = True
+                                if not invalid:
+                                    for y in range(9):
+                                        if y != row1 and y != row2:
+                                            if isinstance(solving_puzzle[y][col1], list):
+                                                if digit in solving_puzzle[y][col1]:
+                                                    if hints:
+                                                        return 'There is an X-Wing with the number ' + str(digit)
+                                                    else:
+                                                        solving_puzzle[y][col1].remove(digit)
+                                                        progress = True
+                                                        solved_cell(solving_puzzle, y, col1)
+                                            if isinstance(solving_puzzle[y][col2], list):
+                                                if digit in solving_puzzle[y][col2]:
+                                                    if hints:
+                                                        return 'There is an X-Wing with the number ' + str(digit)
+                                                    else:
+                                                        solving_puzzle[y][col2].remove(digit)
+                                                        progress = True
+                                                        solved_cell(solving_puzzle, y, col2)
+                                for y in range(9):
+                                    if y != row1 and y != row2:
+                                        if isinstance(solving_puzzle[y][col1], list):
+                                            if digit in solving_puzzle[y][col1]:
+                                                invalid = True
+                                        if isinstance(solving_puzzle[y][col2], list):
+                                            if digit in solving_puzzle[y][col2]:
+                                                invalid = True
+                                if not invalid:
+                                    for x in range(9):
+                                        if x != col1 and x != col2:
+                                            if isinstance(solving_puzzle[row1][x], list):
+                                                if digit in solving_puzzle[row1][x]:
+                                                    if hints:
+                                                        return 'There is an X-Wing with the number ' + str(digit)
+                                                    else:
+                                                        solving_puzzle[row1][x].remove(digit)
+                                                        progress = True
+                                                        solved_cell(solving_puzzle, row1, x)
+                                            if isinstance(solving_puzzle[row2][x], list):
+                                                if digit in solving_puzzle[row2][x]:
+                                                    if hints:
+                                                        return 'There is an X-Wing with the number ' + str(digit)
+                                                    else:
+                                                        solving_puzzle[row2][x].remove(digit)
+                                                        progress = True
+                                                        solved_cell(solving_puzzle, row2, x)
     return progress
 
 
