@@ -1248,6 +1248,7 @@ def swordfish(solving_puzzle, hints=False):
 def block_to_coords(block, sequence):
     """Receives block number 1 through 9 and sequence 1 through 9, both read left to right, top to bottom, and
     returns the y, x coordinates on the puzzle"""
+    # Written by Christopher Breen for Sprint 2, last updated July 5, 2020
     #     0 1 2 3 4 5 6 7 8
     #     - - - - - - - - -
     # 0 - 0 1 2 0 1 2 0 1 2

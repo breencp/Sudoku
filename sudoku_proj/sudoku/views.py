@@ -32,7 +32,12 @@ def how_to_play(request):
 
 def new_game(request):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    return render(request, 'sudoku/newgame.html')
+    if 'board' in request.session:
+        return render(request, 'sudoku/newgame.html', {
+            'previous_board_in_mem': 'True'
+        })
+    else:
+        return render(request, 'sudoku/newgame.html')
 
 
 def puzzleload(request):
@@ -49,7 +54,6 @@ def make_game(request):
             return render(request, 'sudoku/newgame.html', {
                 'error_message': 'Sorry, that difficulty level is not yet available.'
             })
-
         request.session['player'] = sanitized_player(request.POST['player_name'])
     except KeyError:
         return render(request, 'sudoku/newgame.html', {
@@ -96,9 +100,12 @@ def load_puzzle(request):
 
 def sanitized_diff(diff):
     # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    if 0 < int(diff) < 5:  # set upper bound to difficulty level not yet ready
-        return str(diff)
-    else:
+    try:
+        if 0 < int(diff) < 5:  # set upper bound to difficulty level not yet ready
+            return str(diff)
+        else:
+            return False
+    except ValueError:
         return False
 
 
@@ -110,6 +117,7 @@ def sanitized_player(player):
         return match[0]
     else:
         return 'Anonymous'
+
 
 def sanitized_puzzleid(puzzleid):
     # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
@@ -265,8 +273,9 @@ def upload(request):
 
 
 def get_hint(request):
-    # Written by Christopher Breen for Sprint 2, last updated June 29, 2020
+    # Written by Christopher Breen for Sprint 2, last updated July 6, 2020 for Sprint 3
     # get JavaScript sessionStorage from POST
+    request.session['hints'] = request.session['hints'] + 1
     current_board = json.loads(request.POST.get('board'))
     if corrupted_board(current_board):
         # user may have tampered with JavaScript Session Data
@@ -312,7 +321,6 @@ def get_hint(request):
     result = swordfish(current_board, hints=True)
     if result:
         return HttpResponse(json.dumps(result))
-
 
     return HttpResponse(json.dumps(
         'Sorry, your on your own.  You may want to Verify Solutions to see if any mistakes have been made.'))

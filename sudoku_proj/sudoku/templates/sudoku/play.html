@@ -14,19 +14,22 @@
     <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
 </head>
 <!--
-   Written by Chris Breen for Sprint 1, last update June 23, 2020
+   Written by Chris Breen for Sprint 1, last update July 5, 2020 for Sprint 3
    -->
 <script>
     function drawBoard() {
         // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // store django session data into javascript accessible session
         let sessionBoard = "{{ request.session.board }}";
+        let origBoard = "{{ request.session.orig_board }}";
         let start_time = "{{ request.session.start_time }}";
+        let status = "{{ request.session.status }}";
+        let hints = "{{ request.session.hints }}";
         sessionStorage.setItem("board", sessionBoard);
-        sessionStorage.setItem("orig_board", sessionBoard);
+        sessionStorage.setItem("orig_board", origBoard);
         sessionStorage.setItem("start_time", start_time);
-        sessionStorage.setItem("status", "I");
-        sessionStorage.setItem("hints", "0");
+        sessionStorage.setItem("status", status);
+        sessionStorage.setItem("hints", hints);
         saveBoard()
 
         // Draw main puzzle box

@@ -32,15 +32,14 @@
                <p><strong>{{ error_message }}</strong></p>
                {% endif %}
                <form action="{% url 'sudoku:load_puzzle' %}" method="post">
+                  {% csrf_token %}
                   <div class="input-field">
-                     {% csrf_token %}
                      <label for="player_name" class="black-text">Player Name:</label><br>
                      <input type="text" id="player_name" name="player_name"><br>
                   </div>
                   <p>
                   <div class="input-field">
-                     {% csrf_token %}
-                     <label for="puzzle" class="black-text">Puzzle ID:</label><br>
+                     <label for="puzzleID" class="black-text">Puzzle ID:</label><br>
                      <input type="text" id="puzzleID" name="puzzleID"
                         readonly><br>
                   </div>
