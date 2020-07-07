@@ -157,29 +157,29 @@
                      <form action="{% url 'sudoku:puzzleload' %}" method="post">
                         <tr>
                            {% csrf_token %}
-                           <td>{{ "n/a" }} </td>
-                           <td>{{ "n/a" }} </td>
-                           <td> {{ "n/a" }}</td>
+                           <td>{{ diff4_record1.user }} </td>
+                           <td><input type='submit' name="puzzleID" value={{ diff4_record1.puzzle_id }}></td>
+                           <td> {{ diff4_record1.completion_time }}</td>
                         </tr>
                         <tr>
-                           <td>{{ "n/a" }} </td>
-                           <td>{{ "n/a" }} </td>
-                           <td> {{ "n/a" }}</td>
+                           <td>{{ diff4_record2.user }} </td>
+                           <td><input type='submit' name="puzzleID" value={{ diff4_record2.puzzle_id }}></td>
+                           <td> {{ diff4_record2.completion_time }}</td>
                         </tr>
                         <tr>
-                           <td>{{ "n/a" }} </td>
-                           <td>{{ "n/a" }} </td>
-                           <td> {{ "n/a" }}</td>
+                           <td>{{ diff4_record3.user }} </td>
+                           <td><input type='submit' name="puzzleID" value={{ diff4_record3.puzzle_id }}></td>
+                           <td> {{ diff4_record3.completion_time }}</td>
                         </tr>
                         <tr>
-                           <td>{{ "n/a" }} </td>
-                           <td>{{ "n/a" }} </td>
-                           <td> {{ "n/a" }}</td>
+                           <td>{{ diff4_record4.user }} </td>
+                           <td><input type='submit' name="puzzleID" value={{ diff4_record4.puzzle_id }}></td>
+                           <td> {{ diff4_record4.completion_time }}</td>
                         </tr>
                         <tr>
-                           <td>{{ "n/a" }} </td>
-                           <td>{{ "n/a" }} </td>
-                           <td> {{ "n/a" }}</td>
+                           <td>{{ diff4_record5.user }} </td>
+                           <td><input type='submit' name="puzzleID" value={{ diff4_record5.puzzle_id }}></td>
+                           <td> {{ diff4_record5.completion_time }}</td>
                      </form>
                      </tr>
                   </table>

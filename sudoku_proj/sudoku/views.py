@@ -146,6 +146,11 @@ def leaderboard(request):
     diff3_record3 = calculate_leaders(3)[2]
     diff3_record4 = calculate_leaders(3)[3]
     diff3_record5 = calculate_leaders(3)[4]
+    diff4_record1 = calculate_leaders(4)[0]
+    diff4_record2 = calculate_leaders(4)[1]
+    diff4_record3 = calculate_leaders(4)[2]
+    diff4_record4 = calculate_leaders(4)[3]
+    diff4_record5 = calculate_leaders(4)[4]
     return render(request, 'sudoku/leaderboard.html',
                   {'diff1_record1': diff1_record1,
                    'diff1_record2': diff1_record2,
@@ -161,7 +166,12 @@ def leaderboard(request):
                    'diff3_record2': diff3_record2,
                    'diff3_record3': diff3_record3,
                    'diff3_record4': diff3_record4,
-                   'diff3_record5': diff3_record5})
+                   'diff3_record5': diff3_record5,
+                   'diff4_record1': diff4_record1,
+                   'diff4_record2': diff4_record2,
+                   'diff4_record3': diff4_record3,
+                   'diff4_record4': diff4_record4,
+                   'diff4_record5': diff4_record5})
 
 
 def play(request):
