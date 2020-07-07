@@ -376,7 +376,14 @@ def custom_game(request):
 
 def load_custom(request):
     # Written by Christopher Breen for Sprint 3, last updated July 7, 2020
-    new_board = custom_board(request.POST['puzzle'])
+    try:
+        new_board = custom_board(request.POST['puzzle'])
+    except ValueError:
+        # puzzle was not properly formatted
+        return render(request, 'sudoku/customgame.html', {
+            'error_message': 'Invalid Format.  Must be exactly 81 numbers or question marks.'
+        })
+
     solution = copy.deepcopy(new_board)
     solved, difficulty, techniques = solvable_puzzle(solution)
     if not solved:
