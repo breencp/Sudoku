@@ -17,5 +17,7 @@ urlpatterns = [
     path('get_hint/', views.get_hint, name='get_hint'),
     path('erase_obvious/', views.erase_obvious, name='erase_obvious'),
     path('load_puzzle/', views.load_puzzle, name='load_puzzle'),
-    path('puzzleload/', views.puzzleload, name='puzzleload')
+    path('puzzleload/', views.puzzleload, name='puzzleload'),
+    path('customgame/', views.custom_game, name='custom_game'),
+    path('loadcustom/', views.load_custom, name='load_custom')
 ]

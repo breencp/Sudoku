@@ -1,6 +1,6 @@
 # file: views.py
 # author: Christopher Breen
-# last updated: June 29, 2020
+# last updated: July 7, 2020
 import copy
 import json
 import re
@@ -8,16 +8,20 @@ import time
 
 from django import forms
 from django.contrib.admin.views.decorators import staff_member_required
+from django.db import IntegrityError
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse
 
+from .create_game import custom_board
 from .gamerecords import read_file, get_game, save_game, retrieve_puzzle
 from .leaderboard import calculate_leaders
+from .models import Puzzles
 from .techniques import hidden_pair, naked_quad, hidden_triplet
 from .techniques import hidden_quad, xwing, swordfish
 from .techniques import naked_pair, omission, naked_triplet
 from .techniques import naked_single, hidden_single
+from .techniques import solvable_puzzle
 
 
 def index(request):
@@ -337,6 +341,7 @@ def get_hint(request):
 
 
 def convert_board(old_board, direction, orig_board):
+    # Written by Christopher Breen for Sprint 2, last updated July 7, 2020
     new_board = copy.deepcopy(old_board)
     if direction == 'Int':
         # user solved cells remain as length one lists to differentiate givens from user solved cells
@@ -358,6 +363,7 @@ def convert_board(old_board, direction, orig_board):
 def erase_obvious(request):
     """Automatically remove all candidates from a cell when that candidate has already been solved in the cell's
     row, column, or block"""
+    # Written by Christopher Breen for Sprint 2, last updated July 2, 2020
     # It takes 10 minutes of tediously removing numbers from scratchpads before the board is in a state that requires
     # any mental effort.  This function automates the easy stuff so the player can focus on the more challenging
     # techniques.
@@ -371,3 +377,51 @@ def erase_obvious(request):
         'cleaned_board': board
     }
     return HttpResponse(json.dumps(response))
+
+
+def custom_game(request):
+    # Written by Christopher Breen for Sprint 3, last updated July 7, 2020
+    return render(request, 'sudoku/customgame.html')
+
+
+def load_custom(request):
+    # Written by Christopher Breen for Sprint 3, last updated July 7, 2020
+    try:
+        new_board = custom_board(request.POST['puzzle'])
+    except ValueError:
+        # puzzle was not properly formatted
+        return render(request, 'sudoku/customgame.html', {
+            'error_message': 'Invalid Format.  Must be exactly 81 numbers or question marks.'
+        })
+
+    solution = copy.deepcopy(new_board)
+    solved, difficulty, techniques = solvable_puzzle(solution)
+    if not solved:
+        return render(request, 'sudoku/customgame.html', {
+            'error_message': 'Sorry, we were unable to solve that puzzle.'
+        })
+    else:
+        new_puzzle = Puzzles()
+        new_puzzle.board = new_board
+        new_puzzle.solution = solution
+        new_puzzle.difficulty = difficulty
+        for technique, value in techniques.items():
+            setattr(new_puzzle, technique, value)
+        try:
+            new_puzzle.save()
+        except IntegrityError:
+            # unique constraint failed, puzzle already exists
+            pass
+
+        request.session['player'] = sanitized_player(request.POST['player_name'])
+        request.session['orig_board'] = new_board
+        request.session['board'] = new_board
+        request.session['solution'] = solution
+        request.session['start_time'] = round(time.time())
+        if 'end_time' in request.session:
+            del request.session['end_time']
+        # W = Win, I = In-Progress, L = Lost, S = Surrendered
+        request.session['status'] = 'I'
+        request.session['hints'] = 0
+        return HttpResponseRedirect(reverse('sudoku:play'))
+
