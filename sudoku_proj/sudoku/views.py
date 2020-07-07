@@ -134,7 +134,7 @@ def sanitized_puzzleid(puzzleid):
 
 
 def leaderboard(request):
-    # Written by Christopher Smith and modified for Sprint 2
+    # Written by Christopher Smith and modified for Sprint 3
     diff1_record1 = calculate_leaders(1)[0]
     diff1_record2 = calculate_leaders(1)[1]
     diff1_record3 = calculate_leaders(1)[2]
