@@ -1,5 +1,5 @@
 <!--
-   Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
+   Written by Ben Brandhorst for Sprint 1, last updated July 9, 2020
    -->
 <!DOCTYPE html>
 <html lang="en">
@@ -54,12 +54,13 @@
                         <input type="radio" id="gifted" name="difficulty" value="4">
                         <label for="gifted" class="black-text">Expert</label>
                     <p>
-                        <br><input type="submit" value="Create Game">
-                </form>
+                    <button onClick="submit">Create Game</button>
+
                 <button onClick="createCustom()">Create Custom</button>
                 {% if previous_board_in_mem %}
                     <button onclick="renderPlay()">Resume Previous</button>
                 {% endif %}
+                </form>
             </div>
         </div>
     </div>

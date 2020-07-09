@@ -1,0 +1,9 @@
+@startuml
+Admin -> Input: Enters Admin upload URL
+Input --> Upload: Requests render of Upload.html
+Upload --> Admin: Returns django.shortcuts.render(upload.html)
+Admin --> Input: Presses "Choose File" button and selects file to upload. Then preses "Upload" button to complete action.
+Input --> SQLite:Passes file to database
+SQLite --> Input: Returns upload success or failure
+Input --> Admin: Displays notification of upload success or failure
+@enduml

@@ -1,0 +1,7 @@
+@startuml
+User --> Input: User clicks "Get Hint" button
+Input-->ButtonEventListener: Click registered
+ButtonEventListener-->GetHint:Requests board analysis and hint return
+GetHint-->Input: Returns hint data
+Input-->User: Displays hint using javascript alert
+@enduml
