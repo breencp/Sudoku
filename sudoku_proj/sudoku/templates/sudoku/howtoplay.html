@@ -26,13 +26,16 @@
       </nav>
       <main>
          <div class="container">
-            <div class="card-panel blue-grey lighten-2">
+              <div class="row">
+                <div class="col s12 l8 offset-l2 ">
+            <div class="card-panel blue-grey lighten-2 ">
                <h1 class="center-align">Short History of Sudoku</h1>
-               <P>The immediate predecessor to Sudoku was created in Switzerland in 1783 by a mathematician named Leonhard
-                  Euler. This version of the game was called Latin Squares and was based off of an ancient Chinese game
-                  called Magic Squares. Two hundred years later, in Manhattan, New York, Dell Puzzle Magazines published a
-                  Latin Squares variant that they called Number Place. Number Place was essentially Latin Squares with an
-                  additional twist. This variant further divided the board into the 3 x 3 regions.
+               <P>The immediate predecessor to Sudoku was created in Switzerland in 1783 by a mathematician named
+                   Leonhard Euler. This version of the game was called Latin Squares and was based off of an ancient
+                   Chinese game called Magic Squares. Two hundred years later, in Manhattan, New York, Dell Puzzle
+                   Magazines published a Latin Squares variant that they called Number Place. Number Place was
+                   essentially Latin Squares with an additional twist. This variant further divided the board into the 3 x 3
+                   regions.
                </P>
                <P>In the 1980s, because of differences in how English and Japanese languages are written, Japanese
                   newspapers were in search of a crossword puzzle replacement. Numbers based puzzles were a perfect fit
@@ -43,20 +46,25 @@
                   puzzles while shopping in Tokyo in 1997. Wayne Gould was so enamoured with the puzzles, that over the
                   next six years, he developed a computer program to generate his own. His wife Gaye Gould published one
                   of the puzzles his program generated in a New Hampshire newspaper called the Conway Daily Sun. From
-                  there
-                  the puzzles quickly found their way into newspapers across the country and made their way back east to
-                  Europe. In the time that has passed since then, Sudoku has turned into a global phenomenon.
+                  there the puzzles quickly found their way into newspapers across the country and made their way back
+                   east to Europe. In the time that has passed since then, Sudoku has turned into a global phenomenon.
                </P>
             </div>
          </div>
+         </div>
+         </div>
+
+
+
          <div class="container ">
+            <div class="row">
+                <div class="col s12 l8 offset-l2">
             <div class="card-panel blue-grey lighten-2">
                <h1 class="center-align">How to play Sudoku</h1>
                <P>Sudoku is a game that is both easy to learn and difficult to master. Puzzles can vary from extremely
-                  simple to seemingly impossible.
-                  Each puzzle has a unique solution and you will never have to guess at answers. Rather than being a math
-                  game, Sudoku uses numbers to create logic based puzzles which use the same set of consistent rules. This
-                  creates elegant and intuitive gameplay mechanics.
+                  simple to seemingly impossible. Each puzzle has a unique solution and you will never have to guess at
+                  answers. Rather than being a math game, Sudoku uses numbers to create logic based puzzles which
+                   use the same set of consistent rules. This creates elegant and intuitive gameplay mechanics.
                </P>
                <figure class="center-align">
                   <img src="{% static 'Howtoplay.jpg' %}" alt="How to Play"
@@ -76,13 +84,17 @@
                </figure>
             </div>
          </div>
+            </div>
+         </div>
          <div class="container">
+          <div class="row">
+                <div class="col s12 l8 offset-l2 ">
             <div class="card-panel blue-grey lighten-2">
-               <h1 class="center-align">Beginner Puzzle Solving Techniques</h1>
+                <h1 class="center-align">Puzzle Solving Techniques</h1>
+
                <h3 class="center-align">Naked Single</h3>
                <P>The Naked Single technique is more than just a terrible dating strategy. It is the simplest Sudoku
-                  solving
-                  technique and its use takes very little experience with puzzles. Utilizing this technique is as simple
+                  solving technique and its use takes very little experience with puzzles. Utilizing this technique is as simple
                   as eliminating other possibilities for the contents of a cell. In the example below, you can see that we
                   have determined the contents of the cell can be no other numeral than 4. We know this because looking at
                   the <b><span style="color:red"> ROW</span></b>,<b><span style="color:blue"> COLUMN</span></b>, and
@@ -95,13 +107,13 @@
                   <figcaption>Naked Single Technique Example</figcaption>
                </figure>
                <h3 class="center-align">Hidden Single</h3>
-               <P>The Hidden Single technique isn't much more complicated than the Naked Single technique. However, because
-                  there are so many possible cells, sometimes they are difficult to spot. You can tell that you have a
+               <P>The Hidden Single technique isn't much more complicated than the Naked Single technique. However,
+                   because there are so many possible cells, sometimes they are difficult to spot. You can tell that you have a
                   Hidden Single when only one cell contains a pencil mark for a numeral in any <b><span style="color:red"> ROW</span>
-                  </b>,<b><span style="color:blue"> COLUMN</span></b>, or <b><span style="color:yellow">REGION </span></b>. In the example
-                  below, you can see that within the top right <b><span style="color:yellow">REGION </span></b> the top middle cell
-                  is the only instance of the numeral 7. Because there is no other possible location for 7 to go, the top
-                  center cell MUST be its location.
+                  </b>,<b><span style="color:blue"> COLUMN</span></b>, or <b><span style="color:yellow">REGION </span></b>
+                   . In the example below, you can see that within the top right <b><span style="color:yellow">REGION </span></b>
+                   the top middle cell is the only instance of the numeral 7. Because there is no other possible location
+                   for 7 to go, the top center cell MUST be its location.
                </P>
                <figure class="center-align">
                   <img src="{% static 'HiddenSingle.jpg' %}" alt="Completed Board Example"
@@ -110,8 +122,12 @@
                </figure>
             </div>
          </div>
+          </div>
+         </div>
          <div class="container ">
-            <div class="card-panel blue-grey lighten-2">
+             <div class="row">
+                <div class="col s12 l8 offset-l2 ">
+            <div class="card-panel blue-grey lighten-2 ce " >
                <h1 class="center-align">Application Interface</h1>
                <P>The play area for this application contains 3 parts: A standard Sudoku board in the center of the screen,
                   A row of options to the left of the board, and a red scratch pad to the right of the board. If a user
@@ -128,7 +144,7 @@
                   using more advanced Sudoku techniques.
                </P>
                <P>Pressing the "Erase Obvious" button will immediately remove pencil marks by using the "Naked Single"
-                  technique that is described below. This will allow players to reduce the time it takes to get to more
+                  technique that is described above. This will allow players to reduce the time it takes to get to more
                   challenging puzzle solving.
                </P>
                <P>Pressing the "Verify Solutions" button will check the user supplied input against the stored puzzle
@@ -140,6 +156,8 @@
                   <figcaption>Sudoku game in progress</figcaption>
                </figure>
             </div>
+         </div>
+             </div>
          </div>
       </main>
       <footer class="page-footer grey darken-3">
