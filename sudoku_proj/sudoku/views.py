@@ -394,6 +394,12 @@ def load_custom(request):
             'error_message': 'Invalid Format.  Must be exactly 81 numbers or question marks.'
         })
 
+    # if there are no ?'s provided, it will display anything, even invalid puzzles
+    if '?' not in request.POST['puzzle']:
+        return render(request, 'sudoku/customgame.html', {
+            'error_message': 'Sorry, you must include at least one unknown..'
+        })
+
     solution = copy.deepcopy(new_board)
     solved, difficulty, techniques = solvable_puzzle(solution)
     if not solved:
