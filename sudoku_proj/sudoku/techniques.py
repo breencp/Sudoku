@@ -326,7 +326,8 @@ def omission(solving_puzzle, hints=False):
                                 if num in solving_puzzle[y][x]:
                                     if hints:
                                         return 'Omission can be applied between Row ' + str(
-                                            y + 1) + ' and Block ' + str(get_block(y, x) + 1)
+                                            row + 1) + ' and Block ' + str(get_block(y, x) + 1) + \
+                                               ' with the number ' + str(num)
                                     else:
                                         solving_puzzle[y][x].remove(num)
                                         progress = True
@@ -367,7 +368,8 @@ def omission(solving_puzzle, hints=False):
                                 if num in solving_puzzle[y][x]:
                                     if hints:
                                         return 'Omission can be applied between Column ' + str(
-                                            x + 1) + ' and Block ' + str(get_block(y, x) + 1)
+                                            col + 1) + ' and Block ' + str(get_block(y, x) + 1) + \
+                                               ' with the number ' + str(num)
                                     else:
                                         solving_puzzle[y][x].remove(num)
                                         progress = True
@@ -411,7 +413,8 @@ def omission(solving_puzzle, hints=False):
                             if num in solving_puzzle[row][x]:
                                 if hints:
                                     return 'Omission can be applied between Row ' + str(
-                                        row + 1) + ' and Block ' + str(get_block(row, x) + 1)
+                                        row + 1) + ' and Block ' + str(get_block(row, x) + 1) + \
+                                           ' with the number ' + str(num)
                                 else:
                                     solving_puzzle[row][x].remove(num)
                                     progress = True
@@ -455,7 +458,8 @@ def omission(solving_puzzle, hints=False):
                             if num in solving_puzzle[y][col]:
                                 if hints:
                                     return 'Omission can be applied between Column ' + str(
-                                        col + 1) + ' and Block ' + str(get_block(y, col) + 1)
+                                        col + 1) + ' and Block ' + str(get_block(y, col) + 1) + \
+                                           ' with the number ' + str(num)
                                 else:
                                     solving_puzzle[y][col].remove(num)
                                     progress = True
@@ -1184,6 +1188,9 @@ def swordfish(solving_puzzle, hints=False):
                                                 if isinstance(solving_puzzle[y][col1], list):
                                                     if digit in solving_puzzle[y][col1]:
                                                         if hints:
+                                                            print('Rows: ' + str(row1) + str(row2) + str(row3))
+                                                            print('Cols: ' + str(col1) + str(col2) + str(col3))
+                                                            print('Rem ' + str(digit) + ' from ' + str(y) + str(col1))
                                                             return 'There is a Swordfish with the number ' + str(digit)
                                                         else:
                                                             solving_puzzle[y][col1].remove(digit)
@@ -1192,6 +1199,9 @@ def swordfish(solving_puzzle, hints=False):
                                                 if isinstance(solving_puzzle[y][col2], list):
                                                     if digit in solving_puzzle[y][col2]:
                                                         if hints:
+                                                            print('Rows: ' + str(row1) + str(row2) + str(row3))
+                                                            print('Cols: ' + str(col1) + str(col2) + str(col3))
+                                                            print('Rem ' + str(digit) + ' from ' + str(y) + str(col2))
                                                             return 'There is a Swordfish with the number ' + str(digit)
                                                         else:
                                                             solving_puzzle[y][col2].remove(digit)
@@ -1200,12 +1210,15 @@ def swordfish(solving_puzzle, hints=False):
                                                 if isinstance(solving_puzzle[y][col3], list):
                                                     if digit in solving_puzzle[y][col3]:
                                                         if hints:
+                                                            print('Rows: ' + str(row1) + str(row2) + str(row3))
+                                                            print('Cols: ' + str(col1) + str(col2) + str(col3))
+                                                            print('Rem ' + str(digit) + ' from ' + str(y) + str(col3))
                                                             return 'There is a Swordfish with the number ' + str(digit)
                                                         else:
                                                             solving_puzzle[y][col3].remove(digit)
                                                             progress = True
                                                             solved_cell(solving_puzzle, y, col3)
-                                    invalid = False
+
                                     for y in range(9):
                                         if y != row1 and y != row2 and y != row3:
                                             if isinstance(solving_puzzle[y][col1], list):
@@ -1223,6 +1236,9 @@ def swordfish(solving_puzzle, hints=False):
                                                 if isinstance(solving_puzzle[row1][x], list):
                                                     if digit in solving_puzzle[row1][x]:
                                                         if hints:
+                                                            print('Rows: ' + str(row1) + str(row2) + str(row3))
+                                                            print('Cols: ' + str(col1) + str(col2) + str(col3))
+                                                            print('Rem ' + str(digit) + ' from ' + str(row1) + str(x))
                                                             return 'There is a Swordfish with the number ' + str(digit)
                                                         else:
                                                             solving_puzzle[row1][x].remove(digit)
@@ -1231,6 +1247,9 @@ def swordfish(solving_puzzle, hints=False):
                                                 if isinstance(solving_puzzle[row2][x], list):
                                                     if digit in solving_puzzle[row2][x]:
                                                         if hints:
+                                                            print('Rows: ' + str(row1) + str(row2) + str(row3))
+                                                            print('Cols: ' + str(col1) + str(col2) + str(col3))
+                                                            print('Rem ' + str(digit) + ' from ' + str(row2) + str(x))
                                                             return 'There is a Swordfish with the number ' + str(digit)
                                                         else:
                                                             solving_puzzle[row2][x].remove(digit)
@@ -1239,6 +1258,9 @@ def swordfish(solving_puzzle, hints=False):
                                                 if isinstance(solving_puzzle[row3][x], list):
                                                     if digit in solving_puzzle[row3][x]:
                                                         if hints:
+                                                            print('Rows: ' + str(row1) + str(row2) + str(row3))
+                                                            print('Cols: ' + str(col1) + str(col2) + str(col3))
+                                                            print('Rem ' + str(digit) + ' from ' + str(row3) + str(x))
                                                             return 'There is a Swordfish with the number ' + str(digit)
                                                         else:
                                                             solving_puzzle[row3][x].remove(digit)
