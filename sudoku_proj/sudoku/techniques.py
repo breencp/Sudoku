@@ -1107,6 +1107,7 @@ def xwing(solving_puzzle, hints=False):
                                                         solving_puzzle[y][col2].remove(digit)
                                                         progress = True
                                                         solved_cell(solving_puzzle, y, col2)
+                                invalid = False
                                 for y in range(9):
                                     if y != row1 and y != row2:
                                         if isinstance(solving_puzzle[y][col1], list):
@@ -1204,6 +1205,7 @@ def swordfish(solving_puzzle, hints=False):
                                                             solving_puzzle[y][col3].remove(digit)
                                                             progress = True
                                                             solved_cell(solving_puzzle, y, col3)
+                                    invalid = False
                                     for y in range(9):
                                         if y != row1 and y != row2 and y != row3:
                                             if isinstance(solving_puzzle[y][col1], list):
