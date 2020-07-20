@@ -395,7 +395,7 @@ def load_custom(request):
         })
 
     # if there are no ?'s provided, it will display anything, even invalid puzzles
-    if '?' not in request.POST['puzzle']:
+    if '?' not in request.POST['puzzle'] and ' ' not in request.POST['puzzle']:
         return render(request, 'sudoku/customgame.html', {
             'error_message': 'Sorry, you must include at least one unknown..'
         })

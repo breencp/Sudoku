@@ -20,13 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'h=gzwvqj$7xa_71r_4@#v2@4%b#9zq3(m-45(!ly(cm3&t6k^3'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['sudoku-env.eba-qweqnpsc.us-east-1.elasticbeanstalk.com',
-                 '127.0.0.1']
+                 '127.0.0.1', '192.168.0.9', '0.0.0.0']
 
 # Application definition
 

@@ -25,7 +25,7 @@ avail_col_nums = []
 avail_block_nums = []
 
 
-def create_game():
+def create_game(desired_technique, min_givens, max_givens, min_technique_usage):
     """Returns board for user to play, the solution, overall difficulty level, and exact techniques required to win."""
     # Written by Christopher Breen for Sprint 1, last updated June 30, 2020 for Sprint 2
     print('\nCreating solution', end='')
@@ -48,11 +48,11 @@ def create_game():
         print('...done.  Hiding & Solving', end='')
         while True:
             # hide_cells returns the original solution but with a random subset of cell numbers removed
-            board = hide_cells(solution)
+            board = hide_cells(solution, min_givens, max_givens)
             # solvable_puzzle uses techniques in sequentially incremental difficulty attempting to recreate the solution
-            solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board))
-            if solved and actual_difficulty > '1':
-                # if successful, return the board modified by hide_cells, otherwise loops
+            solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board), desired_technique)
+            if solved and desired_technique in techniques and min_technique_usage <= techniques[desired_technique]:
+                # if successful, return the board modified by hide_cells
                 print('...done. Iterations to get solution: ' + str(failed_solutions), end='')
                 print(', Iterations to solve: ' + str(failed_solves))
                 return board, solution, actual_difficulty, techniques
@@ -64,14 +64,14 @@ def create_game():
                     print('.', end='')
 
 
-def hide_cells(solution):
+def hide_cells(solution, min_givens, max_givens):
     """Returns the complete solution but with a random number (and location) of givens replaced with candidates"""
     # Written by Christopher Breen for Sprint 1
     # randomly choose number of cells to hide; need minimum 17 visible numbers of 81 total (64 hidden)
     # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
     # puzzles must have at minimum 17 clues to be solvable (64 hidden)
     board = copy.deepcopy(solution)
-    givens = random.randint(26, 30)
+    givens = random.randint(min_givens, max_givens)
     hide_count = 81 - givens
 
     counter = 0
@@ -100,7 +100,7 @@ def custom_board(human_puzzle):
     for i in range(len(human_puzzle)):
         row = math.floor(i / 9)
         col = i % 9
-        if human_puzzle[i] == '?':
+        if human_puzzle[i] == '?' or human_puzzle[i] == ' ':
             board[row][col] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         else:
             board[row][col] = int(human_puzzle[i])
@@ -203,7 +203,6 @@ def board_to_string(board):
 if __name__ == "__main__":
     """create_game.py is designed to be run in the local IDE.  It creates puzzles and stores them in a JSON file for
     later import into the database using upload.html."""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
     # custom = custom_board('?5736?2846?4825???28?7?465??924?6???3619?7?42?45132?964?62???75?2?57?46?57864?32?')
@@ -214,33 +213,30 @@ if __name__ == "__main__":
         print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(500):  # change loop range to fit your needs
+        for i in range(5):  # change loop range to fit your needs
             # create_game will loop until it creates a puzzle we want to break on for testing
-            board, solution, actual_difficulty, techniques = create_game()
+            board, solution, actual_difficulty, techniques = create_game('omission', 28, 30, 3)
+            board_string, givens = board_to_string(board)
             data = {'board': board,
                     'solution': solution,
                     'difficulty': actual_difficulty,
-                    'techniques': techniques
+                    'techniques': techniques,
+                    'givens': givens,
+                    'board_string': board_string
                     }
 
             # save puzzles in JSON format to a filename of today's date to keep them organized
             dev_name = os.environ.get('LOGNAME')
             if not dev_name:
                 dev_name = '???'
-            filename = 'puzzles/' + date.today().strftime('%Y%m%d_') + dev_name + '.txt'
+            filename = 'puzzles/' + date.today().strftime('%Y%m%d_') + dev_name + '.json'
             with open(filename, 'a+') as f:
                 json.dump(data, f)
                 f.write('\n')
             f.close()
 
-            board_string, givens = board_to_string(board)
             end = time.time()
             output = '#', i, '- Difficulty:', data['difficulty'], data['techniques'], '- Givens:', givens, \
                      '- Total minutes elapsed:', math.ceil((end - start) / 60)
             print(*output)
-
-            # used to stop the loop and print board_string for testing on sudoku-solutions.com when creating
-            # new techniques.  Comment break line to allow continuous puzzle creation up to i counter.
-            if actual_difficulty == '4' or 'hidden_triplet' in data['techniques'] or 'naked_quad' in data['techniques']:
-                print(board_string)
-                break
+            print(board_string)

@@ -5,7 +5,6 @@
 from django.db import models
 
 
-# Puzzle table for storing pre-generated puzzles
 class Puzzles(models.Model):
     puzzle_id = models.AutoField(primary_key=True)
     board = models.CharField(max_length=1863, unique=True)

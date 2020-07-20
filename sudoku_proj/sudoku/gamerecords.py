@@ -1,6 +1,3 @@
-# file: gamerecords.py
-# author: Christopher Smith
-# date: 12 June 2020
 from django.db import IntegrityError
 
 from .models import Puzzles, Played
@@ -15,7 +12,7 @@ def read_file(f):
         new_puzzle.solution = data['solution']
         new_puzzle.difficulty = data['difficulty']
         for technique, value in data['techniques'].items():
-            setattr(new_puzzle, technique, value)
+            setattr(new_puzzle, technique, True)
         try:
             new_puzzle.save()
         except IntegrityError:
@@ -36,12 +33,11 @@ def retrieve_puzzle(puzzleid):
 
 
 def save_game(data):
-    # Written by Christopher Smith for Sprint 1 with modifications for Sprint 2
-    saved_puzzle: Played = Played()
+    saved_puzzle = Played()
     saved_puzzle.user = data['user']
-    saved_puzzle.start_time = round(data['start_time'])
+    saved_puzzle.start_time = data['start_time']
     if 'end_time' in data:
-        saved_puzzle.end_time = round(data['end_time'])
+        saved_puzzle.end_time = data['end_time']
     saved_puzzle.status = data['status']
     saved_puzzle.hints = data['hints']
     saved_puzzle.saved_board = data['current_board']

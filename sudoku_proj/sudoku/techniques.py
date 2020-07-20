@@ -7,90 +7,114 @@ import math
 from .create_game import get_block
 
 
-def solvable_puzzle(puzzle_to_solve):
+def solvable_puzzle(puzzle_to_solve, desired_technique='any'):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     progress = True
     techniques_utilized = dict()
     actual_difficulty = '1'
+    naked_single_count = 0
+    hidden_single_count = 0
+    naked_pair_count = 0
+    omission_count = 0
+    naked_triplet_count = 0
+    hidden_pair_count = 0
+    hidden_triple_count = 0
+    naked_quad_count = 0
+    hidden_quad_count = 0
+    x_wing_count = 0
+    swordfish_count = 0
+    max_technique = translate_technique_to_num(desired_technique)
+
     while progress:
         progress = False
 
         # Difficulty Level 1
         # Naked Single: only technique that solves more than one within function
         if naked_single(puzzle_to_solve):
-            techniques_utilized.update({'naked_single': 'True'})
+            naked_single_count += 1
+            techniques_utilized.update({'naked_single': naked_single_count})
             progress = True
         # Hidden Single
-        if hidden_single(puzzle_to_solve):
-            techniques_utilized.update({'hidden_single': 'True'})
-            progress = True
+        if max_technique >= 2:
+            if hidden_single(puzzle_to_solve):
+                hidden_single_count += 1
+                techniques_utilized.update({'hidden_single': hidden_single_count})
+                progress = True
 
         # Difficulty Level 2
         # Naked Pair
-        if not progress:  # repeatedly try easier techniques until no longer making progress without advanced techniques
+        if not progress and max_technique >= 3:
             if naked_pair(puzzle_to_solve):
-                techniques_utilized.update({'naked_pair': 'True'})
+                naked_pair_count += 1
+                techniques_utilized.update({'naked_pair': naked_pair_count})
                 progress = True
                 if actual_difficulty < '2':
                     actual_difficulty = '2'
         # Omission (a.k.a. Intersection, Pointing)
-        if not progress:
+        if not progress and max_technique >= 4:
             if omission(puzzle_to_solve):
-                techniques_utilized.update({'omission': 'True'})
+                omission_count += 1
+                techniques_utilized.update({'omission': omission_count})
                 progress = True
                 if actual_difficulty < '2':
                     actual_difficulty = '2'
         # Naked Triplet
-        if not progress:
+        if not progress and max_technique >= 5:
             if naked_triplet(puzzle_to_solve):
-                techniques_utilized.update({'naked_triplet': 'True'})
+                naked_triplet_count += 1
+                techniques_utilized.update({'naked_triplet': naked_triplet_count})
                 progress = True
                 if actual_difficulty < '2':
                     actual_difficulty = '2'
 
         # Level 3 Difficulty
         # Hidden Pair
-        if not progress:
+        if not progress and max_technique >= 6:
             if hidden_pair(puzzle_to_solve):
-                techniques_utilized.update({'hidden_pair': 'True'})
+                hidden_pair_count += 1
+                techniques_utilized.update({'hidden_pair': hidden_pair_count})
                 progress = True
                 if actual_difficulty < '3':
                     actual_difficulty = '3'
         # Hidden Triplet
-        if not progress:
+        if not progress and max_technique >= 7:
             if hidden_triplet(puzzle_to_solve):
-                techniques_utilized.update({'hidden_triplet': 'True'})
+                hidden_triple_count += 1
+                techniques_utilized.update({'hidden_triplet': hidden_triple_count})
                 progress = True
                 if actual_difficulty < '3':
                     actual_difficulty = '3'
         # Naked Quad
-        if not progress:
+        if not progress and max_technique >= 8:
             if naked_quad(puzzle_to_solve):
-                techniques_utilized.update({'naked_quad': 'True'})
+                naked_quad_count += 1
+                techniques_utilized.update({'naked_quad': naked_quad_count})
                 progress = True
                 if actual_difficulty < '3':
                     actual_difficulty = '3'
 
         # Level 4 Difficulty
         # Hidden Quad
-        if not progress:
+        if not progress and max_technique >= 9:
             if hidden_quad(puzzle_to_solve):
-                techniques_utilized.update({'hidden_quad': 'True'})
+                hidden_quad_count += 1
+                techniques_utilized.update({'hidden_quad': hidden_quad_count})
                 progress = True
                 if actual_difficulty < '4':
                     actual_difficulty = '4'
         # X-Wing
-        if not progress:
+        if not progress and max_technique >= 10:
             if xwing(puzzle_to_solve):
-                techniques_utilized.update({'x_wing': 'True'})
+                x_wing_count += 1
+                techniques_utilized.update({'x_wing': x_wing_count})
                 progress = True
                 if actual_difficulty < '4':
                     actual_difficulty = '4'
         # Swordfish
-        if not progress:
+        if not progress and max_technique >= 11:
             if swordfish(puzzle_to_solve):
-                techniques_utilized.update({'swordfish': 'True'})
+                swordfish_count += 1
+                techniques_utilized.update({'swordfish': swordfish_count})
                 progress = True
                 if actual_difficulty < '4':
                     actual_difficulty = '4'
@@ -1325,3 +1349,30 @@ def solved_cell(solving_puzzle, y, x):
         solving_puzzle[y][x] = solving_puzzle[y][x][0]
         return True
     return False
+
+
+def translate_technique_to_num(technique):
+    if technique == 'naked_single':
+        return 1
+    elif technique == 'hidden_single':
+        return 2
+    elif technique == 'naked_pair':
+        return 3
+    elif technique == 'omission':
+        return 4
+    elif technique == 'naked_triplet':
+        return 5
+    elif technique == 'hidden_pair':
+        return 6
+    elif technique == 'hidden_triple':
+        return 7
+    elif technique == 'naked_quad':
+        return 8
+    elif technique == 'hidden_quad':
+        return 9
+    elif technique == 'x_wing':
+        return 10
+    elif technique == 'swordfish':
+        return 11
+    else:
+        return 12  # used for any technique
