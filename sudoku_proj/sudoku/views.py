@@ -1,6 +1,3 @@
-# file: views.py
-# author: Christopher Breen
-# last updated: July 7, 2020
 import copy
 import json
 import re
@@ -14,8 +11,6 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .create_game import custom_board
-from .gamerecords import read_file, get_game, save_game, retrieve_puzzle
-from .leaderboard import calculate_leaders
 from .models import Puzzles
 from .techniques import hidden_pair, naked_quad, hidden_triplet
 from .techniques import hidden_quad, xwing, swordfish
@@ -25,42 +20,32 @@ from .techniques import solvable_puzzle
 
 
 def index(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/index.html')
 
 
-def how_to_play(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    return render(request, 'sudoku/howtoplay.html')
-
-
 def new_game(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if 'board' in request.session:
-        return render(request, 'sudoku/newgame.html', {
+        return render(request, 'sudoku/index.html', {
             'previous_board_in_mem': 'True'
         })
     else:
-        return render(request, 'sudoku/newgame.html')
+        return render(request, 'sudoku/index.html')
 
 
 def puzzleload(request):
-    # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
     request.session['puzzleID'] = sanitized_puzzleid(request.POST['puzzleID'])
     return render(request, 'sudoku/puzzleload.html', )
 
 
 def make_game(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     try:
         difficulty = sanitized_diff(request.POST['difficulty'])
         if not difficulty:
-            return render(request, 'sudoku/newgame.html', {
+            return render(request, 'sudoku/index.html', {
                 'error_message': 'Sorry, that difficulty level is not yet available.'
             })
-        request.session['player'] = sanitized_player(request.POST['player_name'])
     except KeyError:
-        return render(request, 'sudoku/newgame.html', {
+        return render(request, 'sudoku/index.html', {
             'error_message': 'Please select a difficulty level.'
         })
     else:
@@ -68,6 +53,10 @@ def make_game(request):
         # new_board = json.dumps(custom_board('63214597881??9???4?4??8??1????85????16?274??????96????481529?6?753416??9296738?4?'))
         # solution = json.dumps(custom_board('632145978817692534945387612324851796169274853578963421481529367753416289296738145'))
         new_board, solution = get_game(difficulty)
+        if not new_board:
+            return render(request, 'sudoku/index.html', {
+                'error_message': 'Sorry, we do not seem to have any puzzles at that level.'
+            })
         request.session['orig_board'] = json.loads(new_board)
         request.session['board'] = json.loads(new_board)
         request.session['solution'] = json.loads(solution)
@@ -80,30 +69,7 @@ def make_game(request):
         return HttpResponseRedirect(reverse('sudoku:play'))
 
 
-def load_puzzle(request):
-    # Written by Ben Brandhorst for Sprint 2, last updated July 3, 2020
-    try:
-        puzzleid = request.POST['puzzleID']
-    except KeyError:
-        return render(request, 'sudoku/leaderboard.html', {
-            'error_message': 'Please select a puzzle to load.'
-        })
-    new_board, solution = retrieve_puzzle(puzzleid)
-    request.session['player'] = sanitized_player(request.POST['player_name'])
-    request.session['orig_board'] = json.loads(new_board)
-    request.session['board'] = json.loads(new_board)
-    request.session['solution'] = json.loads(solution)
-    request.session['start_time'] = round(time.time())
-    if 'end_time' in request.session:
-        del request.session['end_time']
-    # W = Win, I = In-Progress, L = Lost, S = Surrendered
-    request.session['status'] = 'I'
-    request.session['hints'] = 0
-    return HttpResponseRedirect(reverse('sudoku:play'))
-
-
 def sanitized_diff(diff):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     try:
         if 0 < int(diff) < 5:  # set upper bound to difficulty level not yet ready
             return str(diff)
@@ -113,18 +79,7 @@ def sanitized_diff(diff):
         return False
 
 
-def sanitized_player(player):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    regex = r"^[\w ]{4,20}$"
-    match = re.fullmatch(regex, player)
-    if match:
-        return match[0]
-    else:
-        return 'Anonymous'
-
-
 def sanitized_puzzleid(puzzleid):
-    # Written by Ben Brandhorst for Sprint 2, last updated July 4, 2020
     regex = r"^[0-9]+$"
     match = re.fullmatch(regex, puzzleid)
     if match:
@@ -133,59 +88,11 @@ def sanitized_puzzleid(puzzleid):
         return False
 
 
-def leaderboard(request):
-    # Written by Christopher Smith and modified for Sprint 3
-    diff1_record1 = calculate_leaders(1)[0]
-    diff1_record2 = calculate_leaders(1)[1]
-    diff1_record3 = calculate_leaders(1)[2]
-    diff1_record4 = calculate_leaders(1)[3]
-    diff1_record5 = calculate_leaders(1)[4]
-    diff2_record1 = calculate_leaders(2)[0]
-    diff2_record2 = calculate_leaders(2)[1]
-    diff2_record3 = calculate_leaders(2)[2]
-    diff2_record4 = calculate_leaders(2)[3]
-    diff2_record5 = calculate_leaders(2)[4]
-    diff3_record1 = calculate_leaders(3)[0]
-    diff3_record2 = calculate_leaders(3)[1]
-    diff3_record3 = calculate_leaders(3)[2]
-    diff3_record4 = calculate_leaders(3)[3]
-    diff3_record5 = calculate_leaders(3)[4]
-    diff4_record1 = calculate_leaders(4)[0]
-    diff4_record2 = calculate_leaders(4)[1]
-    diff4_record3 = calculate_leaders(4)[2]
-    diff4_record4 = calculate_leaders(4)[3]
-    diff4_record5 = calculate_leaders(4)[4]
-    return render(request, 'sudoku/leaderboard.html',
-                  {'diff1_record1': diff1_record1,
-                   'diff1_record2': diff1_record2,
-                   'diff1_record3': diff1_record3,
-                   'diff1_record4': diff1_record4,
-                   'diff1_record5': diff1_record5,
-                   'diff2_record1': diff2_record1,
-                   'diff2_record2': diff2_record2,
-                   'diff2_record3': diff2_record3,
-                   'diff2_record4': diff2_record4,
-                   'diff2_record5': diff2_record5,
-                   'diff3_record1': diff3_record1,
-                   'diff3_record2': diff3_record2,
-                   'diff3_record3': diff3_record3,
-                   'diff3_record4': diff3_record4,
-                   'diff3_record5': diff3_record5,
-                   'diff4_record1': diff4_record1,
-                   'diff4_record2': diff4_record2,
-                   'diff4_record3': diff4_record3,
-                   'diff4_record4': diff4_record4,
-                   'diff4_record5': diff4_record5})
-
-
 def play(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
-    player = request.session.get('player')
-    return render(request, 'sudoku/play.html', {'player': player})
+    return render(request, 'sudoku/play.html')
 
 
 def update_board(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     end_time = False
 
     # get JavaScript sessionStorage from POST
@@ -222,7 +129,7 @@ def update_board(request):
     request.session['hints'] = hints
 
     # update SQL3 Database: W = Win, I = In-Progress, L = Lost, S = Surrendered
-    data = {'user': request.session['player'],
+    data = {
             'start_time': request.session['start_time'],
             'orig_board': request.session['orig_board'],
             'current_board': request.session['board'],
@@ -233,12 +140,11 @@ def update_board(request):
         data.update({'end_time': end_time})
 
     # uncomment save_game when not using custom board for testing, comment when testing or save will crash
-    save_game(data)
+    # save_game(data)
     return HttpResponse(status=204)
 
 
 def corrupted_board(user_board):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # ensure user_board hasn't been tampered with
     try:
         if len(user_board) != 9:
@@ -264,18 +170,15 @@ def corrupted_board(user_board):
 
 
 def upload_success(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     return render(request, 'sudoku/uploadsuccess.html')
 
 
 class UploadFileForm(forms.Form):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     puzzle_file = forms.FileField()
 
 
 @staff_member_required
 def upload(request):
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -287,7 +190,6 @@ def upload(request):
 
 
 def get_hint(request):
-    # Written by Christopher Breen for Sprint 2, last updated July 6, 2020 for Sprint 3
     # get JavaScript sessionStorage from POST
     request.session['hints'] = request.session['hints'] + 1
     current_board = json.loads(request.POST.get('board'))
@@ -341,7 +243,6 @@ def get_hint(request):
 
 
 def convert_board(old_board, direction, orig_board):
-    # Written by Christopher Breen for Sprint 2, last updated July 7, 2020
     new_board = copy.deepcopy(old_board)
     if direction == 'Int':
         # user solved cells remain as length one lists to differentiate givens from user solved cells
@@ -363,7 +264,6 @@ def convert_board(old_board, direction, orig_board):
 def erase_obvious(request):
     """Automatically remove all candidates from a cell when that candidate has already been solved in the cell's
     row, column, or block"""
-    # Written by Christopher Breen for Sprint 2, last updated July 2, 2020
     # It takes 10 minutes of tediously removing numbers from scratchpads before the board is in a state that requires
     # any mental effort.  This function automates the easy stuff so the player can focus on the more challenging
     # techniques.
@@ -380,12 +280,10 @@ def erase_obvious(request):
 
 
 def custom_game(request):
-    # Written by Christopher Breen for Sprint 3, last updated July 7, 2020
     return render(request, 'sudoku/customgame.html')
 
 
 def load_custom(request):
-    # Written by Christopher Breen for Sprint 3, last updated July 7, 2020
     try:
         new_board = custom_board(request.POST['puzzle'])
     except ValueError:
@@ -419,7 +317,6 @@ def load_custom(request):
             # unique constraint failed, puzzle already exists
             pass
 
-        request.session['player'] = sanitized_player(request.POST['player_name'])
         request.session['orig_board'] = new_board
         request.session['board'] = new_board
         request.session['solution'] = solution
@@ -431,3 +328,31 @@ def load_custom(request):
         request.session['hints'] = 0
         return HttpResponseRedirect(reverse('sudoku:play'))
 
+
+def read_file(f):
+    for row in f:
+        data = eval(row)
+        new_puzzle = Puzzles()
+        new_puzzle.board = data['board']
+        new_puzzle.solution = data['solution']
+        new_puzzle.difficulty = data['difficulty']
+        for technique, value in data['techniques'].items():
+            setattr(new_puzzle, technique, value)
+        try:
+            new_puzzle.save()
+        except IntegrityError as err:
+            # unique constraint failed, puzzle already exists
+            pass
+
+
+def get_game(difficulty):
+    try:
+        puzzles = Puzzles.objects.filter(difficulty=difficulty).order_by('?')[0]
+        return puzzles.board, puzzles.solution
+    except IndexError:
+        return False, False
+
+
+def retrieve_puzzle(puzzleid):
+    puzzles = Puzzles.objects.filter(puzzle_id=puzzleid).order_by('?')[0]
+    return puzzles.board, puzzles.solution

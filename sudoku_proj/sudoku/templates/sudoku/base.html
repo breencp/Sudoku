@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title %}
+            {{ page_title|default:"Sudoku" }}
+        {% endblock title %}
+    </title>
+    <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
+    <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <nav class="red darken-4" role="navigation">
+        <div class="nav-wrapper">
+            <a class="brand-logo right">Sudoku</a>
+            <ul id="nav-mobile" class="align-left">
+                <li><a href="{% url 'sudoku:index' %}">New Game</a></li>
+            </ul>
+        </div>
+    </nav>
+</head>
+{% block body %}
+{% endblock body %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</html>

@@ -9,8 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-# Django Template configured by Christopher Breen for Sprint 1, last updated June 23, 2020
-# Configured for production on AWS Elastik Beanstalk
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)

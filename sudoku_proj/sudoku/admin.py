@@ -1,7 +1,7 @@
-# Written by Christopher Breen for Sprint 1, last updated June 23, 2020
 from django.contrib import admin
+from django.contrib.admin import AdminSite
 
-from .models import Puzzles, Played
+from .models import Puzzles
 
 admin.site.register(Puzzles)
-admin.site.register(Played)
+AdminSite.site_url = '/sudoku'

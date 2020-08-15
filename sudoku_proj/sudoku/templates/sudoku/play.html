@@ -1,24 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'sudoku/base.html' %}
 {% load static %}
-<!--
-   Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
-   -->
-<head>
-    <meta charset="UTF-8">
-    <title>Sudoku Let's Play</title>
-    <link rel="stylesheet" type="text/css" href="{%  static 'Materialize.css' %}">
-    <link rel="stylesheet" type="text/css" href="{%  static 'style.css' %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
-</head>
-<!--
-   Written by Chris Breen for Sprint 1, last update July 5, 2020 for Sprint 3
-   -->
+{% block title %}Sudoku Let's Play{% endblock title %}
+{% block body %}
 <script>
     function drawBoard() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // store django session data into javascript accessible session
         let sessionBoard = "{{ request.session.board }}";
         let origBoard = "{{ request.session.orig_board }}";
@@ -82,7 +67,6 @@
     }
 
     function initiateScratchPad() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // showScratchPad called repeatedly, must separate addEventListener to avoid multiple instances
         const c = document.getElementById('scratch');
         c.addEventListener('click', function (event) {
@@ -129,7 +113,6 @@
     }
 
     function highlightScratchCell(highlight) {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
         ctx.lineWidth = 2;
@@ -142,7 +125,6 @@
     }
 
     function hideScratchPad() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         erasePencilMark(window.scratchRow, window.scratchCol);
         window.scratchVisible = false;
         window.scratchCol = -1;
@@ -160,7 +142,6 @@
     }
 
     function showScratchPad(event) {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
         let availNumbers = board[window.scratchRow][window.scratchCol];
@@ -192,7 +173,6 @@
     }
 
     function drawNumber(row, col, num) {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // draws a single digit from solution into cell
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -203,7 +183,6 @@
     }
 
     function drawPencilMark(row, col, num) {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // draws single set of available numbers into a cell
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -225,7 +204,6 @@
     }
 
     function erasePencilMark(row, col) {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // erase all pencil marks (user deselected checkbox)
         const c = document.getElementById("puzzle");
         const ctx = c.getContext("2d");
@@ -241,7 +219,6 @@
     }
 
     function drawNumbers() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         // loop through every cell calling singular drawNumber for each cell
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
@@ -256,7 +233,6 @@
     }
 
     function showHidePencilMarks() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
 
@@ -278,7 +254,6 @@
     }
 
     function saveBoard() {
-        // Written by Christopher Breen for Sprint 1, last updated June 23, 2020
         let csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
@@ -328,7 +303,6 @@
     }
 
     function verifySolutions() {
-        // Written by Christopher Breen for Sprint 1, last updated June 29, 2020 for Sprint 2
         let solution = JSON.parse("{{ request.session.solution }}");
         let sessionBoard = sessionStorage.getItem("board");
         let board = JSON.parse(sessionBoard);
@@ -372,7 +346,6 @@
     }
 
     function getHint() {
-        // Written by Christopher Breen for Sprint 2, last updated June 29, 2020
         let csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
@@ -398,7 +371,6 @@
     }
 
     function eraseObvious() {
-        // Written by Christopher Breen for Sprint 2, last updated June 29, 2020
         let csrftoken = getCookie('csrftoken');
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
@@ -422,85 +394,34 @@
         });
     }
 </script>
-<!--
-   Written by Ben Brandhorst for Sprint 1, last updated June 28, 2020
-   -->
 <body onload="drawBoard()">
-<nav class="red darken-4" role="navigation">
-    <div class="nav-wrapper">
-        <a class="brand-logo right">Sudoku</a>
-        <ul id="nav-mobile" class="align-left">
-            <li><a href="{% url 'sudoku:index' %}">Home</a></li>
-            <li><a href="{% url 'sudoku:how_to_play' %}">How to Play</a></li>
-            <li><a href="{% url 'sudoku:new_game' %}">Play Game</a></li>
-            <li><a href="{% url 'sudoku:leaderboard' %}">Leaderboard</a></li>
-        </ul>
-    </div>
-</nav>
 <main>
-    <h1 class="center-align">Welcome {{ request.session.player }}!</h1>
-    <div class="container">
-        <div class="leftSide">
-            <h4><u>Options</u></h4>
-            <div class="box">
-        <input id="checkboxPencilMarks" type="checkbox" onclick="showHidePencilMarks()" checked>Pencil Marks<span class="check"></span></div>
-             <p>
-                <button onclick="getHint()">Get Hint</button>
-            </p>
-            <p>
-                <button onclick="eraseObvious()">Erase Obvious</button>
-            </p>
-            <button onclick="verifySolutions()">Verify Solutions</button>
-        </div>
-        <div class="middle">
-            <canvas id="puzzle" width="504" height="503">
-                Browser not supported; Please upgrade to a modern browser.
-            </canvas>
-        </div>
-        <div class="rightSide">
-            <canvas id="scratch" width="56" height="503">
-                Browser not supported; Please upgrade to a modern browser.
-            </canvas>
-        </div>
+<p></p>
+<div class="container">
+    <div class="leftSide">
+        <h4><u>Options</u></h4>
+        <div class="box">
+            <input id="checkboxPencilMarks" type="checkbox" onclick="showHidePencilMarks()" checked>Pencil Marks<span
+                class="check"></span></div>
+        <p>
+            <button onclick="getHint()">Get Hint</button>
+        </p>
+        <p>
+            <button onclick="eraseObvious()">Erase Obvious</button>
+        </p>
+        <button onclick="verifySolutions()">Verify Solutions</button>
     </div>
+    <div class="middle">
+        <canvas id="puzzle" width="504" height="503">
+            Browser not supported; Please upgrade to a modern browser.
+        </canvas>
+    </div>
+    <div class="rightSide">
+        <canvas id="scratch" width="56" height="503">
+            Browser not supported; Please upgrade to a modern browser.
+        </canvas>
+    </div>
+</div>
 </main>
-<footer class="page-footer grey darken-3">
-    <div class="container">
-        <h5 class="white-text">Developers</h5>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col s3">
-                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
-                     data-type="horizontal" data-theme="dark" data-vanity="ben-brandhorst-8407911ab"><a
-                        class="LI-simple-link"
-                        href='https://www.linkedin.com/in/ben-brandhorst-8407911ab?trk=profile-badge'>Ben Brandhorst</a>
-                </div>
-            </div>
-            <div class="col s1">
-            </div>
-            <div class="col s3">
-                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
-                     data-type="horizontal" data-theme="dark" data-vanity="breencp"><a class="LI-simple-link"
-                                                                                       href='https://www.linkedin.com/in/breencp?trk=profile-badge'>Christopher
-                    Breen</a></div>
-            </div>
-            <div class="col s1">
-            </div>
-            <div class="col s3">
-                <div class="LI-profile-badge" data-version="v1" data-size="medium" data-locale="en_US"
-                     data-type="horizontal" data-theme="dark" data-vanity="christopher-smith-4791961b0"><a
-                        class="LI-simple-link"
-                        href='https://www.linkedin.com/in/christopher-smith-4791961b0?trk=profile-badge'>Christopher
-                    Smith</a></div>
-            </div>
-        </div>
-    </div>
-    <div class="footer-copyright">
-        <div class="container">
-            © 2020 Copyright Ben Brandhorst, Christopher Breen, and Christopher Smith
-        </div>
-    </div>
-</footer>
 </body>
-</html>
+{% endblock body %}

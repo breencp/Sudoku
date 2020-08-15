@@ -1,6 +1,3 @@
-# file: create_game.py
-# author: Christopher Breen
-# last updated: June 30, 2020
 import copy
 import json
 import math
@@ -25,9 +22,8 @@ avail_col_nums = []
 avail_block_nums = []
 
 
-def create_game(desired_technique, min_givens, max_givens, min_technique_usage):
+def create_game(desired_technique='any', min_givens=26, max_givens=30):
     """Returns board for user to play, the solution, overall difficulty level, and exact techniques required to win."""
-    # Written by Christopher Breen for Sprint 1, last updated June 30, 2020 for Sprint 2
     print('\nCreating solution', end='')
     failed_solves = 0
     while True:
@@ -51,22 +47,21 @@ def create_game(desired_technique, min_givens, max_givens, min_technique_usage):
             board = hide_cells(solution, min_givens, max_givens)
             # solvable_puzzle uses techniques in sequentially incremental difficulty attempting to recreate the solution
             solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board), desired_technique)
-            if solved and desired_technique in techniques and min_technique_usage <= techniques[desired_technique]:
+            if solved:
                 # if successful, return the board modified by hide_cells
                 print('...done. Iterations to get solution: ' + str(failed_solutions), end='')
                 print(', Iterations to solve: ' + str(failed_solves))
                 return board, solution, actual_difficulty, techniques
             else:
                 failed_solves += 1
-                if failed_solves % 20000 == 0:
+                if failed_solves % 10000 == 0:
                     print('\n.', end='')
-                elif failed_solves % 200 == 0:
+                elif failed_solves % 100 == 0:
                     print('.', end='')
 
 
-def hide_cells(solution, min_givens, max_givens):
+def hide_cells(solution, min_givens=26, max_givens=30):
     """Returns the complete solution but with a random number (and location) of givens replaced with candidates"""
-    # Written by Christopher Breen for Sprint 1
     # randomly choose number of cells to hide; need minimum 17 visible numbers of 81 total (64 hidden)
     # typical puzzle books indicate 30-33 for easy, 24-31 medium, 17-23 hard
     # puzzles must have at minimum 17 clues to be solvable (64 hidden)
@@ -88,7 +83,6 @@ def hide_cells(solution, min_givens, max_givens):
 
 def custom_board(human_puzzle):
     """Takes 81 character string of givens and unknowns, returns playable board"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # convert human readable board sequence into multidimensional list used in code.  e.g. follows:
     # 9?67853???????65???8?3216??43??5?9786?????25?????6???5??85???2??4?1?8???
     # The sequence above represents the known numbers and unknown numbers in the puzzle.  It can be read from
@@ -109,7 +103,6 @@ def custom_board(human_puzzle):
 
 def reset_avail():
     """Resets avail row/col/block nums to [1, 2, 3, 4, 5, 7, 8, 9]"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     global avail_block_nums
     global avail_col_nums
     global avail_row_nums
@@ -120,7 +113,6 @@ def reset_avail():
 
 def make_board():
     """Returns a valid sudoku solution, i.e. 9x9 of [1-9] with no dup nums in row, col, or block"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     # Makes a 9x9 multi-dimensional list of zeros
     board = [[0 for x in range(9)] for x in range(9)]
 
@@ -146,7 +138,6 @@ def make_board():
 
 def get_block(row, col):
     """Determine what block provided row and col are in"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     if row <= 2:
         if col <= 2:
             return 0
@@ -172,7 +163,6 @@ def get_block(row, col):
 
 def get_avail_nums(row, col, block):
     """Returns list of numbers not already used in the row, col, or block"""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     avail = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     for x in range(1, 10):
         if x not in avail_row_nums[row] and x in avail:
@@ -187,7 +177,6 @@ def get_avail_nums(row, col, block):
 def board_to_string(board):
     """Converts the board from multidimensional list to a string for seeding into sudoku-solutions.com to verify/test.
     Also returns number of givens in the puzzle."""
-    # Written by Christopher Breen for Sprint 1, last updated June 23, 2020
     board_string = ''
     givens = 0
     for row in range(9):
@@ -202,10 +191,25 @@ def board_to_string(board):
 
 if __name__ == "__main__":
     """create_game.py is designed to be run in the local IDE.  It creates puzzles and stores them in a JSON file for
-    later import into the database using upload.html."""
+    later import into the database using 0.0.0.0/sudoku/upload by a Django Admin"""
+
     custom = False
     # used to test techniques with custom boards, comment out below to get random boards instead
     # custom = custom_board('?5736?2846?4825???28?7?465??924?6???3619?7?42?45132?964?62???75?2?57?46?57864?32?')
+
+    # set desired_technique to naked_single, hidden_single, naked_pair, omission, naked_triplet, hidden_pair,
+    # hidden_triplet, naked_quad, hidden_quad, x_wing, swordfish, or 'any'.
+    desired_technique = 'hidden_triplet'
+
+    # how many puzzles to find before breaking loop
+    puzzles_to_create = 1
+
+    # choose the bounds for number of givens in the puzzle.  Generally, fewer givens are considered more challenging
+    # puzzles, but really it's about the techniques.  Puzzles are easier to generate with 28-30 givens.  Expanding
+    # the lower bound will take significantly longer to discover a valid puzzle, but may yield a great one every now
+    # and then.
+    min_givens = 28
+    max_givens = 30
 
     if custom:
         print(custom)
@@ -213,9 +217,9 @@ if __name__ == "__main__":
         print(solvable_puzzle(copy.deepcopy(custom)))
     else:
         start = time.time()
-        for i in range(5):  # change loop range to fit your needs
+        for i in range(puzzles_to_create):
             # create_game will loop until it creates a puzzle we want to break on for testing
-            board, solution, actual_difficulty, techniques = create_game('omission', 28, 30, 3)
+            board, solution, actual_difficulty, techniques = create_game(desired_technique, min_givens, max_givens)
             board_string, givens = board_to_string(board)
             data = {'board': board,
                     'solution': solution,
@@ -228,7 +232,7 @@ if __name__ == "__main__":
             # save puzzles in JSON format to a filename of today's date to keep them organized
             dev_name = os.environ.get('LOGNAME')
             if not dev_name:
-                dev_name = '???'
+                dev_name = 'anon'
             filename = 'puzzles/' + date.today().strftime('%Y%m%d_') + dev_name + '.json'
             with open(filename, 'a+') as f:
                 json.dump(data, f)
