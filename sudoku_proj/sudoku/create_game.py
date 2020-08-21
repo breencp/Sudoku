@@ -22,7 +22,7 @@ avail_col_nums = []
 avail_block_nums = []
 
 
-def create_game(desired_technique='any', min_givens=26, max_givens=30):
+def create_game(desired_technique='any', desired_difficulty='1', min_givens=26, max_givens=30):
     """Returns board for user to play, the solution, overall difficulty level, and exact techniques required to win."""
     print('\nCreating solution', end='')
     failed_solves = 0
@@ -46,7 +46,8 @@ def create_game(desired_technique='any', min_givens=26, max_givens=30):
             # hide_cells returns the original solution but with a random subset of cell numbers removed
             board = hide_cells(solution, min_givens, max_givens)
             # solvable_puzzle uses techniques in sequentially incremental difficulty attempting to recreate the solution
-            solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board), desired_technique)
+            solved, actual_difficulty, techniques = solvable_puzzle(copy.deepcopy(board), desired_technique,
+                                                                    desired_difficulty)
             if solved:
                 # if successful, return the board modified by hide_cells
                 print('...done. Iterations to get solution: ' + str(failed_solutions), end='')
@@ -197,12 +198,17 @@ if __name__ == "__main__":
     # used to test techniques with custom boards, comment out below to get random boards instead
     # custom = custom_board('?5736?2846?4825???28?7?465??924?6???3619?7?42?45132?964?62???75?2?57?46?57864?32?')
 
-    # set desired_technique to naked_single, hidden_single, naked_pair, omission, naked_triplet, hidden_pair,
-    # hidden_triplet, naked_quad, hidden_quad, x_wing, swordfish, or 'any'.
-    desired_technique = 'hidden_triplet'
+    # set desired_technique (or desired difficulty) to:
+    # Level 1: naked_single, hidden_single
+    # Level 2: naked_pair, omission, naked_triplet
+    # Level 3: hidden_pair, hidden_triplet, naked_quad
+    # Level 4: hidden_quad, x_wing, swordfish
+    # Any Level: 'any'
+    desired_technique = 'any'
+    desired_difficulty = '3'
 
     # how many puzzles to find before breaking loop
-    puzzles_to_create = 1
+    puzzles_to_create = 5
 
     # choose the bounds for number of givens in the puzzle.  Generally, fewer givens are considered more challenging
     # puzzles, but really it's about the techniques.  Puzzles are easier to generate with 28-30 givens.  Expanding
@@ -219,7 +225,8 @@ if __name__ == "__main__":
         start = time.time()
         for i in range(puzzles_to_create):
             # create_game will loop until it creates a puzzle we want to break on for testing
-            board, solution, actual_difficulty, techniques = create_game(desired_technique, min_givens, max_givens)
+            board, solution, actual_difficulty, techniques = create_game(desired_technique, desired_difficulty,
+                                                                         min_givens, max_givens)
             board_string, givens = board_to_string(board)
             data = {'board': board,
                     'solution': solution,

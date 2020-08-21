@@ -4,7 +4,7 @@ import math
 from .create_game import get_block
 
 
-def solvable_puzzle(puzzle_to_solve, desired_technique='any'):
+def solvable_puzzle(puzzle_to_solve, desired_technique='any', desired_difficulty='1'):
     """Returns true if able to solve provided puzzle with provided difficulty level"""
     progress = True
     techniques_utilized = dict()
@@ -120,7 +120,8 @@ def solvable_puzzle(puzzle_to_solve, desired_technique='any'):
 
     # we have continually looped through all techniques in the given difficulty level
     # we may or may not have removed all available numbers down to a single int.  Let's check.
-    if (desired_technique == 'any' or desired_technique in techniques_utilized) and is_solved(puzzle_to_solve):
+    if (desired_technique == 'any' or desired_technique in techniques_utilized) and \
+            actual_difficulty >= desired_difficulty and is_solved(puzzle_to_solve):
         return True, actual_difficulty, techniques_utilized
     else:
         return False, False, False
