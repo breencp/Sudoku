@@ -1,6 +1,0 @@
-@startuml
-User -> Input: Invalid difficulty input
-Input -> make_game: POST data passed with invalid difficulty selection
-make_game-> error_handler: Requests handling of invalid difficulty input
-error_handler-> User: Redirects users to NewGame.html and prompts difficulty selection
-@enduml

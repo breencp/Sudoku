@@ -1,8 +1,0 @@
-@startuml
-User -> Input: Enters application URL
-Input -> Index: Requests render of index.html
-Index -> User: Returns django.shortcuts.render(index.html)
-User -> Input: "Selects How To Play" hyperlink
-Input ->how_to_play: Requests render of howtoplay.html
-how_to_play -> User: Returns django.shortcuts.render(howtoplay.html)
-@enduml

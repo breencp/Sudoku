@@ -1,7 +1,0 @@
-@startuml
-User -> Input: Invalid username input
-Input -> make_game: POST data passed with invalid username
-make_game-> error_handler: Requests handling of invalid username input
-error_handler-> make_game: Replaces username with Anonymous
-make_game -> User: Returns Sudoku puzzle with replaced username
-@enduml
