@@ -208,7 +208,7 @@ if __name__ == "__main__":
     desired_difficulty = '3'
 
     # how many puzzles to find before breaking loop
-    puzzles_to_create = 5
+    puzzles_to_create = 10
 
     # choose the bounds for number of givens in the puzzle.  Generally, fewer givens are considered more challenging
     # puzzles, but really it's about the techniques.  Puzzles are easier to generate with 28-30 givens.  Expanding
@@ -248,6 +248,6 @@ if __name__ == "__main__":
 
             end = time.time()
             output = '#', i, '- Difficulty:', data['difficulty'], data['techniques'], '- Givens:', givens, \
-                     '- Total minutes elapsed:', math.ceil((end - start) / 60)
+                     '- Total hours elapsed:', round((end - start) / 3600, 2)
             print(*output)
             print(board_string)
